@@ -1,0 +1,26 @@
+{
+  "$GMSound":"v2",
+  "%Name":"snd_ponte_abaixando",
+  "audioGroupId":{
+    "name":"audiogroup_efeitos",
+    "path":"audiogroups/audiogroup_efeitos",
+  },
+  "bitDepth":1,
+  "channelFormat":0,
+  "compression":0,
+  "compressionQuality":4,
+  "conversionMode":0,
+  "duration":1.65,
+  "exportDir":"",
+  "name":"snd_ponte_abaixando",
+  "parent":{
+    "name":"Sounds",
+    "path":"folders/Sounds.yy",
+  },
+  "preload":false,
+  "resourceType":"GMSound",
+  "resourceVersion":"2.0",
+  "sampleRate":44100,
+  "soundFile":"snd_ponte_abaixando.wav",
+  "volume":1.0,
+}

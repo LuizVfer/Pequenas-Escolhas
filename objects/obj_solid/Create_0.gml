@@ -1,0 +1,1 @@
+bloqueio_carroca = false;

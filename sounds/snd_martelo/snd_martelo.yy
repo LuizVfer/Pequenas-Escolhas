@@ -1,0 +1,26 @@
+{
+  "$GMSound":"v2",
+  "%Name":"snd_martelo",
+  "audioGroupId":{
+    "name":"audiogroup_efeitos",
+    "path":"audiogroups/audiogroup_efeitos",
+  },
+  "bitDepth":1,
+  "channelFormat":0,
+  "compression":0,
+  "compressionQuality":4,
+  "conversionMode":0,
+  "duration":1.12,
+  "exportDir":"",
+  "name":"snd_martelo",
+  "parent":{
+    "name":"Sounds",
+    "path":"folders/Sounds.yy",
+  },
+  "preload":false,
+  "resourceType":"GMSound",
+  "resourceVersion":"2.0",
+  "sampleRate":44100,
+  "soundFile":"snd_martelo.wav",
+  "volume":1.0,
+}
