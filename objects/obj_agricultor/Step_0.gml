@@ -75,8 +75,14 @@ var _abrir_portao = method(
         // Futuro som do portão
         if (som_portao != noone)
         {
+            // Abaixa a música durante a abertura do portão
+            global.game_instancia.abaixar_musica_para_efeito(
+                75,
+                0.30
+            );
+            
             audio_play_sound(
-                som_portao,
+                snd_portao_abrindo,
                 2,
                 false
             );

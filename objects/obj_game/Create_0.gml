@@ -238,6 +238,188 @@ carregar_configuracoes = function()
     aplicar_configuracoes();
 };
 
+// ==================================================
+// SISTEMA DE MÚSICA
+// ==================================================
+
+musica_atual = noone;
+musica_instancia = -1;
+// Música que começará depois do atraso
+musica_pendente = noone;
+
+// Aproximadamente 0,5 segundo em 60 FPS
+atraso_musica = 75;
+
+
+// Toca uma música sem criar duplicatas
+tocar_musica = function(_musica)
+{
+    if (_musica == noone)
+    {
+        exit;
+    }
+
+
+    // A música correta já está tocando
+    if (
+        musica_atual == _musica
+        && musica_instancia != -1
+        && audio_is_playing(musica_instancia)
+    )
+    {
+        exit;
+    }
+
+
+    // Interrompe a música anterior
+    if (
+        musica_instancia != -1
+        && audio_is_playing(musica_instancia)
+    )
+    {
+        audio_stop_sound(musica_instancia);
+    }
+
+
+    musica_atual = _musica;
+
+    musica_instancia = audio_play_sound(
+        _musica,
+        10,
+        true
+    );
+};
+
+// Agenda uma música para começar depois de alguns frames
+agendar_musica = function(
+    _musica,
+    _atraso = 30
+)
+{
+    if (_musica == noone)
+    {
+        exit;
+    }
+
+
+    // A mesma música já está tocando.
+    // Exemplo: Menu → Introdução.
+    if (
+        musica_atual == _musica
+        && musica_instancia != -1
+        && audio_is_playing(musica_instancia)
+    )
+    {
+        musica_pendente = noone;
+        alarm[0] = -1;
+        exit;
+    }
+
+
+    // Cancela qualquer música que estava aguardando
+    alarm[0] = -1;
+    musica_pendente = _musica;
+
+
+    // Para a música da room anterior
+    if (
+        musica_instancia != -1
+        && audio_is_playing(musica_instancia)
+    )
+    {
+        audio_stop_sound(musica_instancia);
+    }
+
+
+    musica_atual = noone;
+    musica_instancia = -1;
+
+
+    // Inicia a contagem do atraso
+    alarm[0] = max(1, _atraso);
+};
+
+
+// Para completamente a música atual
+parar_musica = function()
+{
+    if (
+        musica_instancia != -1
+        && audio_is_playing(musica_instancia)
+    )
+    {
+        audio_stop_sound(musica_instancia);
+    }
+
+    musica_atual = noone;
+    musica_instancia = -1;
+};
+
+// ==================================================
+// DUCKING DA MÚSICA
+// ==================================================
+
+ducking_musica_ativo = false;
+
+
+// Abaixa temporariamente a música para destacar um efeito
+abaixar_musica_para_efeito = function(
+    _duracao_frames = 45,
+    _fator = 0.35
+)
+{
+    if (
+        musica_instancia == -1
+        || !audio_is_playing(musica_instancia)
+    )
+    {
+        exit;
+    }
+
+    _duracao_frames =
+        max(1, round(_duracao_frames));
+
+    _fator =
+        clamp(_fator, 0, 1);
+
+
+    // Abaixa suavemente em 100 milissegundos
+    audio_sound_gain(
+        musica_instancia,
+        _fator,
+        100
+    );
+
+
+    // Um novo efeito prolonga o tempo de música baixa
+    alarm[1] = max(
+        alarm[1],
+        _duracao_frames
+    );
+
+    ducking_musica_ativo = true;
+};
+
+
+// Volta a música ao volume normal da instância
+restaurar_musica_apos_efeito = function()
+{
+    if (
+        musica_instancia != -1
+        && audio_is_playing(musica_instancia)
+    )
+    {
+        // Retorna suavemente em 250 milissegundos
+        audio_sound_gain(
+            musica_instancia,
+            1,
+            250
+        );
+    }
+
+    ducking_musica_ativo = false;
+};
+
 
 // ==================================================
 // CARREGAR GRUPOS DE ÁUDIO

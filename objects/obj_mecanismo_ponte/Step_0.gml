@@ -62,8 +62,14 @@ var _abaixar_ponte = method(
         // Toca o som, caso tenha sido configurado
         if (som_ponte != noone)
         {
+            // A ponte é um efeito mais longo
+            global.game_instancia.abaixar_musica_para_efeito(
+                90,
+                0.25
+            );
+            
             audio_play_sound(
-                som_ponte,
+                snd_ponte_abaixando,
                 2,
                 false
             );

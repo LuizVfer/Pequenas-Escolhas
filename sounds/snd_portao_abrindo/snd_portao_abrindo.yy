@@ -14,8 +14,8 @@
   "exportDir":"",
   "name":"snd_portao_abrindo",
   "parent":{
-    "name":"Sounds",
-    "path":"folders/Sounds.yy",
+    "name":"efeitos",
+    "path":"folders/Sounds/efeitos.yy",
   },
   "preload":false,
   "resourceType":"GMSound",

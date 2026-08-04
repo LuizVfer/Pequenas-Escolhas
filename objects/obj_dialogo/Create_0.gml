@@ -31,6 +31,12 @@ texto_visivel = 0;
 // Caracteres adicionados por frame
 velocidade_texto = 0.7;
 
+// Controle do som da máquina de escrever
+ultimo_caractere_som = 0;
+
+// Toca um som a cada 2 caracteres
+intervalo_som_texto = 2;
+
 // Sistema de escolhas
 modo_escolha = false;
 
@@ -186,6 +192,8 @@ abrir = function(_paginas)
 
     pagina_atual = 0;
     texto_visivel = 0;
+    
+    ultimo_caractere_som = 0;
 
     modo_escolha = false;
 

@@ -1,0 +1,26 @@
+{
+  "$GMSound":"v2",
+  "%Name":"snd_interacao",
+  "audioGroupId":{
+    "name":"audiogroup_efeitos",
+    "path":"audiogroups/audiogroup_efeitos",
+  },
+  "bitDepth":1,
+  "channelFormat":0,
+  "compression":0,
+  "compressionQuality":4,
+  "conversionMode":0,
+  "duration":0.31251702,
+  "exportDir":"",
+  "name":"snd_interacao",
+  "parent":{
+    "name":"efeitos",
+    "path":"folders/Sounds/efeitos.yy",
+  },
+  "preload":false,
+  "resourceType":"GMSound",
+  "resourceVersion":"2.0",
+  "sampleRate":44100,
+  "soundFile":"snd_interacao.wav",
+  "volume":1.0,
+}

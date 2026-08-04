@@ -84,7 +84,28 @@ if (!global.controle_bloqueado)
         {
             var _alvo_final =
                 interagivel_atual;
-
+        
+        
+            // Som ao iniciar a interação
+            var _som_interacao = audio_play_sound(
+                snd_interacao,
+                0,
+                false
+            );
+        
+            audio_sound_gain(
+                _som_interacao,
+                0.40,
+                0
+            );
+        
+            audio_sound_pitch(
+                _som_interacao,
+                0.90
+            );
+        
+        
+            // Executa a interação do objeto selecionado
             with (_alvo_final)
             {
                 interagir();

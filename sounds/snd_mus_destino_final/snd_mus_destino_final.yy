@@ -1,0 +1,26 @@
+{
+  "$GMSound":"v2",
+  "%Name":"snd_mus_destino_final",
+  "audioGroupId":{
+    "name":"audiogroup_musica",
+    "path":"audiogroups/audiogroup_musica",
+  },
+  "bitDepth":1,
+  "channelFormat":0,
+  "compression":0,
+  "compressionQuality":4,
+  "conversionMode":0,
+  "duration":162.17598,
+  "exportDir":"",
+  "name":"snd_mus_destino_final",
+  "parent":{
+    "name":"music",
+    "path":"folders/Sounds/music.yy",
+  },
+  "preload":false,
+  "resourceType":"GMSound",
+  "resourceVersion":"2.0",
+  "sampleRate":44100,
+  "soundFile":"snd_mus_destino_final.mp3",
+  "volume":1.0,
+}

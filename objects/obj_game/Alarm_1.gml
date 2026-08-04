@@ -1,0 +1,1 @@
+restaurar_musica_apos_efeito();

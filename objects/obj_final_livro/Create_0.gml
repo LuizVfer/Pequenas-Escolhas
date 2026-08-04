@@ -47,7 +47,38 @@ transicao_consequencia_iniciada = false;
 
 // Som provisório
 // Depois trocaremos por snd_livro_abrindo
-som_livro_abrindo = noone;
+som_livro_abrindo = snd_livro_abrindo;
+
+// Som mais leve usado ao trocar de consequência
+tocar_som_pagina = function()
+{
+    if (som_livro_abrindo == noone)
+    {
+        exit;
+    }
+
+    global.game_instancia.abaixar_musica_para_efeito(
+        45,
+        0.35
+    );
+
+    var _som_pagina = audio_play_sound(
+        som_livro_abrindo,
+        2,
+        false
+    );
+
+    audio_sound_gain(
+        _som_pagina,
+        0.55,
+        0
+    );
+
+    audio_sound_pitch(
+        _som_pagina,
+        1.15
+    );
+};
 
 
 // Bloqueia qualquer controle de gameplay
@@ -69,7 +100,7 @@ global.dialogo_ativo = false;
 tempo_livro_fechado_final = 60;
 
 // Som será adicionado depois
-som_livro_fechando = noone;
+som_livro_fechando = snd_livro_abrindo;
 
 
 // Mensagem final

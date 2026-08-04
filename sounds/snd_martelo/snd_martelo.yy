@@ -14,8 +14,8 @@
   "exportDir":"",
   "name":"snd_martelo",
   "parent":{
-    "name":"Sounds",
-    "path":"folders/Sounds.yy",
+    "name":"efeitos",
+    "path":"folders/Sounds/efeitos.yy",
   },
   "preload":false,
   "resourceType":"GMSound",

@@ -1,0 +1,26 @@
+{
+  "$GMSound":"v2",
+  "%Name":"snd_mus_cidade",
+  "audioGroupId":{
+    "name":"audiogroup_musica",
+    "path":"audiogroups/audiogroup_musica",
+  },
+  "bitDepth":1,
+  "channelFormat":0,
+  "compression":0,
+  "compressionQuality":4,
+  "conversionMode":0,
+  "duration":105.48245,
+  "exportDir":"",
+  "name":"snd_mus_cidade",
+  "parent":{
+    "name":"music",
+    "path":"folders/Sounds/music.yy",
+  },
+  "preload":false,
+  "resourceType":"GMSound",
+  "resourceVersion":"2.0",
+  "sampleRate":44100,
+  "soundFile":"snd_mus_cidade.mp3",
+  "volume":1.0,
+}

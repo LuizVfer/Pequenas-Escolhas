@@ -153,6 +153,7 @@ if (estado_final == 1)
             
                         function()
                         {
+                            tocar_som_pagina();
                             configurar_consequencia_cachorro();
                         }
                     );
@@ -178,6 +179,7 @@ if (estado_final == 1)
             
                         function()
                         {
+                            tocar_som_pagina();
                             configurar_consequencia_sementes();
                         }
                     );
@@ -203,6 +205,7 @@ if (estado_final == 1)
                 
                         function()
                         {
+                            tocar_som_pagina();
                             configurar_consequencia_brinquedo();
                         }
                     );
@@ -233,10 +236,43 @@ if (estado_final == 1)
                             // Som do livro fechando
                             if (som_livro_fechando != noone)
                             {
-                                audio_play_sound(
+                                function()
+                                {
+                                    global.game_instancia.abaixar_musica_para_efeito(
+                                        60,
+                                        0.25
+                                    );
+                                
+                                    if (som_livro_abrindo != noone)
+                                    {
+                                        audio_play_sound(
+                                            som_livro_abrindo,
+                                            2,
+                                            false
+                                        );
+                                    }
+                                
+                                    estado_final = 1;
+                                    contador = 0;
+                                
+                                    configurar_consequencia_pedra();
+                                }
+                            
+                                var _som_fechando = audio_play_sound(
                                     som_livro_fechando,
                                     2,
                                     false
+                                );
+                            
+                                audio_sound_gain(
+                                    _som_fechando,
+                                    0.80,
+                                    0
+                                );
+                            
+                                audio_sound_pitch(
+                                    _som_fechando,
+                                    0.85
                                 );
                             }
                

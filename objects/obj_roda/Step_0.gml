@@ -217,9 +217,15 @@ if (place_meeting(x, y, obj_alvo_roda))
                 }
             }
     
+            // Abaixa a música para destacar o martelo
+            global.game_instancia.abaixar_musica_para_efeito(
+                45,
+                0.35
+            );
+            
             audio_play_sound(
                 snd_martelo,
-                1,
+                2,
                 false
             );
     
