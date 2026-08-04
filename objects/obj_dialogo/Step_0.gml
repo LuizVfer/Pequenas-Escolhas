@@ -197,9 +197,22 @@ if (texto_visivel < _tamanho_texto)
                     false
                 );
                 
+                
+                // Alterna entre um som levemente grave e agudo
+                var _pitch_texto = 1.30;
+                
+                if (pitch_texto_alternado)
+                {
+                    _pitch_texto = 1.50;
+                }
+                
+                pitch_texto_alternado =
+                    !pitch_texto_alternado;
+                
+                
                 audio_sound_pitch(
                     _som_texto,
-                    1.60
+                    _pitch_texto
                 );
             }
         }

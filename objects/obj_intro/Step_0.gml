@@ -7,6 +7,7 @@ if (
     && global.fade_instancia.ativo
 )
 {
+    parar_som_lapis();
     exit;
 }
 
@@ -32,10 +33,21 @@ if (estado_intro == 0)
     // Máquina de escrever
     if (caracteres_visiveis < _tamanho)
     {
+        iniciar_som_lapis();
+    
         caracteres_visiveis = min(
             caracteres_visiveis + velocidade_texto,
             _tamanho
         );
+    
+        if (caracteres_visiveis >= _tamanho)
+        {
+            parar_som_lapis();
+        }
+    }
+    else
+    {
+        parar_som_lapis();
     }
 
 
@@ -45,6 +57,8 @@ if (estado_intro == 0)
         if (caracteres_visiveis < _tamanho)
         {
             caracteres_visiveis = _tamanho;
+        
+            parar_som_lapis();
         }
 
         // Próxima frase

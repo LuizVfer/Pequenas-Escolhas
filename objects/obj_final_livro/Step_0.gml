@@ -33,10 +33,22 @@ if (estado_final == 0)
                 // Toca o som durante a tela preta
                 if (som_livro_abrindo != noone)
                 {
-                    audio_play_sound(
+                    global.game_instancia
+                        .abaixar_musica_para_efeito(
+                            70,
+                            0.15
+                        );
+                
+                    var _som_abrindo = audio_play_sound(
                         som_livro_abrindo,
                         2,
                         false
+                    );
+                
+                    audio_sound_gain(
+                        _som_abrindo,
+                        1,
+                        0
                     );
                 }
 
@@ -69,10 +81,12 @@ if (estado_final == 1)
         && global.fade_instancia.ativo
     )
     {
+        parar_som_lapis();
         exit;
     }
     if (array_length(frases_consequencia) <= 0)
     {
+        parar_som_lapis();
         exit;
     }
 
@@ -87,12 +101,23 @@ if (estado_final == 1)
     // Máquina de escrever
     if (caracteres_visiveis < _tamanho)
     {
+        iniciar_som_lapis();
+    
         caracteres_visiveis = min(
             caracteres_visiveis
                 + velocidade_frase,
-
+    
             _tamanho
         );
+    
+        if (caracteres_visiveis >= _tamanho)
+        {
+            parar_som_lapis();
+        }
+    }
+    else
+    {
+        parar_som_lapis();
     }
 
 
@@ -107,6 +132,8 @@ if (estado_final == 1)
         if (caracteres_visiveis < _tamanho)
         {
             caracteres_visiveis = _tamanho;
+        
+            parar_som_lapis();
         }
 
         // Vai para a próxima frase
@@ -239,8 +266,8 @@ if (estado_final == 1)
                                 function()
                                 {
                                     global.game_instancia.abaixar_musica_para_efeito(
-                                        60,
-                                        0.25
+                                        75,
+                                        0.15
                                     );
                                 
                                     if (som_livro_abrindo != noone)
@@ -266,7 +293,7 @@ if (estado_final == 1)
                             
                                 audio_sound_gain(
                                     _som_fechando,
-                                    0.80,
+                                    1,
                                     0
                                 );
                             
@@ -345,17 +372,19 @@ if (estado_final == 2)
 if (estado_final == 3)
 {
     // Só começa depois que o fade terminar
-    if (
+   if (
         instance_exists(global.fade_instancia)
         && global.fade_instancia.ativo
     )
     {
+        parar_som_lapis();
         exit;
     }
-
+    
 
     if (mensagem_final_concluida)
     {
+        parar_som_lapis();
         exit;
     }
 
@@ -370,12 +399,26 @@ if (estado_final == 3)
     // Máquina de escrever
     if (caracteres_finais_visiveis < _tamanho)
     {
+        iniciar_som_lapis();
+    
         caracteres_finais_visiveis = min(
             caracteres_finais_visiveis
                 + velocidade_mensagem_final,
-
+    
             _tamanho
         );
+    
+        if (
+            caracteres_finais_visiveis
+            >= _tamanho
+        )
+        {
+            parar_som_lapis();
+        }
+    }
+    else
+    {
+        parar_som_lapis();
     }
 
 
@@ -390,8 +433,10 @@ if (estado_final == 3)
         if (caracteres_finais_visiveis < _tamanho)
         {
             caracteres_finais_visiveis = _tamanho;
+        
+            parar_som_lapis();
         }
-
+        
         // Avança para a próxima frase
         else if (
             frase_final_atual

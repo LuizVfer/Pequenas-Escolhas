@@ -39,6 +39,40 @@ else
     pode_interagir = true;
 }
 
+// ==================================================
+// SOM DA ARMADILHA
+// ==================================================
+
+tocar_som_armadilha = function()
+{
+    // Abaixa a música para destacar o efeito
+    if (instance_exists(global.game_instancia))
+    {
+        global.game_instancia
+            .abaixar_musica_para_efeito(
+                55,
+                0.30
+            );
+    }
+
+    var _som = audio_play_sound(
+        snd_armadilha,
+        2,
+        false
+    );
+
+    audio_sound_gain(
+        _som,
+        0.70,
+        0
+    );
+
+    audio_sound_pitch(
+        _som,
+        0.95
+    );
+};
+
 
 // ==================================================
 // INTERAÇÃO
@@ -78,6 +112,8 @@ interagir = function()
             
                         alimentado =
                             (global.escolha_cachorro == 1);
+                        
+                        tocar_som_armadilha();
             
                         sprite_index =
                             spr_cachorro_livre;

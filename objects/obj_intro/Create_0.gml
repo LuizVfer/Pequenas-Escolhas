@@ -30,6 +30,52 @@ frase_atual = 0;
 caracteres_visiveis = 0;
 velocidade_texto = 0.7;
 
+// ==================================================
+// SOM DO LÁPIS
+// ==================================================
+
+som_lapis_instancia = -1;
+
+
+iniciar_som_lapis = function()
+{
+    if (
+        som_lapis_instancia == -1
+        || !audio_is_playing(som_lapis_instancia)
+    )
+    {
+        som_lapis_instancia = audio_play_sound(
+            snd_lapis_escrevendo,
+            0,
+            true
+        );
+
+        audio_sound_gain(
+            som_lapis_instancia,
+            0.30,
+            0
+        );
+
+        audio_sound_pitch(
+            som_lapis_instancia,
+            1
+        );
+    }
+};
+
+
+parar_som_lapis = function()
+{
+    if (som_lapis_instancia != -1)
+    {
+        audio_stop_sound(
+            som_lapis_instancia
+        );
+
+        som_lapis_instancia = -1;
+    }
+};
+
 
 // Título
 titulo_intro = "Pequenas Escolhas";

@@ -12,6 +12,52 @@ frase_atual = 0;
 caracteres_visiveis = 0;
 velocidade_frase = 0.7;
 
+// ==================================================
+// SOM DO LÁPIS
+// ==================================================
+
+som_lapis_instancia = -1;
+
+
+iniciar_som_lapis = function()
+{
+    if (
+        som_lapis_instancia == -1
+        || !audio_is_playing(som_lapis_instancia)
+    )
+    {
+        som_lapis_instancia = audio_play_sound(
+            snd_lapis_escrevendo,
+            0,
+            true
+        );
+
+        audio_sound_gain(
+            som_lapis_instancia,
+            0.30,
+            0
+        );
+
+        audio_sound_pitch(
+            som_lapis_instancia,
+            1
+        );
+    }
+};
+
+
+parar_som_lapis = function()
+{
+    if (som_lapis_instancia != -1)
+    {
+        audio_stop_sound(
+            som_lapis_instancia
+        );
+
+        som_lapis_instancia = -1;
+    }
+};
+
 // Indica que todas as frases terminaram
 consequencia_concluida = false;
 
@@ -58,8 +104,8 @@ tocar_som_pagina = function()
     }
 
     global.game_instancia.abaixar_musica_para_efeito(
-        45,
-        0.35
+        55,
+        0.20
     );
 
     var _som_pagina = audio_play_sound(
@@ -70,7 +116,7 @@ tocar_som_pagina = function()
 
     audio_sound_gain(
         _som_pagina,
-        0.55,
+        0.95,
         0
     );
 

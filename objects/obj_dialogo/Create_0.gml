@@ -37,6 +37,9 @@ ultimo_caractere_som = 0;
 // Toca um som a cada 2 caracteres
 intervalo_som_texto = 2;
 
+// Alternância do pitch da máquina de escrever
+pitch_texto_alternado = false;
+
 // Sistema de escolhas
 modo_escolha = false;
 

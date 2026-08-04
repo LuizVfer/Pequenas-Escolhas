@@ -13,6 +13,22 @@ x_resto = 0;
 // Objeto interagível mais próximo
 interagivel_atual = noone;
 
+// ==================================================
+// SOM DOS PASSOS
+// ==================================================
+
+// Posição usada para descobrir quanto o player andou
+x_anterior_passos = x;
+
+// Distância acumulada desde o último passo
+distancia_passos_acumulada = 0;
+
+// Distância necessária para tocar outro passo
+distancia_entre_passos = 40;
+
+// Alterna o pitch entre os passos
+passo_alternado = false;
+
 #endregion
 
 #region metodos

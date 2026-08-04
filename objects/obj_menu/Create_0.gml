@@ -68,5 +68,51 @@ quantidade_configuracoes = 4;
 // O volume muda de 10% em 10%
 passo_volume = 0.1;
 
+// ==================================================
+// SONS DO MENU
+// ==================================================
+
+tocar_som_menu_mover = function()
+{
+    var _som = audio_play_sound(
+        snd_opcao_mover,
+        0,
+        false
+    );
+
+    audio_sound_gain(
+        _som,
+        0.35,
+        0
+    );
+
+    // Mais grave somente no menu
+    audio_sound_pitch(
+        _som,
+        2
+    );
+};
+
+
+tocar_som_menu_confirmar = function()
+{
+    var _som = audio_play_sound(
+        snd_opcao_confirmar,
+        1,
+        false
+    );
+
+    audio_sound_gain(
+        _som,
+        0.55,
+        0
+    );
+
+    // Confirmação mais grave somente no menu
+    audio_sound_pitch(
+        _som,
+        2
+    );
+};
 
 atualizar_opcoes();

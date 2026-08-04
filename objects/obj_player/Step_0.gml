@@ -1,6 +1,66 @@
 // Executa o estado atual do player
 roda_estado();
 
+// ==================================================
+// SOM DOS PASSOS
+// ==================================================
+
+var _deslocamento_passos =
+    abs(x - x_anterior_passos);
+
+x_anterior_passos = x;
+
+
+// O player realmente se moveu
+if (
+    !global.controle_bloqueado
+    && _deslocamento_passos > 0.01
+)
+{
+    distancia_passos_acumulada +=
+        _deslocamento_passos;
+
+
+    if (
+        distancia_passos_acumulada
+        >= distancia_entre_passos
+    )
+    {
+        distancia_passos_acumulada = 0;
+
+
+        // Alterna levemente entre grave e agudo
+        var _pitch_passo = 0.94;
+
+        if (passo_alternado)
+        {
+            _pitch_passo = 1.06;
+        }
+
+        passo_alternado = !passo_alternado;
+
+
+        audio_play_sound(
+            snd_passos,
+            0,
+            false,
+            0.1,
+            0,
+            _pitch_passo
+        );
+    }
+}
+else
+{
+    // Evita tocar imediatamente depois de ficar parado
+    distancia_passos_acumulada = 0;
+}
+
+
+// Limpa a interação anterior
+interagivel_atual = noone;
+global.interacao_ativa = noone;
+
 
 // Limpa a interação anterior
 interagivel_atual = noone;

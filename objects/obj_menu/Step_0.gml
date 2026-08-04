@@ -91,14 +91,7 @@ if (estado_menu == 0)
                 array_length(opcoes_menu) - 1;
         }
 
-        // Adicionaremos o som depois
-        /*
-        audio_play_sound(
-            snd_menu_mover,
-            1,
-            false
-        );
-        */
+        tocar_som_menu_mover();
     }
 
 
@@ -115,22 +108,18 @@ if (estado_menu == 0)
             opcao_selecionada = 0;
         }
 
-        // Adicionaremos o som depois
-        /*
-        audio_play_sound(
-            snd_menu_mover,
-            1,
-            false
-        );
-        */
+        tocar_som_menu_mover();
     }
 
 
     // Confirmar
     if (_confirmar)
     {
+        tocar_som_menu_confirmar();
+        
         switch (opcao_selecionada)
         {
+            
             // ==========================================
             // JOGAR
             // ==========================================
@@ -212,6 +201,8 @@ if (estado_menu == 1)
 
     if (_voltar_controles)
     {
+        tocar_som_menu_confirmar();
+    
         estado_menu = 0;
         opcao_selecionada = 1;
     }
@@ -257,19 +248,21 @@ if (estado_menu == 2)
     if (_cima)
     {
         opcao_configuracao--;
-
+    
         if (opcao_configuracao < 0)
         {
             opcao_configuracao =
                 quantidade_configuracoes - 1;
         }
+    
+        tocar_som_menu_mover();
     }
 
 
     if (_baixo)
     {
         opcao_configuracao++;
-
+    
         if (
             opcao_configuracao
             >= quantidade_configuracoes
@@ -277,6 +270,8 @@ if (estado_menu == 2)
         {
             opcao_configuracao = 0;
         }
+    
+        tocar_som_menu_mover();
     }
 
 
@@ -350,6 +345,11 @@ if (estado_menu == 2)
                 global.game_instancia
                     .salvar_configuracoes();
             break;
+        }
+        
+        if (opcao_configuracao <= 2)
+        {
+            tocar_som_menu_mover();
         }
     }
 
@@ -425,6 +425,11 @@ if (estado_menu == 2)
                     .salvar_configuracoes();
             break;
         }
+        
+        if (opcao_configuracao <= 2)
+        {
+            tocar_som_menu_mover();
+        }
     }
 
 
@@ -437,20 +442,24 @@ if (estado_menu == 2)
         // Tela cheia
         if (opcao_configuracao == 2)
         {
+            tocar_som_menu_confirmar();
+    
             global.tela_cheia =
                 !global.tela_cheia;
-
+    
             window_set_fullscreen(
                 global.tela_cheia
             );
-
+    
             global.game_instancia
                 .salvar_configuracoes();
         }
-
+    
         // Voltar
         else if (opcao_configuracao == 3)
         {
+            tocar_som_menu_confirmar();
+    
             estado_menu = 0;
             opcao_selecionada = 2;
         }
@@ -460,6 +469,8 @@ if (estado_menu == 2)
     // Esc também volta
     if (_voltar)
     {
+        tocar_som_menu_confirmar();
+    
         estado_menu = 0;
         opcao_selecionada = 2;
     }

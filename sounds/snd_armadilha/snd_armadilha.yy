@@ -1,6 +1,6 @@
 {
   "$GMSound":"v2",
-  "%Name":"snd_opcao_confirmar",
+  "%Name":"snd_armadilha",
   "audioGroupId":{
     "name":"audiogroup_efeitos",
     "path":"audiogroups/audiogroup_efeitos",
@@ -10,9 +10,9 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":0.9926531,
+  "duration":0.6733787,
   "exportDir":"",
-  "name":"snd_opcao_confirmar",
+  "name":"snd_armadilha",
   "parent":{
     "name":"efeitos",
     "path":"folders/Sounds/efeitos.yy",
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"snd_opcao_confirmar.mp3",
+  "soundFile":"snd_armadilha.wav",
   "volume":1.0,
 }
