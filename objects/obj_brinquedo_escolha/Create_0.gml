@@ -28,6 +28,94 @@ else
     pode_interagir = true;
 }
 
+// ==================================================
+// APLICAR RESULTADO DA ESCOLHA
+// ==================================================
+
+aplicar_escolha_brinquedo = function()
+{
+    var _mensagem = "";
+
+
+    switch (global.escolha_brinquedo)
+    {
+        // ==========================================
+        // AJUDAR A CRIANÇA
+        // ==========================================
+
+        case 0:
+            with (obj_crianca_destino)
+            {
+                sprite_index =
+                    spr_crianca_brinquedo;
+
+                image_index = 0;
+                image_speed = 0;
+            }
+
+            visible = false;
+
+            _mensagem =
+                "Você alcançou o brinquedo e o entregou à criança.";
+        break;
+
+
+        // ==========================================
+        // DERRUBAR COM UMA PEDRA
+        // ==========================================
+
+        case 1:
+            with (obj_crianca_destino)
+            {
+                sprite_index =
+                    spr_crianca_brinquedo_quebrado;
+
+                image_index = 0;
+                image_speed = 0;
+            }
+
+            visible = false;
+
+            _mensagem =
+                "Você lançou uma pedra. O brinquedo caiu, mas se partiu.";
+        break;
+
+
+        // ==========================================
+        // NÃO FAZER NADA
+        // ==========================================
+
+        case 2:
+            with (obj_crianca_destino)
+            {
+                sprite_index =
+                    spr_crianca_alcancando;
+
+                image_index = 0;
+                image_speed = 0;
+            }
+
+            _mensagem =
+                "Você decidiu continuar seu caminho.";
+        break;
+    }
+
+
+    show_debug_message(
+        "Escolha do brinquedo salva: "
+        + string(global.escolha_brinquedo)
+    );
+
+
+    global.dialogo_instancia.abrir(
+    [
+        {
+            nome: "",
+            texto: _mensagem
+        }
+    ]);
+};
+
 
 // ==================================================
 // INTERAÇÃO
@@ -49,73 +137,48 @@ interagir = function()
             global.escolha_brinquedo = _opcao;
             pode_interagir = false;
 
-            var _mensagem = "";
 
+            // ==========================================
+            // OPÇÕES QUE ALTERAM OS OBJETOS
+            // ==========================================
 
-            switch (_opcao)
+            if (
+                _opcao == 0
+                || _opcao == 1
+            )
             {
-                // Ajudar
-                case 0:
-                    with (obj_crianca_destino)
+                var _aplicar_resultado = method(
+                    id,
+
+                    function()
                     {
-                        sprite_index = spr_crianca_brinquedo;
-                        image_index = 0;
-                        image_speed = 0;
+                        aplicar_escolha_brinquedo();
                     }
-
-                    visible = false;
-
-                    _mensagem =
-                        "Você alcançou o brinquedo e o entregou à criança.";
-                break;
+                );
 
 
-                // Derrubar com uma pedra
-                case 1:
-                    with (obj_crianca_destino)
-                    {
-                        sprite_index =
-                            spr_crianca_brinquedo_quebrado;
-
-                        image_index = 0;
-                        image_speed = 0;
-                    }
-
-                    visible = false;
-
-                    _mensagem =
-                        "Você lançou uma pedra. O brinquedo caiu, mas se partiu.";
-                break;
+                // Impede o diálogo anterior de liberar
+                // o jogador durante o fade
+                global.dialogo_instancia
+                    .desbloqueio_atrasado = 0;
 
 
-                // Ignorar
-                case 2:
-                    with (obj_crianca_destino)
-                    {
-                        sprite_index = spr_crianca_alcancando;
-                        image_index = 0;
-                        image_speed = 0;
-                    }
-
-                    _mensagem =
-                        "Você decidiu continuar seu caminho.";
-                break;
+                global.fade_instancia.iniciar(
+                    _aplicar_resultado,
+                    0.05,
+                    0
+                );
             }
 
 
-            show_debug_message(
-                "Escolha do brinquedo salva: "
-                + string(global.escolha_brinquedo)
-            );
+            // ==========================================
+            // NÃO FAZER NADA
+            // ==========================================
 
-
-            global.dialogo_instancia.abrir(
-            [
-                {
-                    nome: "",
-                    texto: _mensagem
-                }
-            ]);
+            else
+            {
+                aplicar_escolha_brinquedo();
+            }
         }
     );
 

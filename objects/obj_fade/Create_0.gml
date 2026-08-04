@@ -31,10 +31,15 @@ iniciar = function(
     _duracao_preto = 45
 )
 {
+    // Já existe outro fade acontecendo
     if (ativo)
     {
-        exit;
+        // Garante que o jogador continue bloqueado
+        global.controle_bloqueado = true;
+
+        return false;
     }
+
 
     ativo = true;
     alpha_fade = 0;
@@ -47,4 +52,7 @@ iniciar = function(
     funcao_meio = _funcao;
 
     global.controle_bloqueado = true;
+
+    // Informa que o fade começou corretamente
+    return true;
 };

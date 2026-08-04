@@ -48,6 +48,67 @@ else
 
 
 // ==================================================
+// APLICA A ESCOLHA VISUAL
+// ==================================================
+
+aplicar_escolha_sementes = function()
+{
+    var _mensagem = "";
+
+    switch (global.escolha_sementes)
+    {
+        // Amarrar
+        case 0:
+            sprite_index =
+                spr_saco_sementes_amarrado;
+
+            _mensagem =
+                "Você apertou a corda e fechou o rasgo. O saco está bem fechado.";
+        break;
+
+
+        // Deixar como está
+        case 1:
+            sprite_index =
+                spr_saco_sementes_rasgado;
+
+            _mensagem =
+                "Você decidiu não mexer no saco. Algumas sementes continuam caindo.";
+        break;
+
+
+        // Abrir mais
+        case 2:
+            sprite_index =
+                spr_saco_sementes_aberto;
+
+            _mensagem =
+                "Você puxou o tecido e aumentou o rasgo. Mais sementes se espalharam pelo caminho.";
+        break;
+    }
+
+
+    image_index = 0;
+    image_speed = 0;
+
+
+    show_debug_message(
+        "Escolha das sementes salva: "
+        + string(global.escolha_sementes)
+    );
+
+
+    global.dialogo_instancia.abrir(
+    [
+        {
+            nome: "",
+            texto: _mensagem
+        }
+    ]);
+};
+
+
+// ==================================================
 // INTERAÇÃO
 // ==================================================
 
@@ -67,59 +128,48 @@ interagir = function()
             global.escolha_sementes = _opcao;
             pode_interagir = false;
 
-            var _mensagem = "";
 
+            // ==========================================
+            // AMARRAR OU ABRIR MAIS
+            // ==========================================
 
-            switch (_opcao)
+            if (
+                _opcao == 0
+                || _opcao == 2
+            )
             {
-                // Amarrar
-                case 0:
-                    sprite_index =
-                        spr_saco_sementes_amarrado;
+                var _aplicar_escolha = method(
+                    id,
 
-                    _mensagem =
-                        "Você apertou a corda e fechou o rasgo. O saco está bem fechado.";
-                break;
-
-
-                // Deixar como está
-                case 1:
-                    sprite_index =
-                        spr_saco_sementes_rasgado;
-
-                    _mensagem =
-                        "Você decidiu não mexer no saco. Algumas sementes continuam caindo.";
-                break;
+                    function()
+                    {
+                        aplicar_escolha_sementes();
+                    }
+                );
 
 
-                // Abrir mais
-                case 2:
-                    sprite_index =
-                        spr_saco_sementes_aberto;
+                // Impede o diálogo anterior de liberar
+                // o jogador enquanto o fade acontece
+                global.dialogo_instancia
+                    .desbloqueio_atrasado = 0;
 
-                    _mensagem =
-                        "Você puxou o tecido e aumentou o rasgo. Mais sementes se espalharam pelo caminho.";
-                break;
+
+                global.fade_instancia.iniciar(
+                    _aplicar_escolha,
+                    0.05,
+                    45
+                );
             }
 
 
-            image_index = 0;
-            image_speed = 0;
+            // ==========================================
+            // DEIXAR COMO ESTÁ
+            // ==========================================
 
-
-            show_debug_message(
-                "Escolha das sementes salva: "
-                + string(global.escolha_sementes)
-            );
-
-
-            global.dialogo_instancia.abrir(
-            [
-                {
-                    nome: "",
-                    texto: _mensagem
-                }
-            ]);
+            else
+            {
+                aplicar_escolha_sementes();
+            }
         }
     );
 

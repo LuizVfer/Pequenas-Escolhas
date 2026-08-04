@@ -3,10 +3,25 @@ if (desbloqueio_atrasado > 0)
 {
     desbloqueio_atrasado--;
 
+
     if (desbloqueio_atrasado <= 0)
     {
-        global.controle_bloqueado = false;
+        var _fade_ativo =
+            instance_exists(global.fade_instancia)
+            && global.fade_instancia.ativo;
+
+
+        // Não libera o jogador enquanto outro fade acontece
+        if (_fade_ativo)
+        {
+            global.controle_bloqueado = true;
+        }
+        else
+        {
+            global.controle_bloqueado = false;
+        }
     }
+
 
     exit;
 }

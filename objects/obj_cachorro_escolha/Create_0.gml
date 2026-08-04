@@ -53,38 +53,67 @@ interagir = function()
 
     var _salvar_escolha = method(
         id,
-
+    
         function(_opcao)
         {
             global.escolha_cachorro = _opcao;
             pode_interagir = false;
-
-            switch (_opcao)
+    
+    
+            // ==========================================
+            // LIBERTAR OU ALIMENTAR E LIBERTAR
+            // ==========================================
+            
+            if (
+                _opcao == 0
+                || _opcao == 1
+            )
             {
-                case 0:
-                    libertado = true;
-                    alimentado = false;
+                var _mostrar_cachorro_livre = method(
+                    id,
             
-                    sprite_index = spr_cachorro_livre;
-                    image_index = 0;
-                    image_speed = 0;
-                break;
+                    function()
+                    {
+                        libertado = true;
             
-                case 1:
-                    libertado = true;
-                    alimentado = true;
+                        alimentado =
+                            (global.escolha_cachorro == 1);
             
-                    sprite_index = spr_cachorro_livre;
-                    image_index = 0;
-                    image_speed = 0;
-                break;
+                        sprite_index =
+                            spr_cachorro_livre;
             
-                case 2:
-                    libertado = false;
-                    alimentado = false;
+                        image_index = 0;
+                        image_speed = 0;
+                    }
+                );
             
-                    sprite_index = spr_cachorro_preso;
-                break;
+            
+                global.dialogo_instancia
+                    .desbloqueio_atrasado = 0;
+            
+            
+                global.fade_instancia.iniciar(
+                    _mostrar_cachorro_livre,
+                    0.05,
+                    45
+                );
+            }
+    
+    
+            // ==========================================
+            // IGNORAR
+            // ==========================================
+    
+            else
+            {
+                libertado = false;
+                alimentado = false;
+    
+                sprite_index =
+                    spr_cachorro_preso;
+    
+                image_index = 0;
+                image_speed = 0;
             }
         }
     );
