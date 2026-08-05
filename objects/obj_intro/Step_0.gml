@@ -158,7 +158,7 @@ if (estado_intro == 1)
 
                 global.controle_bloqueado = false;
 
-                room_goto(rm_cidade);
+                room_goto(rm_vila);
             }
         );
 

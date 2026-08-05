@@ -1,4 +1,5 @@
-// Pixel art sem borrado
+// Sincronização e pixel art
+display_reset(0, true);
 gpu_set_texfilter(false);
 
 global.game_instancia = id;
@@ -26,6 +27,7 @@ global.roda_usada = false;
 
 global.ponte_descoberta = false;
 global.ponte_abaixada = false;
+global.caminho_cacador_liberado = false;
 
 global.portao_descoberto = false;
 global.portao_aberto = false;
@@ -35,6 +37,22 @@ global.moradores_necessarios = 2;
 
 global.morador_1_conversado = false;
 global.moradora_2_conversada = false;
+
+#region Puzzle da Vila
+
+global.balde_coletado = false;
+global.balde_cheio = false;
+
+global.cabo_enxada_coletado = false;
+global.cabo_enxada_entregue = false;
+
+global.morador_recebeu_agua = false;
+global.portao_vila_aberto = false;
+
+global.quest_cabo_iniciada = false;
+global.quest_agua_iniciada = false;
+
+#endregion
 
 global.bloquear_pause_frames = 0;
 
@@ -82,6 +100,7 @@ resetar_progresso = function()
 
     global.ponte_descoberta = false;
     global.ponte_abaixada = false;
+    global.caminho_cacador_liberado = false;
 
 
     // ==================================================
@@ -96,6 +115,22 @@ resetar_progresso = function()
 
     global.morador_1_conversado = false;
     global.moradora_2_conversada = false;
+    
+    #region Puzzle da Vila
+
+    global.balde_coletado = false;
+    global.balde_cheio = false;
+    
+    global.cabo_enxada_coletado = false;
+    global.cabo_enxada_entregue = false;
+    
+    global.morador_recebeu_agua = false;
+    global.portao_vila_aberto = false;
+    
+    global.quest_cabo_iniciada = false;
+    global.quest_agua_iniciada = false;
+    
+    #endregion
 
 
     // ==================================================

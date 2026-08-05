@@ -1,17 +1,16 @@
 {
   "$GMObject":"",
-  "%Name":"obj_cacador",
+  "%Name":"obj_balde_vila",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":64,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"obj_cacador",
+  "name":"obj_balde_vila",
   "overriddenProperties":[],
   "parent":{
-    "name":"Floresta",
-    "path":"folders/Objects/Floresta.yy",
+    "name":"Vila",
+    "path":"folders/Objects/Vila.yy",
   },
   "parentObjectId":{
     "name":"obj_par_interagivel",
@@ -35,8 +34,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_cacador",
-    "path":"sprites/spr_cacador/spr_cacador.yy",
+    "name":"spr_tecla_E_placeholder",
+    "path":"sprites/spr_tecla_E_placeholder/spr_tecla_E_placeholder.yy",
   },
   "spriteMaskId":null,
   "visible":true,

@@ -4,40 +4,38 @@ if (!instance_exists(obj_player))
 }
 
 
-// Posição desejada
+var _player =
+    instance_find(obj_player, 0);
+
+
+// Posição desejada da câmera
 var _alvo_x =
-    obj_player.x
-    - camera_largura * posicao_player_tela;
+    _player.x
+    - camera_largura
+    * posicao_player_tela;
 
 
-// Limites da room
-_alvo_x = clamp(
-    _alvo_x,
-    0,
-    max(0, room_width - camera_largura)
-);
+// Limite horizontal da room
+var _limite_x =
+    max(
+        0,
+        room_width - camera_largura
+    );
 
 
-// A posição interna continua suave e decimal
-camera_x = lerp(
-    camera_x,
-    _alvo_x,
-    suavidade
-);
+// Movimento direto e alinhado aos pixels
+camera_x =
+    clamp(
+        round(_alvo_x),
+        0,
+        _limite_x
+    );
 
 camera_y = 0;
 
 
-// Apenas a posição visual é arredondada
-var _camera_visual_x =
-    round(camera_x);
-
-var _camera_visual_y =
-    round(camera_y);
-
-
 camera_set_view_pos(
     camera_id,
-    _camera_visual_x,
-    _camera_visual_y
+    camera_x,
+    camera_y
 );

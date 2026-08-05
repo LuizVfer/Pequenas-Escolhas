@@ -7,14 +7,21 @@ prioridade_interacao = 0;
 
 interagir = function()
 {
-    // Ainda não descobriu o portão
-    if (!global.portao_descoberto)
+    if (!pode_interagir)
+    {
+        exit;
+    }
+
+
+    // O cabo já foi entregue ao agricultor
+    if (global.cabo_enxada_entregue)
     {
         global.dialogo_instancia.abrir(
         [
             {
-                nome: "Moradora",
-                texto: "A colheita tem exigido muito trabalho este ano."
+                nome: "Morador",
+                texto:
+                    "Parece que o agricultor finalmente terminou o trabalho."
             }
         ]);
 
@@ -22,48 +29,71 @@ interagir = function()
     }
 
 
-    // Primeira conversa depois de descobrir o portão
-    if (!global.moradora_2_conversada)
+    // Jogador já recebeu o cabo
+    if (global.cabo_enxada_coletado)
     {
-        global.moradora_2_conversada = true;
-
-        global.moradores_conversados =
-            (global.morador_1_conversado ? 1 : 0)
-            + (global.moradora_2_conversada ? 1 : 0);
-
         global.dialogo_instancia.abrir(
         [
             {
-                nome: "Mensageiro",
-                texto: "Sabe quem poderia ajudar com o portão?"
+                nome: "Morador",
+                texto:
+                    "Esse cabo deve pertencer ao agricultor."
             },
-        
             {
-                nome: "Moradora",
-                texto: "Vi alguém carregando ferramentas perto dele esta manhã."
-            },
-        
-            {
-                nome: "Moradora",
-                texto: "Depois, ele seguiu em direção às plantações."
+                nome: "Morador",
+                texto:
+                    "Ele está trabalhando perto da plantação."
             }
         ]);
-
-        show_debug_message(
-            "Moradores conversados: "
-            + string(global.moradores_conversados)
-        );
 
         exit;
     }
 
 
-    // Conversa repetida
+    // Jogador está carregando água
+    if (global.balde_cheio)
+    {
+        global.dialogo_instancia.abrir(
+        [
+            {
+                nome: "Morador",
+                texto:
+                    "Aquele morador estava procurando água."
+            }
+        ]);
+
+        exit;
+    }
+
+
+    // Jogador encontrou o balde
+    if (global.balde_coletado)
+    {
+        global.dialogo_instancia.abrir(
+        [
+            {
+                nome: "Morador",
+                texto:
+                    "Você pode encher esse balde no poço."
+            }
+        ]);
+
+        exit;
+    }
+
+
+    // Primeira pista
     global.dialogo_instancia.abrir(
     [
         {
-            nome: "Moradora",
-            texto: "Procure perto das plantações. Talvez ele ainda esteja por lá."
+            nome: "Morador",
+            texto:
+                "O agricultor parece preocupado com alguma coisa."
+        },
+        {
+            nome: "Morador",
+            texto:
+                "Talvez alguém perto das casas saiba ajudá-lo."
         }
     ]);
 };

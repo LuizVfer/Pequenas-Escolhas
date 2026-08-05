@@ -1,18 +1,31 @@
 event_inherited();
 
+
+#region Configuração da interação
+
 distancia_interacao = 48;
 offset_indicador_y = 12;
 prioridade_interacao = 0;
 
-// Controle da abertura
+pode_interagir = true;
+
+#endregion
+
+
+#region Controle da abertura
+
 aguardando_abertura = false;
 transicao_iniciada = false;
 
-// Futuro efeito sonoro
 som_portao = snd_portao_abrindo;
 
+#endregion
+
+
+#region Restaurar estado do portão
+
 // Caso o portão já esteja aberto,
-// posiciona o agricultor próximo dele
+// posiciona o agricultor próximo dele.
 if (global.portao_aberto)
 {
     var _ponto = instance_find(
@@ -27,67 +40,21 @@ if (global.portao_aberto)
     }
 }
 
+#endregion
+
+
+#region Função de interação
 
 interagir = function()
 {
-    // ==================================================
-    // PORTÃO JÁ ABERTO
-    // ==================================================
-
-    if (global.portao_aberto)
+    if (!pode_interagir)
     {
-        global.dialogo_instancia.abrir(
-        [
-            {
-                nome: "Agricultor",
-                texto: "Pronto. O caminho está livre novamente."
-            }
-        ]);
-
         exit;
     }
 
 
-    // ==================================================
-    // PLAYER AINDA NÃO VIU O PORTÃO
-    // ==================================================
-
-    if (!global.portao_descoberto)
-    {
-        global.dialogo_instancia.abrir(
-        [
-            {
-                nome: "Agricultor",
-                texto: "O trabalho na plantação parece nunca terminar."
-            }
-        ]);
-
-        exit;
-    }
-
-
-    // ==================================================
-    // AINDA NÃO CONSEGUIU AS DUAS PISTAS
-    // ==================================================
-
-    if (
-        global.moradores_conversados
-        < global.moradores_necessarios
-    )
-    {
-        global.dialogo_instancia.abrir(
-        [
-            {
-                nome: "Agricultor",
-                texto: "Estou descansando um pouco antes de voltar ao trabalho."
-            }
-        ]);
-
-        exit;
-    }
-
-
-    // Evita repetir o acionamento
+    // Evita repetir o acionamento enquanto
+    // o portão está sendo aberto.
     if (
         aguardando_abertura
         || transicao_iniciada
@@ -98,32 +65,140 @@ interagir = function()
 
 
     // ==================================================
-    // DESCOBRIU QUEM CUIDOU DO PORTÃO
+    // PORTÃO JÁ ABERTO
     // ==================================================
+
+    if (global.portao_aberto)
+    {
+        global.dialogo_instancia.abrir(
+        [
+            {
+                nome: "Agricultor",
+                texto:
+                    "Pronto. O caminho está livre novamente."
+            }
+        ]);
+
+        exit;
+    }
+
+
+    // ==================================================
+    // JOGADOR AINDA NÃO VIU O PORTÃO
+    // ==================================================
+
+    if (!global.portao_descoberto)
+    {
+        global.dialogo_instancia.abrir(
+        [
+            {
+                nome: "Agricultor",
+                texto:
+                    "O trabalho na plantação parece nunca terminar."
+            }
+        ]);
+
+        exit;
+    }
+
+
+    // ==================================================
+    // CABO JÁ FOI ENTREGUE
+    // ==================================================
+
+    // Segurança para o caso de a entrega já ter ocorrido,
+    // mas a abertura ainda não ter começado.
+    if (global.cabo_enxada_entregue)
+    {
+        aguardando_abertura = true;
+        pode_interagir = false;
+
+        exit;
+    }
+
+
+    // ==================================================
+    // JOGADOR AINDA NÃO TEM O CABO
+    // ==================================================
+
+    if (!global.cabo_enxada_coletado)
+    {
+        global.quest_cabo_iniciada = true;
+    
+        global.dialogo_instancia.abrir(
+        [
+            {
+                nome: "Mensageiro",
+                texto:
+                    "Preciso atravessar o portão para continuar minha viagem."
+            },
+    
+            {
+                nome: "Agricultor",
+                texto:
+                    "Eu poderia abrir o mecanismo, mas o cabo da minha enxada quebrou."
+            },
+    
+            {
+                nome: "Agricultor",
+                texto:
+                    "Sem terminar este trabalho, não posso abandonar a plantação."
+            },
+    
+            {
+                nome: "Agricultor",
+                texto:
+                    "Talvez alguém perto das casas tenha encontrado outro cabo."
+            }
+        ]);
+    
+        exit;
+    }
+
+
+    // ==================================================
+    // ENTREGA DO CABO DA ENXADA
+    // ==================================================
+
+    global.cabo_enxada_coletado = false;
+    global.cabo_enxada_entregue = true;
 
     aguardando_abertura = true;
     pode_interagir = false;
+
 
     global.dialogo_instancia.abrir(
     [
         {
             nome: "Mensageiro",
-            texto: "Disseram que alguém com ferramentas veio das plantações depois de trabalhar no portão."
+            texto:
+                "Encontrei um cabo que pode servir na sua enxada."
         },
 
         {
             nome: "Agricultor",
-            texto: "Fui eu. Aquele mecanismo costuma emperrar quando fica muito tempo parado."
+            texto:
+                "Sim. Este cabo deve funcionar."
         },
 
         {
-            nome: "Mensageiro",
-            texto: "Preciso atravessá-lo para continuar minha viagem."
+            nome: "",
+            texto:
+                "Você entregou o cabo da enxada."
         },
 
         {
             nome: "Agricultor",
-            texto: "Venha comigo. Eu consigo abri-lo."
+            texto:
+                "Agora posso terminar o trabalho."
+        },
+
+        {
+            nome: "Agricultor",
+            texto:
+                "Depois disso, abrirei o portão para você."
         }
     ]);
 };
+
+#endregion

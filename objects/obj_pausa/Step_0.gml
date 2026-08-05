@@ -1,5 +1,8 @@
 #region Bloqueio temporário da pausa
 
+var _puzzle_aberto = false;
+
+
 var _mecanismo =
     instance_find(
         obj_mecanismo_ponte,
@@ -12,9 +15,34 @@ if (
         == _mecanismo.MECANISMO_PUZZLE
 )
 {
+    _puzzle_aberto = true;
+}
+
+
+var _cacador =
+    instance_find(
+        obj_cacador,
+        0
+    );
+
+if (
+    instance_exists(_cacador)
+    && _cacador.estado_cacador
+        == _cacador.CACADOR_PUZZLE
+)
+{
+    _puzzle_aberto = true;
+}
+
+
+// O Esc pertence ao minigame aberto
+if (_puzzle_aberto)
+{
     exit;
 }
 
+
+// Impede que o mesmo Esc abra a pausa
 if (global.bloquear_pause_frames > 0)
 {
     global.bloquear_pause_frames--;
