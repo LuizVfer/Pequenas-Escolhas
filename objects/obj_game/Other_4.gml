@@ -54,3 +54,27 @@ switch (room)
         parar_musica();
     break;
 }
+
+// ==================================================
+// CRIAR MENU DE PAUSA
+// ==================================================
+
+var _room_permite_pausa =
+    room == rm_cidade
+    || room == rm_floresta
+    || room == rm_vila
+    || room == rm_destino;
+
+
+if (
+    _room_permite_pausa
+    && !instance_exists(obj_pausa)
+)
+{
+    instance_create_layer(
+        0,
+        0,
+        "L11_Controllers",
+        obj_pausa
+    );
+}

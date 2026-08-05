@@ -43,6 +43,40 @@ draw_set_alpha(1);
 if (estado_menu == 0)
 {
     // ==============================================
+    // VALORES DAS ANIMAÇÕES
+    // ==============================================
+
+    var _movimento_logo =
+        round(
+            sin(anim_menu * 0.45)
+        );
+
+    var _movimento_marcador =
+        round(
+            sin(anim_menu) * 2
+        );
+
+    var _movimento_opcao =
+        round(
+            sin(anim_menu * 0.75)
+        );
+
+    var _pulso_selecao =
+        0.12
+        + (
+            sin(anim_menu * 1.25)
+            + 1
+        ) * 0.025;
+
+    var _brilho_linha =
+        0.55
+        + (
+            sin(anim_menu * 0.65)
+            + 1
+        ) * 0.10;
+
+
+    // ==============================================
     // PAINEL ESCURO DO LADO ESQUERDO
     // ==============================================
 
@@ -54,6 +88,22 @@ if (estado_menu == 0)
 
     draw_rectangle(
         0,
+        0,
+        320,
+        360,
+        false
+    );
+
+
+    // Leve divisão entre painel e cenário
+    draw_set_alpha(0.65);
+
+    draw_set_color(
+        make_color_rgb(81, 60, 42)
+    );
+
+    draw_rectangle(
+        319,
         0,
         320,
         360,
@@ -74,7 +124,7 @@ if (estado_menu == 0)
         spr_logo_pequenas_escolhas,
         0,
         48,
-        34
+        34 + _movimento_logo
     );
 
 
@@ -103,7 +153,14 @@ if (estado_menu == 0)
     );
 
 
-    // Linha decorativa
+    // ==============================================
+    // LINHA DECORATIVA ANIMADA
+    // ==============================================
+
+    draw_set_alpha(
+        _brilho_linha
+    );
+
     draw_set_color(
         make_color_rgb(110, 85, 60)
     );
@@ -116,7 +173,33 @@ if (estado_menu == 0)
         false
     );
 
+
+    // Detalhe central
     draw_set_alpha(1);
+
+    draw_set_color(
+        make_color_rgb(170, 130, 84)
+    );
+
+    draw_rectangle(
+        153,
+        162,
+        167,
+        167,
+        false
+    );
+
+    draw_set_color(
+        make_color_rgb(38, 29, 22)
+    );
+
+    draw_rectangle(
+        157,
+        163,
+        163,
+        166,
+        false
+    );
 
 
     // ==============================================
@@ -124,18 +207,12 @@ if (estado_menu == 0)
     // ==============================================
 
     draw_set_alpha(alpha_opcoes);
-
-    // Muito importante:
-    // as opções usam alinhamento à esquerda
     draw_set_halign(fa_left);
     draw_set_valign(fa_middle);
 
     var _inicio_x = 82;
     var _inicio_y = 186;
     var _espacamento = 30;
-
-    var _marcador_anim =
-        round(sin(anim_menu) * 2);
 
 
     for (
@@ -151,34 +228,73 @@ if (estado_menu == 0)
 
         if (_i == opcao_selecionada)
         {
+            // ======================================
+            // FUNDO SUAVE DA OPÇÃO SELECIONADA
+            // ======================================
+
+            draw_set_alpha(
+                _pulso_selecao
+                * alpha_opcoes
+            );
+
             draw_set_color(
-                make_color_rgb(235, 217, 180)
+                make_color_rgb(190, 145, 90)
+            );
+
+            draw_rectangle(
+                45,
+                _y - 12,
+                286,
+                _y + 12,
+                false
             );
 
 
-            // Marcador
+            // Linha lateral dourada
+            draw_set_alpha(alpha_opcoes);
+
+            draw_set_color(
+                make_color_rgb(205, 162, 104)
+            );
+
+            draw_rectangle(
+                45,
+                _y - 12,
+                48,
+                _y + 12,
+                false
+            );
+
+
+            // Marcador animado
+            draw_set_halign(fa_left);
+
             draw_text(
-                54 + _marcador_anim,
+                54 + _movimento_marcador,
                 _y,
                 ">"
             );
 
 
-            // Opção selecionada
+            // Texto selecionado
+            draw_set_color(
+                make_color_rgb(235, 217, 180)
+            );
+
             draw_text(
-                _inicio_x,
+                _inicio_x + _movimento_opcao,
                 _y,
                 opcoes_menu[_i]
             );
         }
         else
         {
+            draw_set_alpha(alpha_opcoes);
+
             draw_set_color(
                 make_color_rgb(150, 138, 118)
             );
 
-
-            // Opções não selecionadas
             draw_text(
                 _inicio_x,
                 _y,
@@ -189,29 +305,66 @@ if (estado_menu == 0)
 
 
     // ==============================================
-    // INSTRUÇÕES INFERIORES
+    // RODAPÉ
     // ==============================================
-    
-    // Alinha com o começo dos textos das opções
+
+    draw_set_alpha(alpha_opcoes);
+
+    draw_set_color(
+        make_color_rgb(68, 52, 39)
+    );
+
+    draw_rectangle(
+        62,
+        302,
+        258,
+        303,
+        false
+    );
+
+
     draw_set_halign(fa_left);
     draw_set_valign(fa_middle);
-    
+
     draw_set_color(
         make_color_rgb(122, 112, 97)
     );
-    
+
     draw_text(
         82,
         316,
         "W/S navegar"
     );
-    
+
     draw_text(
         82,
         338,
         "E confirmar"
     );
-    
+
+
+    // Pequenos símbolos no rodapé
+    draw_set_color(
+        make_color_rgb(145, 108, 71)
+    );
+
+    draw_rectangle(
+        69,
+        315,
+        72,
+        318,
+        false
+    );
+
+    draw_rectangle(
+        69,
+        337,
+        72,
+        340,
+        false
+    );
+
+
     draw_set_alpha(1);
 }
 
