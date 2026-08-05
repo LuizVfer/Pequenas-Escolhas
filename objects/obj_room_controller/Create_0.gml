@@ -1,9 +1,27 @@
-// IDs das layers
-layer_mid = layer_get_id("L08_Background_Mid");
-layer_far = layer_get_id("L09_Background_Far");
-layer_sky = layer_get_id("L10_Background_Sky");
+#region Evitar duplicação
 
-// Intensidade do parallax
+if (instance_number(obj_room_controller) > 1)
+{
+    instance_destroy();
+    exit;
+}
+
+#endregion
+
+
+#region Intensidade do parallax
+
 parallax_mid = 0.5;
 parallax_far = 0.2;
 parallax_sky = 0;
+
+#endregion
+
+
+#region IDs iniciais
+
+layer_mid = -1;
+layer_far = -1;
+layer_sky = -1;
+
+#endregion

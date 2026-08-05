@@ -1,3 +1,13 @@
+#region Evitar duplicação
+
+if (instance_number(obj_game) > 1)
+{
+    instance_destroy();
+    exit;
+}
+
+#endregion
+
 // Sincronização e pixel art
 display_reset(0, true);
 gpu_set_texfilter(false);
