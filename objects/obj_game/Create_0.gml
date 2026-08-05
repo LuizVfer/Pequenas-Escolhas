@@ -36,6 +36,8 @@ global.moradores_necessarios = 2;
 global.morador_1_conversado = false;
 global.moradora_2_conversada = false;
 
+global.bloquear_pause_frames = 0;
+
 global.carta_entregue = false;
 
 display_set_gui_size(640, 360);

@@ -1,3 +1,30 @@
+#region Bloqueio temporário da pausa
+
+var _mecanismo =
+    instance_find(
+        obj_mecanismo_ponte,
+        0
+    );
+
+if (
+    instance_exists(_mecanismo)
+    && _mecanismo.estado_mecanismo
+        == _mecanismo.MECANISMO_PUZZLE
+)
+{
+    exit;
+}
+
+if (global.bloquear_pause_frames > 0)
+{
+    global.bloquear_pause_frames--;
+
+    keyboard_clear(vk_escape);
+    exit;
+}
+
+#endregion
+
 // ==================================================
 // VERIFICA O FADE
 // ==================================================

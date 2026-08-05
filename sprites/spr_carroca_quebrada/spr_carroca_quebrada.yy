@@ -5,21 +5,21 @@
   "bbox_bottom":47,
   "bbox_left":0,
   "bbox_right":95,
-  "bbox_top":0,
+  "bbox_top":5,
   "collisionKind":1,
   "collisionTolerance":0,
   "DynamicTexturePage":false,
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"v1","%Name":"e6237c05-43c8-4c24-bf4e-3ed599c29f1c","name":"e6237c05-43c8-4c24-bf4e-3ed599c29f1c","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"f57d504a-7284-4606-bec1-4fa805ac6e39","name":"f57d504a-7284-4606-bec1-4fa805ac6e39","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,
   "height":48,
   "HTile":false,
   "layers":[
-    {"$GMImageLayer":"","%Name":"e8fd01f5-3719-4481-9040-99aa9ff04000","blendMode":0,"displayName":"default","isLocked":false,"name":"e8fd01f5-3719-4481-9040-99aa9ff04000","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"c8259b53-4ace-483f-a17e-7d7b221c9f5e","blendMode":0,"displayName":"default","isLocked":false,"name":"c8259b53-4ace-483f-a17e-7d7b221c9f5e","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
   "name":"spr_carroca_quebrada",
   "nineSlice":null,
@@ -69,8 +69,8 @@
     "tracks":[
       {"$GMSpriteFramesTrack":"","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"$KeyframeStore<SpriteFrameKeyframe>":"","Keyframes":[
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"e6237c05-43c8-4c24-bf4e-3ed599c29f1c","path":"sprites/spr_carroca_quebrada/spr_carroca_quebrada.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
-              },"Disabled":false,"id":"18bfa850-ba50-4820-b23b-a56489b46856","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"f57d504a-7284-4606-bec1-4fa805ac6e39","path":"sprites/spr_carroca_quebrada/spr_carroca_quebrada.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"069b53bb-a3b0-4e01-9502-3275fe197cc7","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
           ],"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"2.0",},"modifiers":[],"name":"frames","resourceType":"GMSpriteFramesTrack","resourceVersion":"2.0","spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange":null,
