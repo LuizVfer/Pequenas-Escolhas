@@ -32,8 +32,6 @@ global.caminho_cacador_liberado = false;
 global.portao_descoberto = false;
 global.portao_aberto = false;
 
-global.moradores_conversados = 0;
-global.moradores_necessarios = 2;
 
 global.morador_1_conversado = false;
 global.moradora_2_conversada = false;
@@ -57,6 +55,8 @@ global.quest_agua_iniciada = false;
 global.bloquear_pause_frames = 0;
 
 global.carta_entregue = false;
+
+global.crianca_destino_conversada = false;
 
 display_set_gui_size(640, 360);
 
@@ -110,9 +110,6 @@ resetar_progresso = function()
     global.portao_descoberto = false;
     global.portao_aberto = false;
 
-    global.moradores_conversados = 0;
-    global.moradores_necessarios = 2;
-
     global.morador_1_conversado = false;
     global.moradora_2_conversada = false;
     
@@ -138,6 +135,7 @@ resetar_progresso = function()
     // ==================================================
 
     global.carta_entregue = false;
+    global.crianca_destino_conversada = false;
 
 
     // ==================================================

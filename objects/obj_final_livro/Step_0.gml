@@ -147,175 +147,166 @@ if (estado_final == 1)
         }
 
         // Terminou todas as frases
-        else
-        {
-            if (transicao_consequencia_iniciada)
-            {
-                exit;
-            }
-        
-        
-            // ==================================================
-            // PEDRA → CACHORRO
-            // ==================================================
-        
-            else
-            {
-                if (transicao_consequencia_iniciada)
-                {
-                    exit;
-                }
-            
-            
-                // ==================================================
-                // PEDRA → CACHORRO
-                // ==================================================
-            
-                if (consequencia_atual == 0)
-                {
-                    transicao_consequencia_iniciada = true;
-            
-                    var _mostrar_cachorro = method(
-                        id,
-            
-                        function()
-                        {
-                            tocar_som_pagina();
-                            configurar_consequencia_cachorro();
-                        }
-                    );
-            
-                    global.fade_instancia.iniciar(
-                        _mostrar_cachorro,
-                        0.03,
-                        45
-                    );
-                }
-            
-            
-                // ==================================================
-                // CACHORRO → SEMENTES
-                // ==================================================
-            
-                else if (consequencia_atual == 1)
-                {
-                    transicao_consequencia_iniciada = true;
-            
-                    var _mostrar_sementes = method(
-                        id,
-            
-                        function()
-                        {
-                            tocar_som_pagina();
-                            configurar_consequencia_sementes();
-                        }
-                    );
-            
-                    global.fade_instancia.iniciar(
-                        _mostrar_sementes,
-                        0.03,
-                        45
-                    );
-                }
-            
-            
-                // ==================================================
-                // SEMENTES → BRINQUEDO
-                // ==================================================
-                
-                else if (consequencia_atual == 2)
-                {
-                    transicao_consequencia_iniciada = true;
-                
-                    var _mostrar_brinquedo = method(
-                        id,
-                
-                        function()
-                        {
-                            tocar_som_pagina();
-                            configurar_consequencia_brinquedo();
-                        }
-                    );
-                
-                    global.fade_instancia.iniciar(
-                        _mostrar_brinquedo,
-                        0.03,
-                        45
-                    );
-                }
-                
-                
-                // ==================================================
-                // BRINQUEDO CONCLUÍDO
-                // ==================================================
-                
-                else if (consequencia_atual == 3)
-                {
-                    transicao_consequencia_iniciada = true;
-               
-                    var _fechar_livro = method(
-                        id,
-               
-                        function()
-                        {
-                            consequencia_concluida = true;
-               
-                            // Som do livro fechando
-                            if (som_livro_fechando != noone)
-                            {
-                                function()
-                                {
-                                    global.game_instancia.abaixar_musica_para_efeito(
-                                        75,
-                                        0.15
-                                    );
-                                
-                                    if (som_livro_abrindo != noone)
-                                    {
-                                        audio_play_sound(
-                                            som_livro_abrindo,
-                                            2,
-                                            false
-                                        );
-                                    }
-                                
-                                    estado_final = 1;
-                                    contador = 0;
-                                
-                                    configurar_consequencia_pedra();
-                                }
-                            
-                                var _som_fechando = audio_play_sound(
-                                    som_livro_fechando,
-                                    2,
-                                    false
-                                );
-                            
-                                audio_sound_gain(
-                                    _som_fechando,
-                                    1,
-                                    0
-                                );
-                            
-                                audio_sound_pitch(
-                                    _som_fechando,
-                                    0.85
-                                );
-                            }
-               
-                            estado_final = 2;
-                            contador = 0;
-                        }
-                    );
-               
-                    global.fade_instancia.iniciar(
-                        _fechar_livro,
-                        0.03,
-                        60
-                    );
-                }
-            }
-        }
+       else
+       {
+           if (transicao_consequencia_iniciada)
+           {
+               exit;
+           }
+       
+       
+           transicao_consequencia_iniciada = true;
+       
+       
+           switch (consequencia_atual)
+           {
+               // ==================================================
+               // PEDRA → CACHORRO
+               // ==================================================
+       
+               case 0:
+               {
+                   var _mostrar_cachorro = method(
+                       id,
+       
+                       function()
+                       {
+                           tocar_som_pagina();
+                           configurar_consequencia_cachorro();
+                       }
+                   );
+       
+       
+                   global.fade_instancia.iniciar(
+                       _mostrar_cachorro,
+                       0.03,
+                       45
+                   );
+               }
+               break;
+       
+       
+               // ==================================================
+               // CACHORRO → SEMENTES
+               // ==================================================
+       
+               case 1:
+               {
+                   var _mostrar_sementes = method(
+                       id,
+       
+                       function()
+                       {
+                           tocar_som_pagina();
+                           configurar_consequencia_sementes();
+                       }
+                   );
+       
+       
+                   global.fade_instancia.iniciar(
+                       _mostrar_sementes,
+                       0.03,
+                       45
+                   );
+               }
+               break;
+       
+       
+               // ==================================================
+               // SEMENTES → BRINQUEDO
+               // ==================================================
+       
+               case 2:
+               {
+                   var _mostrar_brinquedo = method(
+                       id,
+       
+                       function()
+                       {
+                           tocar_som_pagina();
+                           configurar_consequencia_brinquedo();
+                       }
+                   );
+       
+       
+                   global.fade_instancia.iniciar(
+                       _mostrar_brinquedo,
+                       0.03,
+                       45
+                   );
+               }
+               break;
+       
+       
+               // ==================================================
+               // BRINQUEDO → FECHAR LIVRO
+               // ==================================================
+       
+               case 3:
+               {
+                   var _fechar_livro = method(
+                       id,
+       
+                       function()
+                       {
+                           consequencia_concluida = true;
+                           parar_som_lapis();
+       
+       
+                           // Som do livro fechando
+                           if (som_livro_fechando != noone)
+                           {
+                               if (
+                                   instance_exists(
+                                       global.game_instancia
+                                   )
+                               )
+                               {
+                                   global.game_instancia
+                                       .abaixar_musica_para_efeito(
+                                           75,
+                                           0.15
+                                       );
+                               }
+       
+       
+                               var _som_fechando =
+                                   audio_play_sound(
+                                       som_livro_fechando,
+                                       2,
+                                       false
+                                   );
+       
+       
+                               audio_sound_gain(
+                                   _som_fechando,
+                                   1,
+                                   0
+                               );
+       
+       
+                               audio_sound_pitch(
+                                   _som_fechando,
+                                   0.85
+                               );
+                           }
+       
+       
+                           estado_final = 2;
+                           contador = 0;
+                       }
+                   );
+       
+       
+                   global.fade_instancia.iniciar(
+                       _fechar_livro,
+                       0.03,
+                       60
+                   );
+               }
+               break;
+           }
+       }
     }
 }
 

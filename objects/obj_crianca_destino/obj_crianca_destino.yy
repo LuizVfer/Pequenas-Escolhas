@@ -11,7 +11,10 @@
     "name":"Destino",
     "path":"folders/Objects/Destino.yy",
   },
-  "parentObjectId":null,
+  "parentObjectId":{
+    "name":"obj_par_interagivel",
+    "path":"objects/obj_par_interagivel/obj_par_interagivel.yy",
+  },
   "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,

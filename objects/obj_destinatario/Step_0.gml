@@ -1,21 +1,33 @@
+#region Carta já entregue
+
 if (global.carta_entregue)
 {
     pode_interagir = false;
+
     exit;
 }
 
+#endregion
+
+
+#region Aguardando interação
 
 if (!aguardando_final)
 {
     pode_interagir = true;
+
     exit;
 }
 
+#endregion
+
+
+#region Aguardar final do diálogo
 
 pode_interagir = false;
 
 
-// Aguarda o diálogo terminar
+// Aguarda a conversa da entrega terminar
 if (
     global.dialogo_ativo
     || transicao_iniciada
@@ -24,20 +36,28 @@ if (
     exit;
 }
 
+#endregion
 
-// ==================================================
-// IR PARA O FINAL
-// ==================================================
+
+#region Iniciar final do jogo
 
 transicao_iniciada = true;
 
 
 var _iniciar_final = method(
     id,
+
     function()
     {
-        // Abaixa a música para destacar a porta
-        if (instance_exists(global.game_instancia))
+        // ----------------------------------------------
+        // Abaixar a música
+        // ----------------------------------------------
+
+        if (
+            instance_exists(
+                global.game_instancia
+            )
+        )
         {
             global.game_instancia
                 .abaixar_musica_para_efeito(
@@ -47,12 +67,17 @@ var _iniciar_final = method(
         }
 
 
-        // Destinatário entra na casa
-        var _som_porta = audio_play_sound(
-            snd_porta,
-            2,
-            false
-        );
+        // ----------------------------------------------
+        // Som da porta
+        // ----------------------------------------------
+
+        var _som_porta =
+            audio_play_sound(
+                snd_porta,
+                2,
+                false
+            );
+
 
         audio_sound_gain(
             _som_porta,
@@ -60,16 +85,28 @@ var _iniciar_final = method(
             0
         );
 
+
         audio_sound_pitch(
             _som_porta,
             0.95
         );
 
 
+        // ----------------------------------------------
+        // Salvar conclusão
+        // ----------------------------------------------
+
         global.carta_entregue = true;
         global.usar_spawn = false;
 
-        room_goto(rm_final_livro);
+
+        // ----------------------------------------------
+        // Ir para o livro final
+        // ----------------------------------------------
+
+        room_goto(
+            rm_final_livro
+        );
     }
 );
 
@@ -79,3 +116,5 @@ global.fade_instancia.iniciar(
     0.03,
     60
 );
+
+#endregion

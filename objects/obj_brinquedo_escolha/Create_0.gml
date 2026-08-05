@@ -25,7 +25,8 @@ if (global.escolha_brinquedo != -1)
 }
 else
 {
-    pode_interagir = true;
+    pode_interagir =
+        global.crianca_destino_conversada;
 }
 
 // ==================================================
