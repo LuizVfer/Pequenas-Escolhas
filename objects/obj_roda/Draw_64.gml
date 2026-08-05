@@ -3,11 +3,40 @@
 // ==================================================
 
 if (
-    estado_puzzle_roda != 2
+    (
+        estado_puzzle_roda != 2
+        && estado_puzzle_roda != 6
+    )
     || !minigame_ativo
 )
 {
     exit;
+}
+
+
+var _modo_martelo =
+    estado_puzzle_roda == 6;
+
+var _progresso_atual =
+    impulso_atual;
+
+var _quantidade_progresso =
+    quantidade_impulsos;
+
+var _titulo_minigame =
+    "Empurrar a roda";
+
+
+if (_modo_martelo)
+{
+    _progresso_atual =
+        marteladas_corretas;
+
+    _quantidade_progresso =
+        quantidade_marteladas;
+
+    _titulo_minigame =
+        "Fixar a roda";
 }
 
 
@@ -21,11 +50,11 @@ var _painel_y1 = 246;
 var _painel_x2 = 480;
 var _painel_y2 = 338;
 
-var _barra_x1 = 190;
-var _barra_y1 = 286;
+var _barra_x1 = 210;
+var _barra_y1 = 288;
 
-var _barra_x2 = 450;
-var _barra_y2 = 300;
+var _barra_x2 = 430;
+var _barra_y2 = 298;
 
 var _largura_barra =
     _barra_x2 - _barra_x1;
@@ -38,29 +67,27 @@ var _pulso =
 
 
 // ==================================================
-// SOMBRA
+// PAINEL MINIMALISTA
 // ==================================================
 
-draw_set_alpha(0.45);
+// Sombra bem discreta
+draw_set_alpha(0.25);
 draw_set_color(c_black);
 
 draw_rectangle(
-    _painel_x1 + 4,
-    _painel_y1 + 4,
-    _painel_x2 + 4,
-    _painel_y2 + 4,
+    _painel_x1 + 3,
+    _painel_y1 + 3,
+    _painel_x2 + 3,
+    _painel_y2 + 3,
     false
 );
 
 
-// ==================================================
-// FUNDO
-// ==================================================
-
-draw_set_alpha(0.96);
+// Fundo principal
+draw_set_alpha(0.95);
 
 draw_set_color(
-    make_color_rgb(17, 13, 11)
+    make_color_rgb(18, 15, 13)
 );
 
 draw_rectangle(
@@ -72,28 +99,11 @@ draw_rectangle(
 );
 
 
-// Faixa superior
-draw_set_color(
-    make_color_rgb(27, 21, 16)
-);
-
-draw_rectangle(
-    _painel_x1 + 2,
-    _painel_y1 + 2,
-    _painel_x2 - 2,
-    _painel_y1 + 24,
-    false
-);
-
-
-// ==================================================
-// BORDAS
-// ==================================================
-
+// Borda única e discreta
 draw_set_alpha(1);
 
 draw_set_color(
-    make_color_rgb(132, 99, 65)
+    make_color_rgb(100, 76, 53)
 );
 
 draw_rectangle(
@@ -104,53 +114,17 @@ draw_rectangle(
     true
 );
 
+
+// Pequeno detalhe superior
 draw_set_color(
-    make_color_rgb(67, 50, 36)
+    make_color_rgb(153, 113, 70)
 );
 
 draw_rectangle(
-    _painel_x1 + 4,
-    _painel_y1 + 4,
-    _painel_x2 - 4,
-    _painel_y2 - 4,
-    true
-);
-
-
-// Cantos
-draw_set_color(
-    make_color_rgb(171, 128, 79)
-);
-
-draw_rectangle(
-    _painel_x1,
+    _painel_x1 + 24,
     _painel_y1,
-    _painel_x1 + 16,
-    _painel_y1 + 2,
-    false
-);
-
-draw_rectangle(
-    _painel_x2 - 16,
-    _painel_y1,
-    _painel_x2,
-    _painel_y1 + 2,
-    false
-);
-
-draw_rectangle(
-    _painel_x1,
-    _painel_y2 - 2,
-    _painel_x1 + 16,
-    _painel_y2,
-    false
-);
-
-draw_rectangle(
-    _painel_x2 - 16,
-    _painel_y2 - 2,
-    _painel_x2,
-    _painel_y2,
+    _painel_x2 - 24,
+    _painel_y1 + 1,
     false
 );
 
@@ -159,7 +133,7 @@ draw_rectangle(
 // TEXTO BASE
 // ==================================================
 
-draw_set_font(fnt_dialogo);
+draw_set_font(fnt_minigame);
 draw_set_valign(fa_middle);
 
 
@@ -176,7 +150,7 @@ draw_set_color(
 draw_text(
     174,
     258,
-    "Empurrar a roda"
+    _titulo_minigame
 );
 
 
@@ -186,14 +160,14 @@ draw_text(
 
 for (
     var _i = 0;
-    _i < quantidade_impulsos;
+    _i < _quantidade_progresso;
     _i++
 )
 {
     var _circulo_x =
         430 + _i * 16;
 
-    if (_i < impulso_atual)
+    if (_i < _progresso_atual)
     {
         draw_set_color(
             make_color_rgb(210, 166, 101)
@@ -238,11 +212,22 @@ if (feedback_erro > 0)
         make_color_rgb(207, 125, 101)
     );
 
-    draw_text(
-        320,
-        272,
-        "Errou"
-    );
+    if (_modo_martelo)
+    {
+        draw_text(
+            320,
+            272,
+            "Voltou ao início"
+        );
+    }
+    else
+    {
+        draw_text(
+            320,
+            272,
+            "Errou"
+        );
+    }
 }
 else
 {
@@ -252,7 +237,7 @@ else
 
     draw_text(
         320,
-        272,
+        274,
         "Acerte a faixa"
     );
 }
@@ -383,22 +368,22 @@ else
 
 // Linha principal
 draw_rectangle(
-    _marcador_x - 2,
-    _barra_y1 - 4,
-    _marcador_x + 2,
-    _barra_y2 + 4,
+    _marcador_x - 1,
+    _barra_y1 - 3,
+    _marcador_x + 1,
+    _barra_y2 + 3,
     false
 );
 
 
 // Ponta superior
 draw_triangle(
-    _marcador_x - 4,
-    _barra_y1 - 7,
-    _marcador_x + 4,
-    _barra_y1 - 7,
+    _marcador_x - 3,
+    _barra_y1 - 5,
+    _marcador_x + 3,
+    _barra_y1 - 5,
     _marcador_x,
-    _barra_y1 - 3,
+    _barra_y1 - 2,
     false
 );
 
@@ -445,18 +430,19 @@ draw_set_color(
 );
 
 draw_text(
-    196,
-    324,
+    212,
+    322,
     "E"
 );
+
 
 draw_set_color(
     make_color_rgb(118, 108, 92)
 );
 
 draw_text(
-    220,
-    324,
+    232,
+    322,
     "acertar"
 );
 

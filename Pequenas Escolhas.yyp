@@ -55,6 +55,7 @@
   "name":"Pequenas Escolhas",
   "resources":[
     {"id":{"name":"fnt_dialogo","path":"fonts/fnt_dialogo/fnt_dialogo.yy",},},
+    {"id":{"name":"fnt_minigame","path":"fonts/fnt_minigame/fnt_minigame.yy",},},
     {"id":{"name":"obj_agricultor","path":"objects/obj_agricultor/obj_agricultor.yy",},},
     {"id":{"name":"obj_alvo_roda","path":"objects/obj_alvo_roda/obj_alvo_roda.yy",},},
     {"id":{"name":"obj_bloqueio_ponte","path":"objects/obj_bloqueio_ponte/obj_bloqueio_ponte.yy",},},

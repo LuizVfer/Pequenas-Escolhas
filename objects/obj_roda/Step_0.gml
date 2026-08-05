@@ -384,15 +384,227 @@ if (estado_puzzle_roda > 0)
     // 5 — RODA POSICIONADA
     // ==================================================
 
+    // ==================================================
+    // 5 — AGUARDAR DIÁLOGO DO MARTELO TERMINAR
+    // ==================================================
+    
     if (estado_puzzle_roda == 5)
     {
         sendo_empurrada = false;
         minigame_ativo = false;
         pode_interagir = false;
-
+    
         image_speed = 0;
         image_index = 0;
-
+    
+    
+        // O diálogo terminou
+        if (!global.controle_bloqueado)
+        {
+            global.controle_bloqueado = true;
+    
+            _player_minigame.hsp = 0;
+    
+            _player_minigame.sprite_index =
+                spr_player_idle;
+    
+            _player_minigame.image_index = 0;
+            _player_minigame.image_speed = 0;
+    
+            marteladas_corretas = 0;
+    
+            preparar_minigame_martelo();
+        }
+    
+        exit;
+    }
+    
+    // ==================================================
+    // 6 — MINIGAME DO MARTELO
+    // ==================================================
+    
+    if (estado_puzzle_roda == 6)
+    {
+        global.controle_bloqueado = true;
+    
+        sendo_empurrada = false;
+        pode_interagir = false;
+    
+        image_speed = 0;
+        image_index = 0;
+    
+    
+        // Player permanece parado perto da roda
+        _player_minigame.hsp = 0;
+    
+        _player_minigame.sprite_index =
+            spr_player_idle;
+    
+        _player_minigame.image_index = 0;
+        _player_minigame.image_speed = 0;
+    
+    
+        anim_minigame_roda += 0.10;
+    
+    
+        if (feedback_erro > 0)
+        {
+            feedback_erro--;
+        }
+    
+    
+        // Pequena pausa entre as tentativas
+        if (bloqueio_entrada_minigame > 0)
+        {
+            bloqueio_entrada_minigame--;
+            exit;
+        }
+    
+    
+        // ==============================================
+        // MOVIMENTO DO MARCADOR
+        // ==============================================
+    
+        marcador_posicao +=
+            velocidade_marcador
+            * marcador_direcao;
+    
+    
+        if (marcador_posicao >= 1)
+        {
+            marcador_posicao = 1;
+            marcador_direcao = -1;
+        }
+        else if (marcador_posicao <= 0)
+        {
+            marcador_posicao = 0;
+            marcador_direcao = 1;
+        }
+    
+    
+        // ==============================================
+        // TENTATIVA
+        // ==============================================
+    
+        if (keyboard_check_pressed(ord("E")))
+        {
+            var _zona_inicio =
+                zona_centro
+                - zona_largura * 0.5;
+    
+            var _zona_fim =
+                zona_centro
+                + zona_largura * 0.5;
+    
+    
+            var _acertou =
+                marcador_posicao >= _zona_inicio
+                && marcador_posicao <= _zona_fim;
+    
+    
+            // ==========================================
+            // ACERTOU
+            // ==========================================
+    
+            if (_acertou)
+            {
+                marteladas_corretas++;
+    
+    
+                // Abaixa a música em cada martelada
+                if (instance_exists(global.game_instancia))
+                {
+                    global.game_instancia
+                        .abaixar_musica_para_efeito(
+                            35,
+                            0.25
+                        );
+                }
+    
+    
+                var _som_martelo = audio_play_sound(
+                    snd_martelo,
+                    2,
+                    false
+                );
+    
+                audio_sound_gain(
+                    _som_martelo,
+                    1,
+                    0
+                );
+    
+    
+                // ======================================
+                // TRÊS ACERTOS CONSECUTIVOS
+                // ======================================
+    
+                if (
+                    marteladas_corretas
+                    >= quantidade_marteladas
+                )
+                {
+                    minigame_ativo = false;
+    
+                    _player_minigame.sprite_index =
+                        spr_player_idle;
+    
+                    _player_minigame.image_index = 0;
+                    _player_minigame.image_speed = 0;
+    
+                    concluir_reparo_carroca();
+                }
+                else
+                {
+                    preparar_minigame_martelo();
+                }
+            }
+    
+    
+            // ==========================================
+            // ERROU
+            // ==========================================
+    
+            else
+            {
+                // Perde toda a sequência
+                marteladas_corretas = 0;
+    
+                feedback_erro = 30;
+    
+                marcador_posicao = 0;
+                marcador_direcao = 1;
+    
+                velocidade_marcador =
+                    velocidade_martelo_base;
+    
+                bloqueio_entrada_minigame = 12;
+    
+                zona_centro = random_range(
+                    0.24,
+                    0.76
+                );
+    
+    
+                var _som_erro = audio_play_sound(
+                    snd_opcao_mover,
+                    0,
+                    false
+                );
+    
+                audio_sound_gain(
+                    _som_erro,
+                    0.30,
+                    0
+                );
+    
+                audio_sound_pitch(
+                    _som_erro,
+                    0.70
+                );
+            }
+        }
+    
         exit;
     }
 }
@@ -554,69 +766,3 @@ else
 }
 
 
-// ==================================================
-// CHEGOU AO ALVO DA CARROÇA
-// ==================================================
-
-if (place_meeting(x, y, obj_alvo_roda))
-{
-    reparo_iniciado = true;
-    sendo_empurrada = false;
-
-    image_speed = 0;
-    image_index = 0;
-
-
-        var _finalizar_reparo = method(
-        id,
-    
-        function()
-        {
-            global.roda_usada = true;
-            global.roda_liberada = false;
-            
-            if(instance_exists(obj_carroca_quebrada))
-            {
-                with (obj_carroca_quebrada)
-                {
-                    consertada = true;
-                    sprite_index = spr_carroca_consertada;
-                    image_index = 0;
-                    image_speed = 0;
-                }
-            }
-            
-            // Remove somente o bloqueio da carroça
-            if(instance_exists(obj_solid))
-            {
-                with (obj_solid)
-                {
-                    if (bloqueio_carroca)
-                    {
-                        instance_destroy();
-                    }
-                }
-            }
-    
-            // Abaixa a música para destacar o martelo
-            global.game_instancia.abaixar_musica_para_efeito(
-                45,
-                0.35
-            );
-            
-            audio_play_sound(
-                snd_martelo,
-                2,
-                false
-            );
-    
-            instance_destroy();
-        }
-    );
-    
-    global.fade_instancia.iniciar(
-        _finalizar_reparo,
-        0.05,
-        45
-    );
-}

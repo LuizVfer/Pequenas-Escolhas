@@ -1,4 +1,17 @@
 event_inherited();
+
+// 0 = parado
+// 1 = aguardando diálogo da roda
+// 2 = minigame de empurrar
+// 3 = executando impulso
+// 4 = espera entre impulsos
+// 5 = aguardando diálogo do martelo
+// 6 = minigame do martelo
+// 7 =
+// 6 = minigame do martelo
+// 7 = finalizando o conserto
+
+estado_puzzle_roda = 0;
 prioridade_interacao = 20;
 
 distancia_interacao = 40;
@@ -134,16 +147,7 @@ calcular_destino_impulso = function(_numero_impulso)
     );
 };
 
-// ==================================================
-// ESTADOS DO NOVO PUZZLE
-// ==================================================
 
-// 0 = parado
-// 1 = aguardando o diálogo terminar
-// 2 = minigame ativo
-// 3 = executando impulso
-// 4 = espera entre impulsos
-// 5 = roda posicionada na carroça
 estado_puzzle_roda = 0;
 
 
@@ -169,6 +173,120 @@ bloqueio_entrada_minigame = 0;
 // Feedback visual ao errar
 feedback_erro = 0;
 
+// ==================================================
+// MINIGAME DO MARTELO
+// ==================================================
+
+quantidade_marteladas = 3;
+marteladas_corretas = 0;
+
+// Um pouco mais difícil que o empurrão
+velocidade_martelo_base = 0.030;
+aumento_velocidade_martelo = 0.004;
+
+largura_zona_martelo = 0.22;
+
+
+// ==================================================
+// PREPARAR O MINIGAME DO MARTELO
+// ==================================================
+
+preparar_minigame_martelo = function()
+{
+    marcador_posicao = 0;
+    marcador_direcao = 1;
+
+    // Fica um pouco mais rápido após cada acerto
+    velocidade_marcador =
+        velocidade_martelo_base
+        + marteladas_corretas
+        * aumento_velocidade_martelo;
+
+    zona_largura =
+        largura_zona_martelo;
+
+    zona_centro = random_range(
+        0.24,
+        0.76
+    );
+
+    bloqueio_entrada_minigame = 12;
+    feedback_erro = 0;
+
+    anim_minigame_roda = 0;
+
+    minigame_ativo = true;
+    estado_puzzle_roda = 6;
+};
+
+// ==================================================
+// CONCLUIR O REPARO
+// ==================================================
+
+concluir_reparo_carroca = function()
+{
+    if (reparo_iniciado)
+    {
+        exit;
+    }
+
+    reparo_iniciado = true;
+
+    minigame_ativo = false;
+    estado_puzzle_roda = 7;
+
+    global.controle_bloqueado = true;
+
+
+    var _finalizar_reparo = method(
+        id,
+
+        function()
+        {
+            global.roda_usada = true;
+            global.roda_liberada = false;
+
+
+            // Troca a carroça quebrada pela consertada
+            if (instance_exists(obj_carroca_quebrada))
+            {
+                with (obj_carroca_quebrada)
+                {
+                    consertada = true;
+
+                    sprite_index =
+                        spr_carroca_consertada;
+
+                    image_index = 0;
+                    image_speed = 0;
+                }
+            }
+
+
+            // Remove apenas o bloqueio da carroça
+            if (instance_exists(obj_solid))
+            {
+                with (obj_solid)
+                {
+                    if (bloqueio_carroca)
+                    {
+                        instance_destroy();
+                    }
+                }
+            }
+
+
+            instance_destroy();
+        }
+    );
+
+
+    global.fade_instancia.iniciar(
+        _finalizar_reparo,
+        0.05,
+        45
+    );
+};
 
 // ==================================================
 // SORTEAR A ZONA CORRETA

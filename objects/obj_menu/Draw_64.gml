@@ -458,8 +458,14 @@ else if (estado_menu == 1)
 
     draw_text(
         320,
-        244,
-        "Esc  -  Voltar ou abrir o menu"
+        238,
+        "Esc  -  Pausar durante o jogo"
+    );
+    
+    draw_text(
+        320,
+        264,
+        "Esc  -  Voltar nos menus"
     );
 
 

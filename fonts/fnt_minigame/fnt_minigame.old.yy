@@ -1,6 +1,6 @@
 {
   "$GMFont":"",
-  "%Name":"fnt_dialogo",
+  "%Name":"fnt_minigame",
   "AntiAlias":0,
   "applyKerning":0,
   "ascender":20,
@@ -211,7 +211,7 @@
   "last":0,
   "lineHeight":26,
   "maintainGms1Font":false,
-  "name":"fnt_dialogo",
+  "name":"fnt_minigame",
   "parent":{
     "name":"Fonts",
     "path":"folders/Fonts.yy",
