@@ -43,8 +43,6 @@ global.portao_descoberto = false;
 global.portao_aberto = false;
 
 
-global.morador_1_conversado = false;
-global.moradora_2_conversada = false;
 
 #region Puzzle da Vila
 
@@ -55,7 +53,6 @@ global.cabo_enxada_coletado = false;
 global.cabo_enxada_entregue = false;
 
 global.morador_recebeu_agua = false;
-global.portao_vila_aberto = false;
 
 global.quest_cabo_iniciada = false;
 global.quest_agua_iniciada = false;
@@ -120,9 +117,6 @@ resetar_progresso = function()
     global.portao_descoberto = false;
     global.portao_aberto = false;
 
-    global.morador_1_conversado = false;
-    global.moradora_2_conversada = false;
-    
     #region Puzzle da Vila
 
     global.balde_coletado = false;
@@ -132,7 +126,6 @@ resetar_progresso = function()
     global.cabo_enxada_entregue = false;
     
     global.morador_recebeu_agua = false;
-    global.portao_vila_aberto = false;
     
     global.quest_cabo_iniciada = false;
     global.quest_agua_iniciada = false;

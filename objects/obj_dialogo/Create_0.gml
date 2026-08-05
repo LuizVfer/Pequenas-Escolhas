@@ -192,6 +192,11 @@ abrir = function(_paginas)
     }
 
     paginas = paginar_dialogo(_paginas);
+    
+    if (array_length(paginas) <= 0)
+    {
+        return false;
+    }
 
     pagina_atual = 0;
     texto_visivel = 0;
@@ -206,6 +211,8 @@ abrir = function(_paginas)
 
     global.dialogo_ativo = true;
     global.controle_bloqueado = true;
+    
+    return true;
 };
 
 abrir_escolha = function(

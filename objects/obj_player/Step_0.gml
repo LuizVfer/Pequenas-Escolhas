@@ -56,12 +56,6 @@ else
     distancia_passos_acumulada = 0;
 }
 
-
-// Limpa a interação anterior
-interagivel_atual = noone;
-global.interacao_ativa = noone;
-
-
 // Limpa a interação anterior
 interagivel_atual = noone;
 global.interacao_ativa = noone;
