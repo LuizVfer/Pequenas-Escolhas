@@ -5,13 +5,12 @@ camera_id = view_camera[0];
 camera_largura = 640;
 camera_altura = 360;
 
-// Posição horizontal do player na tela
-// 0.40 = aproximadamente 40% da tela
+// Posição do jogador na tela
 posicao_player_tela = 0.40;
 
-// Quanto menor, mais suave
+// Suavização da câmera
 suavidade = 0.10;
 
-// Posição inicial
+// Posição interna da câmera
 camera_x = 0;
 camera_y = 0;

@@ -1,33 +1,43 @@
-if (instance_exists(obj_player))
+if (!instance_exists(obj_player))
 {
-    // Posição desejada da câmera
-    var _alvo_x =
-        obj_player.x
-        - camera_largura * posicao_player_tela;
-
-    // Impede a câmera de mostrar fora da room
-    _alvo_x = clamp(
-        _alvo_x,
-        0,
-        max(0, room_width - camera_largura)
-    );
-
-    // Movimento suave
-    camera_x = lerp(
-        camera_x,
-        _alvo_x,
-        suavidade
-    );
-
-    // Evita pixels tremendo
-    camera_x = round(camera_x);
-
-    // Eixo Y permanece fixo
-    camera_y = 0;
-
-    camera_set_view_pos(
-        camera_id,
-        camera_x,
-        camera_y
-    );
+    exit;
 }
+
+
+// Posição desejada
+var _alvo_x =
+    obj_player.x
+    - camera_largura * posicao_player_tela;
+
+
+// Limites da room
+_alvo_x = clamp(
+    _alvo_x,
+    0,
+    max(0, room_width - camera_largura)
+);
+
+
+// A posição interna continua suave e decimal
+camera_x = lerp(
+    camera_x,
+    _alvo_x,
+    suavidade
+);
+
+camera_y = 0;
+
+
+// Apenas a posição visual é arredondada
+var _camera_visual_x =
+    round(camera_x);
+
+var _camera_visual_y =
+    round(camera_y);
+
+
+camera_set_view_pos(
+    camera_id,
+    _camera_visual_x,
+    _camera_visual_y
+);

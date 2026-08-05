@@ -191,9 +191,18 @@ switch (estado_puzzle_roda)
             _player,
             true
         );
-
-        image_speed =
+        
+        
+        // Animação da roda durante o movimento
+        image_speed = 0;
+        
+        image_index +=
             velocidade_animacao;
+        
+        if (image_index >= image_number)
+        {
+            image_index -= image_number;
+        }
 
 
         if (_progresso >= 1)

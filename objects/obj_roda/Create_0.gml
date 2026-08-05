@@ -54,7 +54,7 @@ espera_proximo_impulso = 12;
 contador_espera = 0;
 
 distancia_player_roda = 32;
-velocidade_animacao = 0.25;
+velocidade_animacao = 0.08;
 
 #endregion
 
