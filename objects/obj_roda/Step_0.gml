@@ -1,6 +1,4 @@
-// ==================================================
-// SEGURANÇA
-// ==================================================
+#region Segurança
 
 if (global.roda_usada)
 {
@@ -11,97 +9,84 @@ if (global.roda_usada)
 
 if (reparo_iniciado)
 {
-    image_speed = 0;
-    image_index = 0;
+    parar_roda();
     exit;
 }
 
-// ==================================================
-// NOVO PUZZLE DA RODA
-// ==================================================
 
-if (estado_puzzle_roda > 0)
+if (estado_puzzle_roda == ESTADO_PARADO)
 {
-    var _player_minigame =
-        instance_find(obj_player, 0);
+    sendo_empurrada = false;
+    minigame_ativo = false;
+
+    pode_interagir =
+        global.roda_liberada;
+
+    parar_roda();
+    exit;
+}
 
 
-    // Segurança
-    if (!instance_exists(_player_minigame))
-    {
-        estado_puzzle_roda = 0;
-        sendo_empurrada = false;
-        minigame_ativo = false;
-
-        global.controle_bloqueado = false;
-
-        exit;
-    }
+var _player =
+    instance_find(obj_player, 0);
 
 
-    // ==================================================
-    // MANTER O PLAYER NA POSE DE EMPURRAR
-    // ==================================================
+if (!instance_exists(_player))
+{
+    estado_puzzle_roda =
+        ESTADO_PARADO;
 
-    if (
-        estado_puzzle_roda >= 2
-        && estado_puzzle_roda <= 4
-    )
-    {
-        global.controle_bloqueado = true;
+    sendo_empurrada = false;
+    minigame_ativo = false;
 
-        _player_minigame.sprite_index =
-            spr_player_empurrando;
+    global.controle_bloqueado = false;
 
-        _player_minigame.image_xscale = 1;
-        _player_minigame.direcao = 1;
+    exit;
+}
 
-        _player_minigame.x =
-            x - distancia_player_roda;
-    }
+#endregion
 
 
-    // ==================================================
-    // 1 — AGUARDAR O DIÁLOGO TERMINAR
-    // ==================================================
+#region Estados do puzzle
 
-    if (estado_puzzle_roda == 1)
+switch (estado_puzzle_roda)
+{
+    // --------------------------------------------------
+    // Aguarda o diálogo inicial terminar
+    // --------------------------------------------------
+
+    case ESTADO_DIALOGO_RODA:
     {
         if (!global.controle_bloqueado)
         {
             global.controle_bloqueado = true;
 
-            _player_minigame.hsp = 0;
-
-            _player_minigame.x =
-                x - distancia_player_roda;
-
-            _player_minigame.sprite_index =
-                spr_player_empurrando;
-
-            _player_minigame.image_xscale = 1;
-            _player_minigame.direcao = 1;
-
-            _player_minigame.image_index = 0;
-            _player_minigame.image_speed = 0;
+            posicionar_player_empurrando(
+                _player,
+                false
+            );
 
             preparar_minigame_roda();
         }
-
-        exit;
     }
+    break;
 
 
-    // ==================================================
-    // 2 — MINIGAME ATIVO
-    // ==================================================
+    // --------------------------------------------------
+    // Minigame para empurrar
+    // --------------------------------------------------
 
-    if (estado_puzzle_roda == 2)
+    case ESTADO_MINIGAME_RODA:
     {
-        image_speed = 0;
+        global.controle_bloqueado = true;
 
-        _player_minigame.image_speed = 0;
-        
+        parar_roda();
+
+        posicionar_player_empurrando(
+            _player,
+            false
+        );
+
         anim_minigame_roda += 0.10;
 
 
@@ -114,54 +99,16 @@ if (estado_puzzle_roda > 0)
         if (bloqueio_entrada_minigame > 0)
         {
             bloqueio_entrada_minigame--;
-            exit;
+            break;
         }
 
 
-        // Move o marcador
-        marcador_posicao +=
-            velocidade_marcador
-            * marcador_direcao;
+        atualizar_marcador();
 
-
-        // Volta ao chegar nas extremidades
-        if (marcador_posicao >= 1)
-        {
-            marcador_posicao = 1;
-            marcador_direcao = -1;
-        }
-        else if (marcador_posicao <= 0)
-        {
-            marcador_posicao = 0;
-            marcador_direcao = 1;
-        }
-
-
-        // ==============================================
-        // TENTATIVA COM E
-        // ==============================================
 
         if (keyboard_check_pressed(ord("E")))
         {
-            var _zona_inicio =
-                zona_centro
-                - zona_largura * 0.5;
-
-            var _zona_fim =
-                zona_centro
-                + zona_largura * 0.5;
-
-
-            var _acertou =
-                marcador_posicao >= _zona_inicio
-                && marcador_posicao <= _zona_fim;
-
-
-            // ==========================================
-            // ACERTOU
-            // ==========================================
-
-            if (_acertou)
+            if (marcador_acertou_zona())
             {
                 minigame_ativo = false;
 
@@ -174,28 +121,22 @@ if (estado_puzzle_roda > 0)
 
                 contador_impulso = 0;
 
-                estado_puzzle_roda = 3;
+                estado_puzzle_roda =
+                    ESTADO_IMPULSO;
 
 
-                var _som_acerto =
-                    audio_play_sound(
-                        snd_opcao_confirmar,
-                        1,
-                        false
-                    );
+                var _som = audio_play_sound(
+                    snd_opcao_confirmar,
+                    1,
+                    false
+                );
 
                 audio_sound_gain(
-                    _som_acerto,
+                    _som,
                     0.45,
                     0
                 );
             }
-
-
-            // ==========================================
-            // ERROU
-            // ==========================================
-
             else
             {
                 feedback_erro = 30;
@@ -205,43 +146,26 @@ if (estado_puzzle_roda > 0)
 
                 bloqueio_entrada_minigame = 10;
 
-                sortear_zona_minigame();
-
-
-                var _som_erro =
-                    audio_play_sound(
-                        snd_opcao_mover,
-                        0,
-                        false
-                    );
-
-                audio_sound_gain(
-                    _som_erro,
-                    0.30,
-                    0
-                );
-
-                audio_sound_pitch(
-                    _som_erro,
-                    0.70
-                );
+                sortear_zona(0.27, 0.73);
+                tocar_som_erro();
             }
         }
-
-        exit;
     }
+    break;
 
 
-    // ==================================================
-    // 3 — MOVIMENTO DO IMPULSO
-    // ==================================================
+    // --------------------------------------------------
+    // Executa o movimento da roda
+    // --------------------------------------------------
 
-    if (estado_puzzle_roda == 3)
+    case ESTADO_IMPULSO:
     {
+        global.controle_bloqueado = true;
+
         contador_impulso++;
 
 
-        var _progresso_impulso =
+        var _progresso =
             clamp(
                 contador_impulso
                     / duracao_impulso,
@@ -250,14 +174,10 @@ if (estado_puzzle_roda > 0)
             );
 
 
-        // Movimento suave no começo e no final
         var _progresso_suave =
-            _progresso_impulso
-            * _progresso_impulso
-            * (
-                3
-                - 2 * _progresso_impulso
-            );
+            _progresso
+            * _progresso
+            * (3 - 2 * _progresso);
 
 
         x = lerp(
@@ -267,105 +187,84 @@ if (estado_puzzle_roda > 0)
         );
 
 
-        // Player acompanha a roda
-        _player_minigame.x =
-            x - distancia_player_roda;
+        posicionar_player_empurrando(
+            _player,
+            true
+        );
+
+        image_speed =
+            velocidade_animacao;
 
 
-        // Animações durante o movimento
-        image_speed = velocidade_animacao;
-
-        _player_minigame.sprite_index =
-            spr_player_empurrando;
-
-        _player_minigame.image_speed = 0.18;
-
-
-        // ==============================================
-        // IMPULSO TERMINOU
-        // ==============================================
-
-        if (_progresso_impulso >= 1)
+        if (_progresso >= 1)
         {
             x = x_fim_impulso;
 
-            _player_minigame.x =
-                x - distancia_player_roda;
+            parar_roda();
 
-
-            image_speed = 0;
-            image_index = 0;
-
-            _player_minigame.image_speed = 0;
-            _player_minigame.image_index = 0;
-
+            posicionar_player_empurrando(
+                _player,
+                false
+            );
 
             impulso_atual++;
 
-
-            // ==========================================
-            // CHEGOU À CARROÇA
-            // ==========================================
 
             if (
                 impulso_atual
                 >= quantidade_impulsos
             )
             {
-                // Garante posição exata no alvo
                 x = x_destino_sequencia;
-
-                estado_puzzle_roda = 5;
 
                 sendo_empurrada = false;
                 minigame_ativo = false;
 
-                global.controle_bloqueado = false;
+                estado_puzzle_roda =
+                    ESTADO_DIALOGO_MARTELO;
 
+                global.controle_bloqueado =
+                    false;
 
-                _player_minigame.sprite_index =
-                    spr_player_idle;
-
-                _player_minigame.image_index = 0;
-                _player_minigame.image_speed = 0;
+                posicionar_player_idle(_player);
 
 
                 global.dialogo_instancia.abrir(
                 [
                     {
                         nome: "Mensageiro",
-                        texto: "A roda está no lugar. Agora preciso prendê-la."
+                        texto:
+                            "A roda está no lugar. Agora preciso prendê-la."
                     }
                 ]);
             }
-
-
-            // ==========================================
-            // PREPARAR PRÓXIMO IMPULSO
-            // ==========================================
-
             else
             {
-                estado_puzzle_roda = 4;
-
                 contador_espera =
                     espera_proximo_impulso;
+
+                estado_puzzle_roda =
+                    ESTADO_ESPERA;
             }
         }
-
-        exit;
     }
+    break;
 
 
-    // ==================================================
-    // 4 — ESPERA ENTRE IMPULSOS
-    // ==================================================
+    // --------------------------------------------------
+    // Pequena espera entre os impulsos
+    // --------------------------------------------------
 
-    if (estado_puzzle_roda == 4)
+    case ESTADO_ESPERA:
     {
-        image_speed = 0;
+        global.controle_bloqueado = true;
 
-        _player_minigame.image_speed = 0;
+        parar_roda();
+
+        posicionar_player_empurrando(
+            _player,
+            false
+        );
 
 
         contador_espera--;
@@ -375,144 +274,82 @@ if (estado_puzzle_roda > 0)
         {
             preparar_minigame_roda();
         }
-
-        exit;
     }
+    break;
 
 
-    // ==================================================
-    // 5 — RODA POSICIONADA
-    // ==================================================
+    // --------------------------------------------------
+    // Aguarda o diálogo do martelo terminar
+    // --------------------------------------------------
 
-    // ==================================================
-    // 5 — AGUARDAR DIÁLOGO DO MARTELO TERMINAR
-    // ==================================================
-    
-    if (estado_puzzle_roda == 5)
+    case ESTADO_DIALOGO_MARTELO:
     {
         sendo_empurrada = false;
         minigame_ativo = false;
         pode_interagir = false;
-    
-        image_speed = 0;
-        image_index = 0;
-    
-    
-        // O diálogo terminou
+
+        parar_roda();
+
+
         if (!global.controle_bloqueado)
         {
             global.controle_bloqueado = true;
-    
-            _player_minigame.hsp = 0;
-    
-            _player_minigame.sprite_index =
-                spr_player_idle;
-    
-            _player_minigame.image_index = 0;
-            _player_minigame.image_speed = 0;
-    
+
+            posicionar_player_idle(_player);
+
             marteladas_corretas = 0;
-    
+
             preparar_minigame_martelo();
         }
-    
-        exit;
     }
-    
-    // ==================================================
-    // 6 — MINIGAME DO MARTELO
-    // ==================================================
-    
-    if (estado_puzzle_roda == 6)
+    break;
+
+
+    // --------------------------------------------------
+    // Minigame do martelo
+    // --------------------------------------------------
+
+    case ESTADO_MINIGAME_MARTELO:
     {
         global.controle_bloqueado = true;
-    
+
         sendo_empurrada = false;
         pode_interagir = false;
-    
-        image_speed = 0;
-        image_index = 0;
-    
-    
-        // Player permanece parado perto da roda
-        _player_minigame.hsp = 0;
-    
-        _player_minigame.sprite_index =
-            spr_player_idle;
-    
-        _player_minigame.image_index = 0;
-        _player_minigame.image_speed = 0;
-    
-    
+
+        parar_roda();
+        posicionar_player_idle(_player);
+
         anim_minigame_roda += 0.10;
-    
-    
+
+
         if (feedback_erro > 0)
         {
             feedback_erro--;
         }
-    
-    
-        // Pequena pausa entre as tentativas
+
+
         if (bloqueio_entrada_minigame > 0)
         {
             bloqueio_entrada_minigame--;
-            exit;
+            break;
         }
-    
-    
-        // ==============================================
-        // MOVIMENTO DO MARCADOR
-        // ==============================================
-    
-        marcador_posicao +=
-            velocidade_marcador
-            * marcador_direcao;
-    
-    
-        if (marcador_posicao >= 1)
-        {
-            marcador_posicao = 1;
-            marcador_direcao = -1;
-        }
-        else if (marcador_posicao <= 0)
-        {
-            marcador_posicao = 0;
-            marcador_direcao = 1;
-        }
-    
-    
-        // ==============================================
-        // TENTATIVA
-        // ==============================================
-    
+
+
+        atualizar_marcador();
+
+
         if (keyboard_check_pressed(ord("E")))
         {
-            var _zona_inicio =
-                zona_centro
-                - zona_largura * 0.5;
-    
-            var _zona_fim =
-                zona_centro
-                + zona_largura * 0.5;
-    
-    
-            var _acertou =
-                marcador_posicao >= _zona_inicio
-                && marcador_posicao <= _zona_fim;
-    
-    
-            // ==========================================
-            // ACERTOU
-            // ==========================================
-    
-            if (_acertou)
+            if (marcador_acertou_zona())
             {
                 marteladas_corretas++;
-    
-    
-                // Abaixa a música em cada martelada
-                if (instance_exists(global.game_instancia))
+
+
+                if (
+                    instance_exists(
+                        global.game_instancia
+                    )
+                )
                 {
                     global.game_instancia
                         .abaixar_musica_para_efeito(
@@ -520,38 +357,31 @@ if (estado_puzzle_roda > 0)
                             0.25
                         );
                 }
-    
-    
-                var _som_martelo = audio_play_sound(
-                    snd_martelo,
-                    2,
-                    false
-                );
-    
+
+
+                var _som_martelo =
+                    audio_play_sound(
+                        snd_martelo,
+                        2,
+                        false
+                    );
+
                 audio_sound_gain(
                     _som_martelo,
                     1,
                     0
                 );
-    
-    
-                // ======================================
-                // TRÊS ACERTOS CONSECUTIVOS
-                // ======================================
-    
+
+
                 if (
                     marteladas_corretas
                     >= quantidade_marteladas
                 )
                 {
                     minigame_ativo = false;
-    
-                    _player_minigame.sprite_index =
-                        spr_player_idle;
-    
-                    _player_minigame.image_index = 0;
-                    _player_minigame.image_speed = 0;
-    
+
+                    posicionar_player_idle(_player);
+
                     concluir_reparo_carroca();
                 }
                 else
@@ -559,210 +389,37 @@ if (estado_puzzle_roda > 0)
                     preparar_minigame_martelo();
                 }
             }
-    
-    
-            // ==========================================
-            // ERROU
-            // ==========================================
-    
             else
             {
-                // Perde toda a sequência
                 marteladas_corretas = 0;
-    
+
                 feedback_erro = 30;
-    
+
                 marcador_posicao = 0;
                 marcador_direcao = 1;
-    
+
                 velocidade_marcador =
                     velocidade_martelo_base;
-    
+
                 bloqueio_entrada_minigame = 12;
-    
-                zona_centro = random_range(
-                    0.24,
-                    0.76
-                );
-    
-    
-                var _som_erro = audio_play_sound(
-                    snd_opcao_mover,
-                    0,
-                    false
-                );
-    
-                audio_sound_gain(
-                    _som_erro,
-                    0.30,
-                    0
-                );
-    
-                audio_sound_pitch(
-                    _som_erro,
-                    0.70
-                );
+
+                sortear_zona(0.24, 0.76);
+                tocar_som_erro();
             }
         }
-    
-        exit;
     }
-}
+    break;
 
 
-// ==================================================
-// RODA NÃO ATIVADA PARA EMPURRAR
-// ==================================================
+    // --------------------------------------------------
+    // O fade está concluindo o reparo
+    // --------------------------------------------------
 
-if (!sendo_empurrada)
-{
-    pode_interagir =
-        global.roda_liberada;
-
-    image_speed = 0;
-    image_index = 0;
-
-    exit;
-}
-
-
-pode_interagir = false;
-
-
-// Não move durante diálogo ou fade
-if (global.controle_bloqueado)
-{
-    image_speed = 0;
-    image_index = 0;
-    exit;
-}
-
-
-var _player = instance_find(obj_player, 0);
-
-if (_player == noone)
-{
-    sendo_empurrada = false;
-
-    image_speed = 0;
-    image_index = 0;
-
-    exit;
-}
-
-
-// ==================================================
-// SOLTAR A RODA
-// ==================================================
-
-var _distancia_player =
-    abs(_player.x - x);
-
-if (_distancia_player > distancia_soltar)
-{
-    sendo_empurrada = false;
-    pode_interagir = true;
-
-    image_speed = 0;
-    image_index = 0;
-
-    exit;
-}
-
-
-// ==================================================
-// VERIFICAR EMPURRÃO E ENCAIXE VISUAL
-// ==================================================
-
-var _movimento = 0;
-
-// Posição exata em que a roda deve ficar encostada
-var _x_encoste =
-    _player.x
-    + lado_empurrao * distancia_encoste_visual;
-
-
-// Player está no lado correto da roda
-var _lado_correto =
-(
-    lado_empurrao > 0
-    && _player.x < x
-)
-||
-(
-    lado_empurrao < 0
-    && _player.x > x
-);
-
-
-// Player está andando na direção do empurrão
-var _andando_para_roda =
-(
-    lado_empurrao > 0
-    && _player.hsp > 0
-)
-||
-(
-    lado_empurrao < 0
-    && _player.hsp < 0
-);
-
-
-// Verifica se o ponto de encoste alcançou a roda
-var _alcancou_roda = false;
-
-if (lado_empurrao > 0)
-{
-    _alcancou_roda =
-        _x_encoste >= x
-        && _x_encoste - x
-            <= abs(_player.hsp) + tolerancia_encoste;
-}
-else
-{
-    _alcancou_roda =
-        _x_encoste <= x
-        && x - _x_encoste
-            <= abs(_player.hsp) + tolerancia_encoste;
-}
-
-
-// ==================================================
-// MOVIMENTAR
-// ==================================================
-
-if (
-    _lado_correto
-    && _andando_para_roda
-    && _alcancou_roda
-)
-{
-    var _novo_x = _x_encoste;
-
-    if (!place_meeting(_novo_x, y, obj_solid))
+    case ESTADO_FINALIZANDO:
     {
-        _movimento = _novo_x - x;
-        x = _novo_x;
+        parar_roda();
     }
+    break;
 }
 
-
-// ==================================================
-// ANIMAÇÃO
-// ==================================================
-
-if (_movimento != 0)
-{
-    // Positivo girando para a direita,
-    // negativo girando para a esquerda
-    image_speed =
-        velocidade_animacao
-        * sign(_movimento);
-}
-else
-{
-    image_speed = 0;
-    image_index = 0;
-}
-
-
+#endregion

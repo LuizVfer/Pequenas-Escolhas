@@ -1,58 +1,50 @@
-// ==================================================
-// MINIGAME DA RODA
-// ==================================================
-
 if (
-    (
-        estado_puzzle_roda != 2
-        && estado_puzzle_roda != 6
+    !minigame_ativo
+    || (
+        estado_puzzle_roda
+            != ESTADO_MINIGAME_RODA
+
+        && estado_puzzle_roda
+            != ESTADO_MINIGAME_MARTELO
     )
-    || !minigame_ativo
 )
 {
     exit;
 }
 
 
+#region Dados da interface
+
 var _modo_martelo =
-    estado_puzzle_roda == 6;
+    estado_puzzle_roda
+        == ESTADO_MINIGAME_MARTELO;
 
-var _progresso_atual =
-    impulso_atual;
+var _titulo =
+    _modo_martelo
+        ? "Fixar a roda"
+        : "Empurrar a roda";
 
-var _quantidade_progresso =
-    quantidade_impulsos;
+var _progresso =
+    _modo_martelo
+        ? marteladas_corretas
+        : impulso_atual;
 
-var _titulo_minigame =
-    "Empurrar a roda";
+var _total =
+    _modo_martelo
+        ? quantidade_marteladas
+        : quantidade_impulsos;
 
-
-if (_modo_martelo)
-{
-    _progresso_atual =
-        marteladas_corretas;
-
-    _quantidade_progresso =
-        quantidade_marteladas;
-
-    _titulo_minigame =
-        "Fixar a roda";
-}
-
-
-// ==================================================
-// POSIÇÕES
-// ==================================================
 
 var _painel_x1 = 160;
 var _painel_y1 = 246;
-
 var _painel_x2 = 480;
 var _painel_y2 = 338;
 
+var _centro_x =
+    (_painel_x1 + _painel_x2) * 0.5;
+
 var _barra_x1 = 210;
 var _barra_y1 = 288;
-
 var _barra_x2 = 430;
 var _barra_y2 = 298;
 
@@ -60,17 +52,32 @@ var _largura_barra =
     _barra_x2 - _barra_x1;
 
 var _pulso =
-(
-    sin(anim_minigame_roda)
-    + 1
-) * 0.5;
+    (sin(anim_minigame_roda) + 1) * 0.5;
 
 
-// ==================================================
-// PAINEL MINIMALISTA
-// ==================================================
+var _cor_fundo =
+    make_color_rgb(18, 15, 13);
 
-// Sombra bem discreta
+var _cor_borda =
+    make_color_rgb(100, 76, 53);
+
+var _cor_detalhe =
+    make_color_rgb(153, 113, 70);
+
+var _cor_texto =
+    make_color_rgb(237, 219, 182);
+
+var _cor_texto_secundario =
+    make_color_rgb(151, 138, 118);
+
+var _cor_erro =
+    make_color_rgb(207, 125, 101);
+
+#endregion
+
+
+#region Painel
+
 draw_set_alpha(0.25);
 draw_set_color(c_black);
 
@@ -83,12 +90,8 @@ draw_rectangle(
 );
 
 
-// Fundo principal
 draw_set_alpha(0.95);
-
-draw_set_color(
-    make_color_rgb(18, 15, 13)
-);
+draw_set_color(_cor_fundo);
 
 draw_rectangle(
     _painel_x1,
@@ -99,12 +102,8 @@ draw_rectangle(
 );
 
 
-// Borda única e discreta
 draw_set_alpha(1);
-
-draw_set_color(
-    make_color_rgb(100, 76, 53)
-);
+draw_set_color(_cor_borda);
 
 draw_rectangle(
     _painel_x1,
@@ -115,10 +114,7 @@ draw_rectangle(
 );
 
 
-// Pequeno detalhe superior
-draw_set_color(
-    make_color_rgb(153, 113, 70)
-);
+draw_set_color(_cor_detalhe);
 
 draw_rectangle(
     _painel_x1 + 24,
@@ -128,46 +124,45 @@ draw_rectangle(
     false
 );
 
+#endregion
 
-// ==================================================
-// TEXTO BASE
-// ==================================================
+
+#region Título e progresso
 
 draw_set_font(fnt_minigame);
 draw_set_valign(fa_middle);
 
-
-// ==================================================
-// TÍTULO
-// ==================================================
-
 draw_set_halign(fa_left);
-
-draw_set_color(
-    make_color_rgb(237, 219, 182)
-);
+draw_set_color(_cor_texto);
 
 draw_text(
-    174,
+    _painel_x1 + 14,
     258,
-    _titulo_minigame
+    _titulo
 );
 
 
-// ==================================================
-// PROGRESSO (BOLINHAS)
-// ==================================================
+var _espaco_circulos = 14;
+
+var _inicio_circulos =
+    _painel_x2
+    - 18
+    - (_total - 1)
+    * _espaco_circulos;
+
 
 for (
     var _i = 0;
-    _i < _quantidade_progresso;
+    _i < _total;
     _i++
 )
 {
     var _circulo_x =
-        430 + _i * 16;
+        _inicio_circulos
+        + _i * _espaco_circulos;
 
-    if (_i < _progresso_atual)
+
+    if (_i < _progresso)
     {
         draw_set_color(
             make_color_rgb(210, 166, 101)
@@ -180,12 +175,14 @@ for (
         );
     }
 
+
     draw_circle(
         _circulo_x,
         258,
         4,
         false
     );
+
 
     draw_set_color(
         make_color_rgb(137, 104, 70)
@@ -199,53 +196,42 @@ for (
     );
 }
 
+#endregion
 
-// ==================================================
-// INSTRUÇÃO / ERRO
-// ==================================================
+
+#region Mensagem
 
 draw_set_halign(fa_center);
 
 if (feedback_erro > 0)
 {
-    draw_set_color(
-        make_color_rgb(207, 125, 101)
-    );
+    draw_set_color(_cor_erro);
 
-    if (_modo_martelo)
-    {
-        draw_text(
-            320,
-            272,
-            "Voltou ao início"
-        );
-    }
-    else
-    {
-        draw_text(
-            320,
-            272,
-            "Errou"
-        );
-    }
+    draw_text(
+        _centro_x,
+        272,
+        _modo_martelo
+            ? "Voltou ao início"
+            : "Errou"
+    );
 }
 else
 {
     draw_set_color(
-        make_color_rgb(151, 138, 118)
+        _cor_texto_secundario
     );
 
     draw_text(
-        320,
+        _centro_x,
         274,
         "Acerte a faixa"
     );
 }
 
+#endregion
 
-// ==================================================
-// FUNDO DA BARRA
-// ==================================================
+
+#region Barra
 
 draw_set_color(
     make_color_rgb(43, 34, 28)
@@ -258,6 +244,7 @@ draw_rectangle(
     _barra_y2,
     false
 );
+
 
 draw_set_color(
     make_color_rgb(57, 46, 37)
@@ -272,10 +259,6 @@ draw_rectangle(
 );
 
 
-// ==================================================
-// ZONA CORRETA
-// ==================================================
-
 var _zona_inicio =
     zona_centro
     - zona_largura * 0.5;
@@ -286,14 +269,16 @@ var _zona_fim =
 
 var _zona_x1 =
     _barra_x1
-    + _largura_barra * _zona_inicio;
+    + _largura_barra
+    * _zona_inicio;
 
 var _zona_x2 =
     _barra_x1
-    + _largura_barra * _zona_fim;
+    + _largura_barra
+    * _zona_fim;
 
 
-// brilho
+// Brilho da área correta
 draw_set_alpha(
     0.14 + _pulso * 0.08
 );
@@ -311,7 +296,7 @@ draw_rectangle(
 );
 
 
-// faixa dourada
+// Faixa correta
 draw_set_alpha(1);
 
 draw_set_color(
@@ -326,6 +311,7 @@ draw_rectangle(
     false
 );
 
+
 draw_set_color(
     make_color_rgb(198, 151, 88)
 );
@@ -339,10 +325,7 @@ draw_rectangle(
 );
 
 
-// ==================================================
-// MARCADOR
-// ==================================================
-
+// Marcador
 var _marcador_x =
     _barra_x1
     + _largura_barra
@@ -352,21 +335,14 @@ var _marcador_na_zona =
     marcador_posicao >= _zona_inicio
     && marcador_posicao <= _zona_fim;
 
-if (_marcador_na_zona)
-{
-    draw_set_color(
-        make_color_rgb(255, 230, 169)
-    );
-}
-else
-{
-    draw_set_color(
-        make_color_rgb(225, 214, 190)
-    );
-}
+
+draw_set_color(
+    _marcador_na_zona
+        ? make_color_rgb(255, 230, 169)
+        : make_color_rgb(225, 214, 190)
+);
 
 
-// Linha principal
 draw_rectangle(
     _marcador_x - 1,
     _barra_y1 - 3,
@@ -376,19 +352,20 @@ draw_rectangle(
 );
 
 
-// Ponta superior
 draw_triangle(
     _marcador_x - 3,
     _barra_y1 - 5,
+
     _marcador_x + 3,
     _barra_y1 - 5,
+
     _marcador_x,
     _barra_y1 - 2,
+
     false
 );
 
 
-// Borda da barra
 draw_set_color(
     make_color_rgb(120, 89, 59)
 );
@@ -401,27 +378,23 @@ draw_rectangle(
     true
 );
 
+#endregion
 
-// ==================================================
-// LINHA INFERIOR
-// ==================================================
+
+#region Rodapé
 
 draw_set_color(
     make_color_rgb(64, 48, 36)
 );
 
 draw_rectangle(
-    180,
+    _painel_x1 + 20,
     311,
-    460,
+    _painel_x2 - 20,
     312,
     false
 );
 
-
-// ==================================================
-// RODAPÉ MÍNIMO
-// ==================================================
 
 draw_set_halign(fa_left);
 
@@ -446,10 +419,8 @@ draw_text(
     "acertar"
 );
 
+#endregion
 
-// ==================================================
-// RESTAURAR DRAW
-// ==================================================
 
 draw_set_alpha(1);
 draw_set_color(c_white);

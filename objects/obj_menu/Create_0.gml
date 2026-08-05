@@ -1,39 +1,65 @@
-// ==================================================
-// MENU PRINCIPAL
-// ==================================================
+event_inherited();
 
 global.controle_bloqueado = true;
 
 
-// 0 = menu principal
-// 1 = controles
-// 2 = configurações
-estado_menu = 0;
+#region Estados
+
+MENU_PRINCIPAL = 0;
+MENU_CONTROLES = 1;
+MENU_CONFIGURACOES = 2;
+
+CONFIG_MUSICA = 0;
+CONFIG_EFEITOS = 1;
+CONFIG_TELA_CHEIA = 2;
+CONFIG_VOLTAR = 3;
+
+estado_menu = MENU_PRINCIPAL;
+
+#endregion
+
+
+#region Menu principal
+
+opcao_selecionada = 0;
+opcoes_menu = [];
+
+transicao_iniciada = false;
 anim_menu = 0;
 
-
-// Opção selecionada
-opcao_selecionada = 0;
+#endregion
 
 
-// Controle de transição
-transicao_iniciada = false;
+#region Animação de entrada
+
+alpha_fundo = 0;
+alpha_logo = 0;
+alpha_opcoes = 0;
+
+contador_entrada = 0;
+menu_pronto = false;
+
+#endregion
 
 
-// Título
-titulo_menu = "Pequenas Escolhas";
+#region Configurações
+
+opcao_configuracao = CONFIG_MUSICA;
+quantidade_configuracoes = 4;
+
+passo_volume = 0.1;
+
+#endregion
 
 
-// Atualiza o texto Jogar/Jogar novamente
+#region Opções do menu
+
 atualizar_opcoes = function()
 {
-    var _texto_jogar = "Jogar";
-
-    if (global.jogo_concluido)
-    {
-        _texto_jogar = "Jogar novamente";
-    }
-
+    var _texto_jogar =
+        global.jogo_concluido
+        ? "Jogar novamente"
+        : "Jogar";
 
     opcoes_menu =
     [
@@ -44,33 +70,10 @@ atualizar_opcoes = function()
     ];
 };
 
-// ==================================================
-// ANIMAÇÃO DE ENTRADA
-// ==================================================
-
-alpha_fundo = 0;
-alpha_logo = 0;
-alpha_opcoes = 0;
-
-contador_entrada = 0;
-
-menu_pronto = false;
+#endregion
 
 
-// ==================================================
-// CONFIGURAÇÕES
-// ==================================================
-
-opcao_configuracao = 0;
-
-quantidade_configuracoes = 4;
-
-// O volume muda de 10% em 10%
-passo_volume = 0.1;
-
-// ==================================================
-// SONS DO MENU
-// ==================================================
+#region Sons
 
 tocar_som_menu_mover = function()
 {
@@ -86,7 +89,6 @@ tocar_som_menu_mover = function()
         0
     );
 
-    // Mais grave somente no menu
     audio_sound_pitch(
         _som,
         2
@@ -108,11 +110,95 @@ tocar_som_menu_confirmar = function()
         0
     );
 
-    // Confirmação mais grave somente no menu
     audio_sound_pitch(
         _som,
         2
     );
 };
+
+#endregion
+
+
+#region Funções de configuração
+
+salvar_configuracoes = function()
+{
+    if (instance_exists(global.game_instancia))
+    {
+        global.game_instancia
+            .salvar_configuracoes();
+    }
+};
+
+
+alterar_volume_musica = function(_direcao)
+{
+    global.volume_musica =
+        clamp(
+            round(
+                (
+                    global.volume_musica
+                    + passo_volume * _direcao
+                ) * 10
+            ) / 10,
+            0,
+            1
+        );
+
+    audio_group_set_gain(
+        audiogroup_musica,
+        global.volume_musica,
+        0
+    );
+
+    salvar_configuracoes();
+};
+
+
+alterar_volume_efeitos = function(_direcao)
+{
+    global.volume_efeitos =
+        clamp(
+            round(
+                (
+                    global.volume_efeitos
+                    + passo_volume * _direcao
+                ) * 10
+            ) / 10,
+            0,
+            1
+        );
+
+    audio_group_set_gain(
+        audiogroup_efeitos,
+        global.volume_efeitos,
+        0
+    );
+
+    salvar_configuracoes();
+};
+
+
+alternar_tela_cheia = function()
+{
+    global.tela_cheia =
+        !global.tela_cheia;
+
+    window_set_fullscreen(
+        global.tela_cheia
+    );
+
+    salvar_configuracoes();
+};
+
+
+voltar_menu_principal = function(_opcao)
+{
+    estado_menu = MENU_PRINCIPAL;
+    opcao_selecionada = _opcao;
+};
+
+#endregion
+
 
 atualizar_opcoes();

@@ -1,89 +1,102 @@
 event_inherited();
 
-// 0 = parado
-// 1 = aguardando diálogo da roda
-// 2 = minigame de empurrar
-// 3 = executando impulso
-// 4 = espera entre impulsos
-// 5 = aguardando diálogo do martelo
-// 6 = minigame do martelo
-// 7 =
-// 6 = minigame do martelo
-// 7 = finalizando o conserto
 
-estado_puzzle_roda = 0;
+#region Estados
+
+ESTADO_PARADO = 0;
+ESTADO_DIALOGO_RODA = 1;
+ESTADO_MINIGAME_RODA = 2;
+ESTADO_IMPULSO = 3;
+ESTADO_ESPERA = 4;
+ESTADO_DIALOGO_MARTELO = 5;
+ESTADO_MINIGAME_MARTELO = 6;
+ESTADO_FINALIZANDO = 7;
+
+estado_puzzle_roda = ESTADO_PARADO;
+
+#endregion
+
+
+#region Interação
+
 prioridade_interacao = 20;
-
 distancia_interacao = 40;
 offset_indicador_y = 12;
 
-// Estado da roda
+pode_interagir = global.roda_liberada;
+
 sendo_empurrada = false;
-lado_empurrao = 1;
-
-// Player 32 px + roda 32 px:
-// 16 px do player + 16 px da roda
-distancia_encoste_visual = 32;
-
-// Pequena tolerância para não falhar por subpixel
-tolerancia_encoste = 3;
-
-// Distância de contato (32) + 16 px de tolerância.
-// Permite aproximar-se da roda sem cancelar o empurrão.
-distancia_soltar = 48;
-
-// Velocidade da animação
-velocidade_animacao = 0.25;
-
-// Começa parada no frame 0
-image_speed = 0;
-image_index = 0;
-
 reparo_iniciado = false;
 
-// ==================================================
-// NOVO SISTEMA DE IMPULSOS
-// ==================================================
+image_index = 0;
+image_speed = 0;
 
-// Quantidade de acertos necessários para levar
-// a roda até a carroça
+#endregion
+
+
+#region Movimento da roda
+
 quantidade_impulsos = 3;
-
-// Quantos impulsos já foram concluídos
 impulso_atual = 0;
 
-// Referência ao alvo encontrado automaticamente
 alvo_roda = noone;
 
-// Posições usadas para dividir o percurso
 x_inicio_sequencia = x;
 x_destino_sequencia = x;
 
-// Movimento de cada impulso
 x_inicio_impulso = x;
 x_fim_impulso = x;
 
 duracao_impulso = 36;
 contador_impulso = 0;
 
-// Espera antes do próximo minigame
 espera_proximo_impulso = 12;
 contador_espera = 0;
 
-// O jogador sempre ficará à esquerda da roda
 distancia_player_roda = 32;
+velocidade_animacao = 0.25;
+
+#endregion
+
+
+#region Minigame
+
+minigame_ativo = false;
+
+marcador_posicao = 0;
+marcador_direcao = 1;
+velocidade_marcador = 0.025;
+
+zona_centro = 0.50;
+zona_largura = 0.30;
+
+bloqueio_entrada_minigame = 0;
+feedback_erro = 0;
 
 anim_minigame_roda = 0;
 
+#endregion
 
-// ==================================================
-// ENCONTRAR O ALVO AUTOMATICAMENTE
-// ==================================================
+
+#region Martelo
+
+quantidade_marteladas = 3;
+marteladas_corretas = 0;
+
+velocidade_martelo_base = 0.030;
+aumento_velocidade_martelo = 0.004;
+
+largura_zona_martelo = 0.22;
+
+#endregion
+
+
+#region Funções auxiliares
 
 encontrar_alvo_roda = function()
 {
-    var _melhor_alvo = noone;
-    var _melhor_distancia = 1000000;
+    var _alvo_encontrado = noone;
+    var _menor_distancia = infinity;
 
     var _quantidade =
         instance_number(obj_alvo_roda);
@@ -95,18 +108,14 @@ encontrar_alvo_roda = function()
     )
     {
         var _alvo =
-            instance_find(
-                obj_alvo_roda,
-                _i
-            );
+            instance_find(obj_alvo_roda, _i);
 
         if (!instance_exists(_alvo))
         {
             continue;
         }
 
-        // A roda só pode ser empurrada
-        // para a direita
+        // A roda só avança para a direita
         if (_alvo.x <= x)
         {
             continue;
@@ -115,27 +124,22 @@ encontrar_alvo_roda = function()
         var _distancia =
             _alvo.x - x;
 
-        if (_distancia < _melhor_distancia)
+        if (_distancia < _menor_distancia)
         {
-            _melhor_distancia = _distancia;
-            _melhor_alvo = _alvo;
+            _menor_distancia = _distancia;
+            _alvo_encontrado = _alvo;
         }
     }
 
-    return _melhor_alvo;
+    return _alvo_encontrado;
 };
 
 
-// ==================================================
-// CALCULAR A POSIÇÃO DE CADA IMPULSO
-// ==================================================
-
-calcular_destino_impulso = function(_numero_impulso)
+calcular_destino_impulso = function(_impulso)
 {
     var _progresso =
         clamp(
-            _numero_impulso
-                / quantidade_impulsos,
+            _impulso / quantidade_impulsos,
             0,
             1
         );
@@ -148,55 +152,147 @@ calcular_destino_impulso = function(_numero_impulso)
 };
 
 
-estado_puzzle_roda = 0;
+sortear_zona = function(_minimo, _maximo)
+{
+    zona_centro =
+        random_range(_minimo, _maximo);
+};
 
 
-// ==================================================
-// MINIGAME DE PRECISÃO
-// ==================================================
-
-minigame_ativo = false;
-
-// Posição normalizada: 0 até 1
-marcador_posicao = 0;
-marcador_direcao = 1;
-
-velocidade_marcador = 0.025;
-
-// 30% da barra será considerada área correta
-zona_largura = 0.30;
-zona_centro = 0.50;
-
-// Evita que o mesmo E seja registrado duas vezes
-bloqueio_entrada_minigame = 0;
-
-// Feedback visual ao errar
-feedback_erro = 0;
-
-// ==================================================
-// MINIGAME DO MARTELO
-// ==================================================
-
-quantidade_marteladas = 3;
-marteladas_corretas = 0;
-
-// Um pouco mais difícil que o empurrão
-velocidade_martelo_base = 0.030;
-aumento_velocidade_martelo = 0.004;
-
-largura_zona_martelo = 0.22;
-
-
-// ==================================================
-// PREPARAR O MINIGAME DO MARTELO
-// ==================================================
-
-preparar_minigame_martelo = function()
+reiniciar_marcador = function(_bloqueio)
 {
     marcador_posicao = 0;
     marcador_direcao = 1;
 
-    // Fica um pouco mais rápido após cada acerto
+    bloqueio_entrada_minigame = _bloqueio;
+    feedback_erro = 0;
+
+    anim_minigame_roda = 0;
+};
+
+
+atualizar_marcador = function()
+{
+    marcador_posicao +=
+        velocidade_marcador
+        * marcador_direcao;
+
+    if (marcador_posicao >= 1)
+    {
+        marcador_posicao = 1;
+        marcador_direcao = -1;
+    }
+    else if (marcador_posicao <= 0)
+    {
+        marcador_posicao = 0;
+        marcador_direcao = 1;
+    }
+};
+
+
+marcador_acertou_zona = function()
+{
+    var _inicio =
+        zona_centro
+        - zona_largura * 0.5;
+
+    var _fim =
+        zona_centro
+        + zona_largura * 0.5;
+
+    return (
+        marcador_posicao >= _inicio
+        && marcador_posicao <= _fim
+    );
+};
+
+
+posicionar_player_empurrando =
+function(_player, _animar)
+{
+    _player.hsp = 0;
+
+    _player.x =
+        x - distancia_player_roda;
+
+    _player.sprite_index =
+        spr_player_empurrando;
+
+    _player.image_xscale = 1;
+    _player.direcao = 1;
+
+    if (_animar)
+    {
+        _player.image_speed = 0.18;
+    }
+    else
+    {
+        _player.image_index = 0;
+        _player.image_speed = 0;
+    }
+};
+
+
+posicionar_player_idle = function(_player)
+{
+    _player.hsp = 0;
+
+    _player.sprite_index =
+        spr_player_idle;
+
+    _player.image_index = 0;
+    _player.image_speed = 0;
+};
+
+
+parar_roda = function()
+{
+    image_index = 0;
+    image_speed = 0;
+};
+
+
+tocar_som_erro = function()
+{
+    var _som = audio_play_sound(
+        snd_opcao_mover,
+        0,
+        false
+    );
+
+    audio_sound_gain(
+        _som,
+        0.30,
+        0
+    );
+
+    audio_sound_pitch(
+        _som,
+        0.70
+    );
+};
+
+#endregion
+
+
+#region Preparação dos minigames
+
+preparar_minigame_roda = function()
+{
+    velocidade_marcador = 0.025;
+    zona_largura = 0.30;
+
+    reiniciar_marcador(12);
+    sortear_zona(0.27, 0.73);
+
+    minigame_ativo = true;
+    estado_puzzle_roda =
+        ESTADO_MINIGAME_RODA;
+};
+
+
+preparar_minigame_martelo = function()
+{
     velocidade_marcador =
         velocidade_martelo_base
         + marteladas_corretas
@@ -205,23 +301,18 @@ preparar_minigame_martelo = function()
     zona_largura =
         largura_zona_martelo;
 
-    zona_centro = random_range(
-        0.24,
-        0.76
-    );
-
-    bloqueio_entrada_minigame = 12;
-    feedback_erro = 0;
-
-    anim_minigame_roda = 0;
+    reiniciar_marcador(12);
+    sortear_zona(0.24, 0.76);
 
     minigame_ativo = true;
-    estado_puzzle_roda = 6;
+    estado_puzzle_roda =
+        ESTADO_MINIGAME_MARTELO;
 };
 
-// ==================================================
-// CONCLUIR O REPARO
-// ==================================================
+#endregion
+
+
+#region Finalização
 
 concluir_reparo_carroca = function()
 {
@@ -231,9 +322,10 @@ concluir_reparo_carroca = function()
     }
 
     reparo_iniciado = true;
-
     minigame_ativo = false;
-    estado_puzzle_roda = 7;
+
+    estado_puzzle_roda =
+        ESTADO_FINALIZANDO;
 
     global.controle_bloqueado = true;
 
@@ -247,31 +339,23 @@ concluir_reparo_carroca = function()
             global.roda_liberada = false;
 
 
-            // Troca a carroça quebrada pela consertada
-            if (instance_exists(obj_carroca_quebrada))
+            with (obj_carroca_quebrada)
             {
-                with (obj_carroca_quebrada)
-                {
-                    consertada = true;
+                consertada = true;
 
-                    sprite_index =
-                        spr_carroca_consertada;
+                sprite_index =
+                    spr_carroca_consertada;
 
-                    image_index = 0;
-                    image_speed = 0;
-                }
+                image_index = 0;
+                image_speed = 0;
             }
 
 
-            // Remove apenas o bloqueio da carroça
-            if (instance_exists(obj_solid))
+            with (obj_solid)
             {
-                with (obj_solid)
+                if (bloqueio_carroca)
                 {
-                    if (bloqueio_carroca)
-                    {
-                        instance_destroy();
-                    }
+                    instance_destroy();
                 }
             }
 
@@ -288,116 +372,82 @@ concluir_reparo_carroca = function()
     );
 };
 
-// ==================================================
-// SORTEAR A ZONA CORRETA
-// ==================================================
-
-sortear_zona_minigame = function()
-{
-    zona_centro = random_range(
-        0.27,
-        0.73
-    );
-};
+#endregion
 
 
-// ==================================================
-// PREPARAR NOVA TENTATIVA
-// ==================================================
-
-preparar_minigame_roda = function()
-{
-    marcador_posicao = 0;
-    marcador_direcao = 1;
-
-    bloqueio_entrada_minigame = 12;
-    feedback_erro = 0;
-    
-    anim_minigame_roda = 0;
-
-    sortear_zona_minigame();
-
-    minigame_ativo = true;
-    estado_puzzle_roda = 2;
-};
-
-image_speed = 0;
-
-
-// Se já foi usada, não deve reaparecer
-if (global.roda_usada)
-{
-    instance_destroy();
-    exit;
-}
-
-
-pode_interagir = global.roda_liberada;
-
+#region Interação
 
 interagir = function()
 {
     if (
         !global.roda_liberada
         || global.roda_usada
-        || sendo_empurrada
+        || estado_puzzle_roda
+            != ESTADO_PARADO
     )
     {
         exit;
     }
 
 
-    var _player = instance_find(obj_player, 0);
+    var _player =
+        instance_find(obj_player, 0);
 
-    if (_player == noone)
+    if (!instance_exists(_player))
     {
         exit;
     }
 
 
-    // A roda será empurrada somente para a direita
-    lado_empurrao = 1;
-    
-    
-    // Procura automaticamente o alvo mais próximo
-    // que esteja à direita da roda
-    alvo_roda = encontrar_alvo_roda();
-    
+    alvo_roda =
+        encontrar_alvo_roda();
+
+
     if (!instance_exists(alvo_roda))
     {
         global.dialogo_instancia.abrir(
         [
             {
                 nome: "Mensageiro",
-                texto: "Não parece haver lugar para levar esta roda."
+                texto:
+                    "Não parece haver lugar para levar esta roda."
             }
         ]);
-    
+
         exit;
     }
-    
-    
-    // Guarda o percurso completo
+
+
     x_inicio_sequencia = x;
     x_destino_sequencia = alvo_roda.x;
-    
+
     impulso_atual = 0;
     contador_impulso = 0;
     contador_espera = 0;
-    
-    // Depois do diálogo, começará o minigame
-    estado_puzzle_roda = 1;
-
 
     sendo_empurrada = true;
     pode_interagir = false;
+
+    estado_puzzle_roda =
+        ESTADO_DIALOGO_RODA;
 
 
     global.dialogo_instancia.abrir(
     [
         {
             nome: "Mensageiro",
-            texto: "Vou empurrá-la até a carroça."
+            texto:
+                "Vou empurrá-la até a carroça."
         }
     ]);
 };
+
+#endregion
+
+
+// Não deixa a roda reaparecer depois do reparo
+if (global.roda_usada)
+{
+    instance_destroy();
+    exit;
+}

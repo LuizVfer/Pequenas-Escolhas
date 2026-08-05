@@ -1,6 +1,4 @@
-// ==================================================
-// AGUARDA O FADE
-// ==================================================
+#region Fade
 
 if (
     instance_exists(global.fade_instancia)
@@ -10,39 +8,33 @@ if (
     exit;
 }
 
+#endregion
+
+
 anim_menu += 0.08;
 
 
-// ==================================================
-// ANIMAÇÃO DE ENTRADA DO MENU
-// ==================================================
+#region Entrada do menu
 
 if (!menu_pronto)
 {
     contador_entrada++;
 
-
-    alpha_fundo = min(
-        alpha_fundo + 0.025,
-        1
-    );
+    alpha_fundo =
+        min(alpha_fundo + 0.025, 1);
 
 
     if (contador_entrada >= 20)
     {
-        alpha_logo = min(
-            alpha_logo + 0.025,
-            1
-        );
+        alpha_logo =
+            min(alpha_logo + 0.025, 1);
     }
 
 
     if (contador_entrada >= 50)
     {
-        alpha_opcoes = min(
-            alpha_opcoes + 0.03,
-            1
-        );
+        alpha_opcoes =
+            min(alpha_opcoes + 0.03, 1);
     }
 
 
@@ -53,427 +45,276 @@ if (!menu_pronto)
     }
 }
 
+#endregion
 
-// ==================================================
-// MENU PRINCIPAL
-// ==================================================
 
-if (estado_menu == 0)
+#region Telas
+
+switch (estado_menu)
 {
-    // Não permite navegar durante a animação
-    if (!menu_pronto)
+    case MENU_PRINCIPAL:
     {
-        exit;
-    }
-
-
-    var _cima =
-        keyboard_check_pressed(vk_up)
-        || keyboard_check_pressed(ord("W"));
-
-    var _baixo =
-        keyboard_check_pressed(vk_down)
-        || keyboard_check_pressed(ord("S"));
-
-    var _confirmar =
-        keyboard_check_pressed(ord("E"))
-        || keyboard_check_pressed(vk_enter);
-
-
-    // Navegar para cima
-    if (_cima)
-    {
-        opcao_selecionada--;
-
-        if (opcao_selecionada < 0)
+        if (!menu_pronto)
         {
-            opcao_selecionada =
-                array_length(opcoes_menu) - 1;
+            break;
         }
 
-        tocar_som_menu_mover();
-    }
+
+        var _cima =
+            keyboard_check_pressed(vk_up)
+            || keyboard_check_pressed(ord("W"));
+
+        var _baixo =
+            keyboard_check_pressed(vk_down)
+            || keyboard_check_pressed(ord("S"));
+
+        var _confirmar =
+            keyboard_check_pressed(ord("E"))
+            || keyboard_check_pressed(vk_enter);
 
 
-    // Navegar para baixo
-    if (_baixo)
-    {
-        opcao_selecionada++;
-
-        if (
-            opcao_selecionada
-            >= array_length(opcoes_menu)
-        )
+        if (_cima)
         {
-            opcao_selecionada = 0;
+            opcao_selecionada--;
+
+            if (opcao_selecionada < 0)
+            {
+                opcao_selecionada =
+                    array_length(opcoes_menu) - 1;
+            }
+
+            tocar_som_menu_mover();
         }
 
-        tocar_som_menu_mover();
-    }
 
-
-    // Confirmar
-    if (_confirmar)
-    {
-        tocar_som_menu_confirmar();
-        
-        switch (opcao_selecionada)
+        if (_baixo)
         {
-            
-            // ==========================================
-            // JOGAR
-            // ==========================================
+            opcao_selecionada++;
 
-            case 0:
-                if (!transicao_iniciada)
+            if (
+                opcao_selecionada
+                >= array_length(opcoes_menu)
+            )
+            {
+                opcao_selecionada = 0;
+            }
+
+            tocar_som_menu_mover();
+        }
+
+
+        if (_confirmar)
+        {
+            tocar_som_menu_confirmar();
+
+
+            switch (opcao_selecionada)
+            {
+                case 0:
                 {
-                    transicao_iniciada = true;
+                    if (!transicao_iniciada)
+                    {
+                        transicao_iniciada = true;
 
 
-                    var _iniciar_jogo = method(
-                        id,
+                        var _iniciar_jogo = method(
+                            id,
 
-                        function()
-                        {
-                            global.game_instancia
-                                .resetar_progresso();
+                            function()
+                            {
+                                global.game_instancia
+                                    .resetar_progresso();
 
-                            global.controle_bloqueado = true;
+                                global.controle_bloqueado =
+                                    true;
 
-                            room_goto(rm_intro);
-                        }
-                    );
+                                room_goto(rm_intro);
+                            }
+                        );
 
 
-                    global.fade_instancia.iniciar(
-                        _iniciar_jogo,
-                        0.03,
-                        45
-                    );
+                        global.fade_instancia.iniciar(
+                            _iniciar_jogo,
+                            0.03,
+                            45
+                        );
+                    }
                 }
-            break;
+                break;
 
 
-            // ==========================================
-            // CONTROLES
-            // ==========================================
+                case 1:
+                {
+                    estado_menu =
+                        MENU_CONTROLES;
+                }
+                break;
 
-            case 1:
-                estado_menu = 1;
-            break;
+
+                case 2:
+                {
+                    estado_menu =
+                        MENU_CONFIGURACOES;
+
+                    opcao_configuracao =
+                        CONFIG_MUSICA;
+                }
+                break;
 
 
-            // ==========================================
-            // CONFIGURAÇÕES
-            // ==========================================
+                case 3:
+                {
+                    game_end();
+                }
+                break;
+            }
+        }
+    }
+    break;
 
-            case 2:
-                estado_menu = 2;
+
+    case MENU_CONTROLES:
+    {
+        var _voltar =
+            keyboard_check_pressed(vk_escape)
+            || keyboard_check_pressed(ord("E"))
+            || keyboard_check_pressed(vk_enter);
+
+
+        if (_voltar)
+        {
+            tocar_som_menu_confirmar();
+            voltar_menu_principal(1);
+        }
+    }
+    break;
+
+
+    case MENU_CONFIGURACOES:
+    {
+        var _cima =
+            keyboard_check_pressed(vk_up)
+            || keyboard_check_pressed(ord("W"));
+
+        var _baixo =
+            keyboard_check_pressed(vk_down)
+            || keyboard_check_pressed(ord("S"));
+
+        var _esquerda =
+            keyboard_check_pressed(vk_left)
+            || keyboard_check_pressed(ord("A"));
+
+        var _direita =
+            keyboard_check_pressed(vk_right)
+            || keyboard_check_pressed(ord("D"));
+
+        var _confirmar =
+            keyboard_check_pressed(ord("E"))
+            || keyboard_check_pressed(vk_enter);
+
+        var _voltar =
+            keyboard_check_pressed(vk_escape);
+
+
+        // Navegação
+        if (_cima)
+        {
+            opcao_configuracao--;
+
+            if (opcao_configuracao < 0)
+            {
+                opcao_configuracao =
+                    quantidade_configuracoes - 1;
+            }
+
+            tocar_som_menu_mover();
+        }
+
+
+        if (_baixo)
+        {
+            opcao_configuracao++;
+
+            if (
+                opcao_configuracao
+                >= quantidade_configuracoes
+            )
+            {
                 opcao_configuracao = 0;
-            break;
+            }
 
-
-            // ==========================================
-            // SAIR
-            // ==========================================
-
-            case 3:
-                game_end();
-            break;
-        }
-    }
-
-    exit;
-}
-
-
-// ==================================================
-// CONTROLES
-// ==================================================
-
-if (estado_menu == 1)
-{
-    var _voltar_controles =
-        keyboard_check_pressed(vk_escape)
-        || keyboard_check_pressed(ord("E"))
-        || keyboard_check_pressed(vk_enter);
-
-
-    if (_voltar_controles)
-    {
-        tocar_som_menu_confirmar();
-    
-        estado_menu = 0;
-        opcao_selecionada = 1;
-    }
-
-    exit;
-}
-
-
-// ==================================================
-// CONFIGURAÇÕES
-// ==================================================
-
-if (estado_menu == 2)
-{
-    var _cima =
-        keyboard_check_pressed(vk_up)
-        || keyboard_check_pressed(ord("W"));
-
-    var _baixo =
-        keyboard_check_pressed(vk_down)
-        || keyboard_check_pressed(ord("S"));
-
-    var _esquerda =
-        keyboard_check_pressed(vk_left)
-        || keyboard_check_pressed(ord("A"));
-
-    var _direita =
-        keyboard_check_pressed(vk_right)
-        || keyboard_check_pressed(ord("D"));
-
-    var _confirmar =
-        keyboard_check_pressed(ord("E"))
-        || keyboard_check_pressed(vk_enter);
-
-    var _voltar =
-        keyboard_check_pressed(vk_escape);
-
-
-    // ==============================================
-    // NAVEGAR
-    // ==============================================
-
-    if (_cima)
-    {
-        opcao_configuracao--;
-    
-        if (opcao_configuracao < 0)
-        {
-            opcao_configuracao =
-                quantidade_configuracoes - 1;
-        }
-    
-        tocar_som_menu_mover();
-    }
-
-
-    if (_baixo)
-    {
-        opcao_configuracao++;
-    
-        if (
-            opcao_configuracao
-            >= quantidade_configuracoes
-        )
-        {
-            opcao_configuracao = 0;
-        }
-    
-        tocar_som_menu_mover();
-    }
-
-
-    // ==============================================
-    // ALTERAR PARA A ESQUERDA
-    // ==============================================
-
-    if (_esquerda)
-    {
-        switch (opcao_configuracao)
-        {
-            // Volume da música
-            case 0:
-                global.volume_musica =
-                    clamp(
-                        round(
-                            (
-                                global.volume_musica
-                                - passo_volume
-                            ) * 10
-                        ) / 10,
-                        0,
-                        1
-                    );
-
-                audio_group_set_gain(
-                    audiogroup_musica,
-                    global.volume_musica,
-                    0
-                );
-
-                global.game_instancia
-                    .salvar_configuracoes();
-            break;
-
-
-            // Volume dos efeitos
-            case 1:
-                global.volume_efeitos =
-                    clamp(
-                        round(
-                            (
-                                global.volume_efeitos
-                                - passo_volume
-                            ) * 10
-                        ) / 10,
-                        0,
-                        1
-                    );
-
-                audio_group_set_gain(
-                    audiogroup_efeitos,
-                    global.volume_efeitos,
-                    0
-                );
-
-                global.game_instancia
-                    .salvar_configuracoes();
-            break;
-
-
-            // Tela cheia
-            case 2:
-                global.tela_cheia =
-                    !global.tela_cheia;
-
-                window_set_fullscreen(
-                    global.tela_cheia
-                );
-
-                global.game_instancia
-                    .salvar_configuracoes();
-            break;
-        }
-        
-        if (opcao_configuracao <= 2)
-        {
             tocar_som_menu_mover();
         }
-    }
 
 
-    // ==============================================
-    // ALTERAR PARA A DIREITA
-    // ==============================================
-
-    if (_direita)
-    {
-        switch (opcao_configuracao)
+        // Ajustes laterais
+        if (_esquerda || _direita)
         {
-            // Volume da música
-            case 0:
-                global.volume_musica =
-                    clamp(
-                        round(
-                            (
-                                global.volume_musica
-                                + passo_volume
-                            ) * 10
-                        ) / 10,
-                        0,
-                        1
+            var _direcao =
+                _direita ? 1 : -1;
+
+
+            switch (opcao_configuracao)
+            {
+                case CONFIG_MUSICA:
+                {
+                    alterar_volume_musica(
+                        _direcao
                     );
 
-                audio_group_set_gain(
-                    audiogroup_musica,
-                    global.volume_musica,
-                    0
-                );
-
-                global.game_instancia
-                    .salvar_configuracoes();
-            break;
+                    tocar_som_menu_mover();
+                }
+                break;
 
 
-            // Volume dos efeitos
-            case 1:
-                global.volume_efeitos =
-                    clamp(
-                        round(
-                            (
-                                global.volume_efeitos
-                                + passo_volume
-                            ) * 10
-                        ) / 10,
-                        0,
-                        1
+                case CONFIG_EFEITOS:
+                {
+                    alterar_volume_efeitos(
+                        _direcao
                     );
 
-                audio_group_set_gain(
-                    audiogroup_efeitos,
-                    global.volume_efeitos,
-                    0
-                );
-
-                global.game_instancia
-                    .salvar_configuracoes();
-            break;
+                    tocar_som_menu_mover();
+                }
+                break;
 
 
-            // Tela cheia
-            case 2:
-                global.tela_cheia =
-                    !global.tela_cheia;
-
-                window_set_fullscreen(
-                    global.tela_cheia
-                );
-
-                global.game_instancia
-                    .salvar_configuracoes();
-            break;
+                case CONFIG_TELA_CHEIA:
+                {
+                    alternar_tela_cheia();
+                    tocar_som_menu_mover();
+                }
+                break;
+            }
         }
-        
-        if (opcao_configuracao <= 2)
+
+
+        // Confirmação
+        if (_confirmar)
         {
-            tocar_som_menu_mover();
+            if (
+                opcao_configuracao
+                == CONFIG_TELA_CHEIA
+            )
+            {
+                tocar_som_menu_confirmar();
+                alternar_tela_cheia();
+            }
+            else if (
+                opcao_configuracao
+                == CONFIG_VOLTAR
+            )
+            {
+                tocar_som_menu_confirmar();
+                voltar_menu_principal(2);
+            }
         }
-    }
-
-
-    // ==============================================
-    // CONFIRMAR
-    // ==============================================
-
-    if (_confirmar)
-    {
-        // Tela cheia
-        if (opcao_configuracao == 2)
+        else if (_voltar)
         {
             tocar_som_menu_confirmar();
-    
-            global.tela_cheia =
-                !global.tela_cheia;
-    
-            window_set_fullscreen(
-                global.tela_cheia
-            );
-    
-            global.game_instancia
-                .salvar_configuracoes();
-        }
-    
-        // Voltar
-        else if (opcao_configuracao == 3)
-        {
-            tocar_som_menu_confirmar();
-    
-            estado_menu = 0;
-            opcao_selecionada = 2;
+            voltar_menu_principal(2);
         }
     }
-
-
-    // Esc também volta
-    if (_voltar)
-    {
-        tocar_som_menu_confirmar();
-    
-        estado_menu = 0;
-        opcao_selecionada = 2;
-    }
-
-    exit;
+    break;
 }
+
+#endregion
