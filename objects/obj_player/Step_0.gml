@@ -1,19 +1,33 @@
-// Executa o estado atual do player
-roda_estado();
+#region Atualizar estado e animações
 
-// ==================================================
-// SOM DOS PASSOS
-// ==================================================
+// A martelada possui prioridade sobre
+// idle, walk e o estado bloqueado
+var _martelando =
+    atualizar_animacao_martelo();
+
+
+if (!_martelando)
+{
+    roda_estado();
+}
+
+#endregion
+
+
+#region Som dos passos
 
 var _deslocamento_passos =
-    abs(x - x_anterior_passos);
+    abs(
+        x - x_anterior_passos
+    );
+
 
 x_anterior_passos = x;
 
 
-// O player realmente se moveu
 if (
     !global.controle_bloqueado
+    && !animacao_martelo_ativa
     && _deslocamento_passos > 0.01
 )
 {
@@ -29,15 +43,14 @@ if (
         distancia_passos_acumulada = 0;
 
 
-        // Alterna levemente entre grave e agudo
-        var _pitch_passo = 0.94;
+        var _pitch_passo =
+            passo_alternado
+            ? 1.06
+            : 0.94;
 
-        if (passo_alternado)
-        {
-            _pitch_passo = 1.06;
-        }
 
-        passo_alternado = !passo_alternado;
+        passo_alternado =
+            !passo_alternado;
 
 
         audio_play_sound(
@@ -52,66 +65,96 @@ if (
 }
 else
 {
-    // Evita tocar imediatamente depois de ficar parado
     distancia_passos_acumulada = 0;
 }
 
-// Limpa a interação anterior
+#endregion
+
+
+#region Procurar interação
+
 interagivel_atual = noone;
 global.interacao_ativa = noone;
 
+
 if (!global.controle_bloqueado)
 {
-    var _melhor_distancia = 1000000;
-    var _melhor_prioridade = -1000000;
+    var _melhor_distancia =
+        infinity;
+
+    var _melhor_prioridade =
+        -infinity;
+
 
     var _quantidade =
-        instance_number(obj_par_interagivel);
-
-    for (var _i = 0; _i < _quantidade; _i++)
-    {
-        var _alvo = instance_find(
-            obj_par_interagivel,
-            _i
+        instance_number(
+            obj_par_interagivel
         );
+
+
+    for (
+        var _i = 0;
+        _i < _quantidade;
+        _i++
+    )
+    {
+        var _alvo =
+            instance_find(
+                obj_par_interagivel,
+                _i
+            );
+
 
         if (!instance_exists(_alvo))
         {
             continue;
         }
 
+
         if (!_alvo.pode_interagir)
         {
             continue;
         }
 
+
         var _ponto_x =
-            _alvo.x + _alvo.offset_interacao_x;
-        
+            _alvo.x
+            + _alvo.offset_interacao_x;
+
+
         var _ponto_y =
-            _alvo.y + _alvo.offset_interacao_y;
-        
-        var _distancia = point_distance(
-            x,
-            y,
-            _ponto_x,
-            _ponto_y
-        );
+            _alvo.y
+            + _alvo.offset_interacao_y;
+
+
+        var _distancia =
+            point_distance(
+                x,
+                y,
+                _ponto_x,
+                _ponto_y
+            );
+
 
         var _prioridade =
             _alvo.prioridade_interacao;
+
 
         var _dentro_da_distancia =
             _distancia
             <= _alvo.distancia_interacao;
 
+
         var _prioridade_melhor =
             _prioridade
             > _melhor_prioridade;
 
+
         var _mesma_prioridade_mais_perto =
-            _prioridade == _melhor_prioridade
-            && _distancia < _melhor_distancia;
+            _prioridade
+                == _melhor_prioridade
+            && _distancia
+                < _melhor_distancia;
 
 
         if (
@@ -122,48 +165,68 @@ if (!global.controle_bloqueado)
             )
         )
         {
-            _melhor_prioridade = _prioridade;
-            _melhor_distancia = _distancia;
-            interagivel_atual = _alvo;
+            _melhor_prioridade =
+                _prioridade;
+
+            _melhor_distancia =
+                _distancia;
+
+            interagivel_atual =
+                _alvo;
         }
     }
+}
+
+#endregion
 
 
-    if (instance_exists(interagivel_atual))
+#region Executar interação
+
+if (instance_exists(interagivel_atual))
+{
+    global.interacao_ativa =
+        interagivel_atual;
+
+
+    if (
+        keyboard_check_pressed(
+            ord("E")
+        )
+    )
     {
-        global.interacao_ativa =
+        var _alvo_final =
             interagivel_atual;
 
-        if (keyboard_check_pressed(ord("E")))
-        {
-            var _alvo_final =
-                interagivel_atual;
-        
-        
-            // Som ao iniciar a interação
-            var _som_interacao = audio_play_sound(
+
+        var _som_interacao =
+            audio_play_sound(
                 snd_interacao,
                 0,
                 false
             );
-        
+
+
+        if (_som_interacao != -1)
+        {
             audio_sound_gain(
                 _som_interacao,
                 0.40,
                 0
             );
-        
+
+
             audio_sound_pitch(
                 _som_interacao,
                 0.90
             );
-        
-        
-            // Executa a interação do objeto selecionado
-            with (_alvo_final)
-            {
-                interagir();
-            }
+        }
+
+
+        with (_alvo_final)
+        {
+            interagir();
         }
     }
 }
+
+#endregion

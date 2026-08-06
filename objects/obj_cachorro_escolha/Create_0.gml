@@ -1,51 +1,67 @@
 event_inherited();
 
-distancia_interacao = 48;
+
+#region Configuração da interação
+
 offset_indicador_y = 12;
 prioridade_interacao = 10;
+opcao_cachorro_pendente = -1;
 
-// Estado visual
+#endregion
+
+
+#region Estado visual
+
 alimentado = false;
 libertado = false;
 
-// A escolha já foi feita anteriormente
-if (global.escolha_cachorro != -1)
-{
-    pode_interagir = false;
 
-    switch (global.escolha_cachorro)
-    {
-        case 0:
-            libertado = true;
-            alimentado = false;
-            sprite_index = spr_cachorro_livre;
-        break;
-    
-        case 1:
-            libertado = true;
-            alimentado = true;
-            sprite_index = spr_cachorro_livre;
-        break;
-    
-        case 2:
-            libertado = false;
-            alimentado = false;
-            sprite_index = spr_cachorro_preso;
-        break;
-    }
-}
-else
+// Restaura o resultado caso a escolha já tenha sido feita
+switch (global.escolha_cachorro)
 {
-    pode_interagir = true;
+    // Libertou o cachorro
+    case 0:
+        libertado = true;
+        alimentado = false;
+
+        sprite_index = spr_cachorro_livre;
+    break;
+
+
+    // Alimentou e libertou
+    case 1:
+        libertado = true;
+        alimentado = true;
+
+        sprite_index = spr_cachorro_livre;
+    break;
+
+
+    // Ignorou ou ainda não realizou a escolha
+    default:
+        libertado = false;
+        alimentado = false;
+
+        sprite_index = spr_cachorro_preso;
+    break;
 }
 
-// ==================================================
-// SOM DA ARMADILHA
-// ==================================================
+
+image_index = 0;
+image_speed = 0;
+
+pode_interagir =
+    global.escolha_cachorro == -1;
+
+#endregion
+
+
+#region Som da armadilha
 
 tocar_som_armadilha = function()
 {
-    // Abaixa a música para destacar o efeito
+    // Abaixa temporariamente a música
+    // para destacar o efeito
     if (instance_exists(global.game_instancia))
     {
         global.game_instancia
@@ -55,102 +71,169 @@ tocar_som_armadilha = function()
             );
     }
 
-    var _som = audio_play_sound(
+
+    var _som_armadilha = audio_play_sound(
         snd_armadilha,
         2,
         false
     );
 
+
     audio_sound_gain(
-        _som,
+        _som_armadilha,
         0.70,
         0
     );
 
     audio_sound_pitch(
-        _som,
+        _som_armadilha,
         0.95
     );
 };
 
+#endregion
 
-// ==================================================
-// INTERAÇÃO
-// ==================================================
+
+#region Aplicar escolha
+
+aplicar_escolha_cachorro = function(_opcao)
+{
+    global.escolha_cachorro = _opcao;
+    pode_interagir = false;
+
+
+    switch (_opcao)
+    {
+        // Libertar
+        case 0:
+            libertado = true;
+            alimentado = false;
+
+            sprite_index = spr_cachorro_livre;
+
+            tocar_som_armadilha();
+        break;
+
+
+        // Alimentar e libertar
+        case 1:
+            libertado = true;
+            alimentado = true;
+
+            sprite_index = spr_cachorro_livre;
+
+            tocar_som_armadilha();
+        break;
+
+
+        // Ignorar
+        case 2:
+            libertado = false;
+            alimentado = false;
+
+            sprite_index = spr_cachorro_preso;
+        break;
+
+
+        // Segurança para um valor inválido
+        default:
+            global.escolha_cachorro = -1;
+            pode_interagir = true;
+            exit;
+    }
+
+
+    image_index = 0;
+    image_speed = 0;
+};
+
+#endregion
+
+
+#region Interação
 
 interagir = function()
 {
-    if (global.escolha_cachorro != -1)
+    // Impede que uma nova escolha seja realizada
+    if (
+        global.escolha_cachorro != -1
+        || !pode_interagir
+    )
     {
         exit;
     }
 
+
     var _salvar_escolha = method(
         id,
-    
+
         function(_opcao)
         {
-            global.escolha_cachorro = _opcao;
-            pode_interagir = false;
-    
-    
             // ==========================================
             // LIBERTAR OU ALIMENTAR E LIBERTAR
             // ==========================================
-            
-            if (
-                _opcao == 0
-                || _opcao == 1
-            )
+
+            if (_opcao == 0 || _opcao == 1)
             {
-                var _mostrar_cachorro_livre = method(
+                // Guarda a escolha na instância.
+                // O callback será executado somente
+                // depois que o fade terminar.
+                opcao_cachorro_pendente =
+                    _opcao;
+
+
+                var _aplicar_resultado = method(
                     id,
-            
+
                     function()
                     {
-                        libertado = true;
-            
-                        alimentado =
-                            (global.escolha_cachorro == 1);
-                        
-                        tocar_som_armadilha();
-            
-                        sprite_index =
-                            spr_cachorro_livre;
-            
-                        image_index = 0;
-                        image_speed = 0;
+                        // Recupera a escolha armazenada
+                        var _opcao_salva =
+                            opcao_cachorro_pendente;
+
+
+                        // Limpa a opção pendente
+                        opcao_cachorro_pendente =
+                            -1;
+
+
+                        aplicar_escolha_cachorro(
+                            _opcao_salva
+                        );
                     }
                 );
-            
-            
-                global.dialogo_instancia
-                    .desbloqueio_atrasado = 0;
-            
-            
-                global.fade_instancia.iniciar(
-                    _mostrar_cachorro_livre,
-                    0.05,
-                    45
-                );
+
+
+                var _fade_iniciado =
+                    global.fade_instancia.iniciar(
+                        _aplicar_resultado,
+                        0.05,
+                        45
+                    );
+
+
+                // Bloqueia a interação somente se
+                // a transição realmente começar
+                if (_fade_iniciado)
+                {
+                    pode_interagir = false;
+                }
+                else
+                {
+                    // O fade não começou, portanto
+                    // não existe escolha aguardando
+                    opcao_cachorro_pendente = -1;
+                }
+
+
+                exit;
             }
-    
-    
-            // ==========================================
-            // IGNORAR
-            // ==========================================
-    
-            else
-            {
-                libertado = false;
-                alimentado = false;
-    
-                sprite_index =
-                    spr_cachorro_preso;
-    
-                image_index = 0;
-                image_speed = 0;
-            }
+
+
+            // Ignorar não precisa de transição visual
+            aplicar_escolha_cachorro(
+                _opcao
+            );
         }
     );
 
@@ -169,3 +252,6 @@ interagir = function()
         _salvar_escolha
     );
 };
+
+#endregion
+

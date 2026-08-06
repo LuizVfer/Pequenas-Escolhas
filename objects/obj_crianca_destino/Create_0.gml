@@ -4,40 +4,29 @@ event_inherited();
 #region Configuração visual
 
 image_speed = 0;
+image_index = 0;
 
 
-// Restaura o resultado ao entrar novamente na room
+// Restaura o resultado da escolha ao entrar na room
 switch (global.escolha_brinquedo)
 {
-    // Ajudou a criança
+    // Brinquedo recuperado
     case 0:
-    {
-        sprite_index =
-            spr_crianca_brinquedo;
-    }
+        sprite_index = spr_crianca_brinquedo;
     break;
 
 
-    // Derrubou o brinquedo e ele quebrou
+    // Brinquedo quebrado
     case 1:
-    {
-        sprite_index =
-            spr_crianca_brinquedo_quebrado;
-    }
+        sprite_index = spr_crianca_brinquedo_quebrado;
     break;
 
 
-    // Ignorou ou ainda não escolheu
+    // Escolha ainda não realizada ou ignorada
     default:
-    {
-        sprite_index =
-            spr_crianca_alcancando;
-    }
+        sprite_index = spr_crianca_alcancando;
     break;
 }
-
-
-image_index = 0;
 
 #endregion
 
@@ -45,15 +34,14 @@ image_index = 0;
 #region Configuração da interação
 
 distancia_interacao = 44;
-offset_indicador_y = 12;
 prioridade_interacao = 5;
 
-pode_interagir = true;
+offset_indicador_y = 12;
 
 #endregion
 
 
-#region Função de interação
+#region Interação
 
 interagir = function()
 {
@@ -64,59 +52,51 @@ interagir = function()
 
 
     // ==================================================
-    // AJUDOU A CRIANÇA
+    // RESULTADO DA ESCOLHA
     // ==================================================
 
-    if (global.escolha_brinquedo == 0)
+    switch (global.escolha_brinquedo)
     {
-        global.dialogo_instancia.abrir(
-        [
-            {
-                nome: "Criança",
-                texto:
-                    "Obrigado por recuperar meu brinquedo."
-            }
-        ]);
+        // Ajudou a criança
+        case 0:
+            global.dialogo_instancia.abrir(
+            [
+                {
+                    nome: "Criança",
+                    texto: "Você conseguiu! Meu brinquedo está inteiro. Agora vou tomar mais cuidado com ele."
+                }
+            ]);
 
-        exit;
-    }
-
-
-    // ==================================================
-    // BRINQUEDO FOI QUEBRADO
-    // ==================================================
-
-    if (global.escolha_brinquedo == 1)
-    {
-        global.dialogo_instancia.abrir(
-        [
-            {
-                nome: "Criança",
-                texto:
-                    "Ele caiu... mas acabou quebrando."
-            }
-        ]);
-
-        exit;
-    }
+            exit;
+        break;
 
 
-    // ==================================================
-    // JOGADOR IGNOROU
-    // ==================================================
+        // Derrubou o brinquedo com uma pedra
+        case 1:
+            global.dialogo_instancia.abrir(
+            [
+                {
+                    nome: "Criança",
+                    texto: "Ele caiu... mas se quebrou. Talvez alguém consiga consertá-lo."
+                }
+            ]);
 
-    if (global.escolha_brinquedo == 2)
-    {
-        global.dialogo_instancia.abrir(
-        [
-            {
-                nome: "",
-                texto:
-                    "A criança continua tentando alcançar o brinquedo."
-            }
-        ]);
+            exit;
+        break;
 
-        exit;
+
+        // Não fez nada
+        case 2:
+            global.dialogo_instancia.abrir(
+            [
+                {
+                    nome: "",
+                    texto: "A criança continua estendendo os braços, mas o brinquedo permanece fora de seu alcance."
+                }
+            ]);
+
+            exit;
+        break;
     }
 
 
@@ -126,23 +106,26 @@ interagir = function()
 
     if (!global.crianca_destino_conversada)
     {
-        global.crianca_destino_conversada = true;
-
-
-        global.dialogo_instancia.abrir(
+        var _dialogo_aberto = global.dialogo_instancia.abrir(
         [
             {
                 nome: "Criança",
-                texto:
-                    "Meu brinquedo ficou preso nos galhos."
+                texto: "O vento levou meu brinquedo, e ele ficou preso nos galhos."
             },
 
             {
                 nome: "Criança",
-                texto:
-                    "Eu tentei alcançar, mas ele está muito alto."
+                texto: "Já tentei alcançar, mas está alto demais para mim."
             }
         ]);
+
+
+        // Libera a interação com o brinquedo somente
+        // se o diálogo realmente conseguir abrir
+        if (_dialogo_aberto)
+        {
+            global.crianca_destino_conversada = true;
+        }
 
         exit;
     }
@@ -156,8 +139,7 @@ interagir = function()
     [
         {
             nome: "Criança",
-            texto:
-                "Meu brinquedo ainda está preso na árvore."
+            texto: "Meu brinquedo ainda está preso nos galhos. Não consigo alcançá-lo."
         }
     ]);
 };

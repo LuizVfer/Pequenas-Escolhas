@@ -1,9 +1,9 @@
 event_inherited();
 
-distancia_interacao = 48;
+// Ajuste visual exclusivo do ferreiro
 offset_indicador_y = 12;
 
-
+// Interação com o ferreiro
 interagir = function()
 {
     // Carroça já consertada
@@ -13,53 +13,55 @@ interagir = function()
         [
             {
                 nome: "Ferreiro",
-                texto: "Pronto. A roda está firme novamente."
+                texto: "Pronto. A roda está firme de novo."
             },
 
             {
                 nome: "Ferreiro",
-                texto: "Uma pequena ajuda pode manter uma longa viagem em movimento."
+                texto: "Obrigado pela ajuda. Agora posso tirar a carroça do caminho."
             }
         ]);
 
         exit;
     }
-
 
     // Primeira conversa
     if (!global.ferreiro_conversado)
     {
-        global.ferreiro_conversado = true;
-        global.roda_liberada = true;
-
-        global.dialogo_instancia.abrir(
+        var _dialogo_aberto = global.dialogo_instancia.abrir(
         [
             {
                 nome: "Ferreiro",
-                texto: "Essa carroça não irá muito longe sem a roda que se soltou."
+                texto: "Uma das rodas se soltou e foi parar ali. Sem ela, não consigo mover a carroça."
             },
 
             {
                 nome: "Ferreiro",
-                texto: "Se puder empurrá-la até aqui, eu consigo colocá-la de volta."
+                texto: "Você poderia empurrá-la até aqui e fixá-la ao eixo? O martelo está junto à carroça."
             },
 
             {
                 nome: "Mensageiro",
-                texto: "Vou cuidar disso."
+                texto: "Posso fazer isso."
             }
         ]);
 
+        // Libera a roda somente se o diálogo abrir
+        if (_dialogo_aberto)
+        {
+            global.ferreiro_conversado = true;
+            global.roda_liberada = true;
+        }
+
         exit;
     }
-
 
     // Ainda aguardando a roda
     global.dialogo_instancia.abrir(
     [
         {
             nome: "Ferreiro",
-            texto: "A roda está ali. Traga-a até a carroça e eu cuidarei do resto."
+            texto: "A roda está logo ali. Traga-a até a carroça e use o martelo para fixá-la."
         }
     ]);
 };

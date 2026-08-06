@@ -1,37 +1,39 @@
 event_inherited();
 
+
+#region Configuração da interação
+
 distancia_interacao = 56;
-offset_indicador_y = 12;
 prioridade_interacao = 10;
 
-// Ajuste conforme o local do brinquedo na árvore
+offset_indicador_y = 12;
+
+// Ponto de interação próximo ao brinquedo na árvore
 offset_interacao_x = 0;
 offset_interacao_y = 32;
 
+#endregion
 
-// A escolha já foi feita
-if (global.escolha_brinquedo != -1)
-{
-    pode_interagir = false;
 
-    // Nas opções 0 e 1, o brinquedo já caiu da árvore
-    if (
-        global.escolha_brinquedo == 0
-        || global.escolha_brinquedo == 1
-    )
-    {
-        visible = false;
-    }
-}
-else
-{
-    pode_interagir =
-        global.crianca_destino_conversada;
-}
+#region Restaurar estado
 
-// ==================================================
-// APLICAR RESULTADO DA ESCOLHA
-// ==================================================
+// O brinquedo desaparece da árvore caso tenha sido
+// recuperado ou derrubado
+visible = !(
+    global.escolha_brinquedo == 0
+    || global.escolha_brinquedo == 1
+);
+
+// A escolha só é liberada depois de conversar
+// com a criança
+pode_interagir =
+    global.crianca_destino_conversada
+    && global.escolha_brinquedo == -1;
+
+#endregion
+
+
+#region Aplicar resultado da escolha
 
 aplicar_escolha_brinquedo = function()
 {
@@ -40,16 +42,11 @@ aplicar_escolha_brinquedo = function()
 
     switch (global.escolha_brinquedo)
     {
-        // ==========================================
-        // AJUDAR A CRIANÇA
-        // ==========================================
-
+        // Ajudar a criança
         case 0:
             with (obj_crianca_destino)
             {
-                sprite_index =
-                    spr_crianca_brinquedo;
-
+                sprite_index = spr_crianca_brinquedo;
                 image_index = 0;
                 image_speed = 0;
             }
@@ -57,20 +54,15 @@ aplicar_escolha_brinquedo = function()
             visible = false;
 
             _mensagem =
-                "Você alcançou o brinquedo e o entregou à criança.";
+                "Com algum esforço, o mensageiro alcança o brinquedo e o devolve à criança.";
         break;
 
 
-        // ==========================================
-        // DERRUBAR COM UMA PEDRA
-        // ==========================================
-
+        // Derrubar com uma pedra
         case 1:
             with (obj_crianca_destino)
             {
-                sprite_index =
-                    spr_crianca_brinquedo_quebrado;
-
+                sprite_index = spr_crianca_brinquedo_quebrado;
                 image_index = 0;
                 image_speed = 0;
             }
@@ -78,27 +70,27 @@ aplicar_escolha_brinquedo = function()
             visible = false;
 
             _mensagem =
-                "Você lançou uma pedra. O brinquedo caiu, mas se partiu.";
+                "A pedra atinge o galho. O brinquedo cai, mas se quebra ao tocar o chão.";
         break;
 
 
-        // ==========================================
-        // NÃO FAZER NADA
-        // ==========================================
-
+        // Não fazer nada
         case 2:
             with (obj_crianca_destino)
             {
-                sprite_index =
-                    spr_crianca_alcancando;
-
+                sprite_index = spr_crianca_alcancando;
                 image_index = 0;
                 image_speed = 0;
             }
 
             _mensagem =
-                "Você decidiu continuar seu caminho.";
+                "O mensageiro decide não interferir e segue seu caminho.";
         break;
+
+
+        // Segurança para um valor inválido
+        default:
+            exit;
     }
 
 
@@ -117,13 +109,14 @@ aplicar_escolha_brinquedo = function()
     ]);
 };
 
+#endregion
 
-// ==================================================
-// INTERAÇÃO
-// ==================================================
+
+#region Interação
 
 interagir = function()
 {
+    // Impede que outra escolha seja feita
     if (global.escolha_brinquedo != -1)
     {
         exit;
@@ -139,14 +132,9 @@ interagir = function()
             pode_interagir = false;
 
 
-            // ==========================================
-            // OPÇÕES QUE ALTERAM OS OBJETOS
-            // ==========================================
-
-            if (
-                _opcao == 0
-                || _opcao == 1
-            )
+            // As opções que alteram os sprites
+            // utilizam uma transição
+            if (_opcao == 0 || _opcao == 1)
             {
                 var _aplicar_resultado = method(
                     id,
@@ -158,10 +146,8 @@ interagir = function()
                 );
 
 
-                // Impede o diálogo anterior de liberar
-                // o jogador durante o fade
-                global.dialogo_instancia
-                    .desbloqueio_atrasado = 0;
+                // O controle permanecerá bloqueado durante o fade
+                global.dialogo_instancia.desbloqueio_atrasado = 0;
 
 
                 global.fade_instancia.iniciar(
@@ -169,17 +155,13 @@ interagir = function()
                     0.05,
                     0
                 );
+
+                exit;
             }
 
 
-            // ==========================================
-            // NÃO FAZER NADA
-            // ==========================================
-
-            else
-            {
-                aplicar_escolha_brinquedo();
-            }
+            // Não fazer nada não precisa de transição
+            aplicar_escolha_brinquedo();
         }
     );
 
@@ -187,7 +169,7 @@ interagir = function()
     global.dialogo_instancia.abrir_escolha(
         "Mensageiro",
 
-        "O brinquedo da criança está preso entre os galhos. O que fazer?",
+        "O brinquedo está preso entre os galhos, longe do alcance da criança. O que fazer?",
 
         [
             "Ajudar a criança",
@@ -198,3 +180,5 @@ interagir = function()
         _salvar_escolha
     );
 };
+
+#endregion

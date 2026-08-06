@@ -1,4 +1,4 @@
-#region Bloqueio de interação
+#region Bloqueio da interação
 
 if (bloqueio_interacao > 0)
 {
@@ -8,6 +8,7 @@ if (bloqueio_interacao > 0)
 #endregion
 
 
+// Movimento visual da interface
 anim_puzzle += 0.08;
 
 
@@ -15,26 +16,28 @@ anim_puzzle += 0.08;
 
 switch (estado_cacador)
 {
-    // --------------------------------------------------
-    // Aguardando interação
-    // --------------------------------------------------
+    // ==================================================
+    // AGUARDANDO INTERAÇÃO
+    // ==================================================
 
-   case CACADOR_PARADO:
+    case CACADOR_PARADO:
     {
         pode_interagir =
-            bloqueio_interacao <= 0;
+            bloqueio_interacao <= 0
+            && !transicao_iniciada;
     }
     break;
 
-    // --------------------------------------------------
-    // Aguarda o diálogo inicial terminar
-    // --------------------------------------------------
+
+    // ==================================================
+    // AGUARDAR O DIÁLOGO INICIAL
+    // ==================================================
 
     case CACADOR_DIALOGO:
     {
         pode_interagir = false;
 
-
+        // Abre o puzzle depois que o diálogo terminar
         if (!global.controle_bloqueado)
         {
             abrir_puzzle_corda();
@@ -42,32 +45,29 @@ switch (estado_cacador)
     }
     break;
 
-// --------------------------------------------------
-// Conversa depois que o caminho foi liberado
-// --------------------------------------------------
+
+    // ==================================================
+    // AGUARDAR O DIÁLOGO FINAL
+    // ==================================================
 
     case CACADOR_DIALOGO_FINAL:
     {
         pode_interagir = false;
-    
-    
-        // Aguarda o diálogo fechar
+
         if (!global.controle_bloqueado)
         {
-            estado_cacador =
-                CACADOR_PARADO;
-    
-            // Evita que o mesmo E reabra a conversa
+            estado_cacador = CACADOR_PARADO;
+
+            // Impede que o mesmo E reabra a conversa
             bloqueio_interacao = 10;
-            pode_interagir = false;
         }
     }
     break;
 
 
-    // --------------------------------------------------
-    // Puzzle das cordas
-    // --------------------------------------------------
+    // ==================================================
+    // PUZZLE DAS CORDAS
+    // ==================================================
 
     case CACADOR_PUZZLE:
     {
@@ -91,97 +91,7 @@ switch (estado_cacador)
             keyboard_check_pressed(vk_escape);
 
 
-        // Selecionar a peça anterior
-        if (_esquerda)
-        {
-            peca_selecionada--;
-
-            if (peca_selecionada < 0)
-            {
-                peca_selecionada =
-                    quantidade_pecas - 1;
-            }
-
-
-            var _som_mover =
-                audio_play_sound(
-                    snd_opcao_mover,
-                    0,
-                    false
-                );
-
-            audio_sound_gain(
-                _som_mover,
-                0.35,
-                0
-            );
-        }
-
-
-        // Selecionar a próxima peça
-        else if (_direita)
-        {
-            peca_selecionada++;
-
-            if (
-                peca_selecionada
-                >= quantidade_pecas
-            )
-            {
-                peca_selecionada = 0;
-            }
-
-
-            var _som_mover =
-                audio_play_sound(
-                    snd_opcao_mover,
-                    0,
-                    false
-                );
-
-            audio_sound_gain(
-                _som_mover,
-                0.35,
-                0
-            );
-        }
-
-
-        // Girar a peça selecionada
-        if (_girar)
-        {
-            girar_peca(peca_selecionada);
-
-
-            var _som_girar =
-                audio_play_sound(
-                    snd_opcao_confirmar,
-                    1,
-                    false
-                );
-
-            audio_sound_gain(
-                _som_girar,
-                0.50,
-                0
-            );
-
-
-            // Verifica a solução
-            if (puzzle_corda_resolvido())
-            {
-                estado_cacador =
-                    CACADOR_CONCLUIDO;
-
-                contador_conclusao =
-                    espera_conclusao;
-
-                transicao_iniciada = false;
-            }
-        }
-
-
-        // Fecha sem perder as rotações
+        // Sair possui prioridade sobre os outros comandos
         if (_sair)
         {
             var _som_sair =
@@ -199,21 +109,118 @@ switch (estado_cacador)
 
             fechar_puzzle_corda();
         }
+        else
+        {
+            // ------------------------------------------
+            // SELECIONAR A PEÇA ANTERIOR
+            // ------------------------------------------
+
+            if (_esquerda)
+            {
+                peca_selecionada--;
+
+                if (peca_selecionada < 0)
+                {
+                    peca_selecionada =
+                        quantidade_pecas - 1;
+                }
+
+                var _som_esquerda =
+                    audio_play_sound(
+                        snd_opcao_mover,
+                        0,
+                        false
+                    );
+
+                audio_sound_gain(
+                    _som_esquerda,
+                    0.35,
+                    0
+                );
+            }
+
+
+            // ------------------------------------------
+            // SELECIONAR A PRÓXIMA PEÇA
+            // ------------------------------------------
+
+            else if (_direita)
+            {
+                peca_selecionada++;
+
+                if (
+                    peca_selecionada
+                    >= quantidade_pecas
+                )
+                {
+                    peca_selecionada = 0;
+                }
+
+                var _som_direita =
+                    audio_play_sound(
+                        snd_opcao_mover,
+                        0,
+                        false
+                    );
+
+                audio_sound_gain(
+                    _som_direita,
+                    0.35,
+                    0
+                );
+            }
+
+
+            // ------------------------------------------
+            // GIRAR A PEÇA SELECIONADA
+            // ------------------------------------------
+
+            if (_girar)
+            {
+                girar_peca(peca_selecionada);
+
+                var _som_girar =
+                    audio_play_sound(
+                        snd_opcao_confirmar,
+                        1,
+                        false
+                    );
+
+                audio_sound_gain(
+                    _som_girar,
+                    0.50,
+                    0
+                );
+
+
+                // Verifica se todas as peças estão alinhadas
+                if (puzzle_corda_resolvido())
+                {
+                    estado_cacador =
+                        CACADOR_CONCLUIDO;
+
+                    contador_conclusao =
+                        espera_conclusao;
+
+                    transicao_iniciada = false;
+                }
+            }
+        }
     }
     break;
 
 
-    // --------------------------------------------------
-    // Mostra a corda resolvida antes do fade
-    // --------------------------------------------------
+    // ==================================================
+    // MOSTRAR A SOLUÇÃO ANTES DO FADE
+    // ==================================================
 
     case CACADOR_CONCLUIDO:
     {
         global.controle_bloqueado = true;
         pode_interagir = false;
 
-
-        contador_conclusao--;
+        contador_conclusao =
+            max(0, contador_conclusao - 1);
 
 
         if (
@@ -221,10 +228,6 @@ switch (estado_cacador)
             && !transicao_iniciada
         )
         {
-            transicao_iniciada = true;
-            estado_cacador = CACADOR_FADE;
-
-
             var _liberar_caminho = method(
                 id,
 
@@ -233,38 +236,47 @@ switch (estado_cacador)
                     global.caminho_cacador_liberado =
                         true;
 
-
-                    // Remove o bloqueio da saída
+                    // Remove o bloqueio da passagem
                     with (obj_bloqueio_cacador)
                     {
                         instance_destroy();
                     }
 
+                    estado_cacador = CACADOR_PARADO;
+                    transicao_iniciada = false;
 
-                    estado_cacador =
-                        CACADOR_PARADO;
-                    
-                    pode_interagir = true;
-                    
-                    global.controle_bloqueado =
-                        false;
+                    // Evita uma interação imediata
+                    bloqueio_interacao = 10;
+                    pode_interagir = false;
+
+                    // O próprio obj_fade devolverá o
+                    // controle quando a transição terminar
                 }
             );
 
 
-            global.fade_instancia.iniciar(
-                _liberar_caminho,
-                0.04,
-                45
-            );
+            var _fade_iniciado =
+                global.fade_instancia.iniciar(
+                    _liberar_caminho,
+                    0.04,
+                    45
+                );
+
+
+            // Só muda de estado se o fade realmente começar
+            if (_fade_iniciado)
+            {
+                transicao_iniciada = true;
+                estado_cacador = CACADOR_FADE;
+            }
         }
     }
     break;
 
 
-    // --------------------------------------------------
-    // Aguarda o fade terminar
-    // --------------------------------------------------
+    // ==================================================
+    // AGUARDAR O FADE
+    // ==================================================
 
     case CACADOR_FADE:
     {

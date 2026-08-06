@@ -1,7 +1,7 @@
 event_inherited();
 
 
-#region Interação
+#region Configuração da interação
 
 distancia_interacao = 40;
 prioridade_interacao = 10;
@@ -13,7 +13,22 @@ pode_interagir =
 #endregion
 
 
-#region Função de interação
+#region Restaurar estado
+
+// O balde não deve reaparecer caso a room
+// seja recriada depois da coleta
+if (global.balde_coletado)
+{
+    pode_interagir = false;
+    instance_destroy();
+
+    exit;
+}
+
+#endregion
+
+
+#region Interação
 
 interagir = function()
 {
@@ -27,21 +42,25 @@ interagir = function()
     }
 
 
-    global.balde_coletado = true;
-    pode_interagir = false;
+    var _dialogo_aberto =
+        global.dialogo_instancia.abrir(
+        [
+            {
+                nome: "",
+                texto: "Você encontrou um balde vazio."
+            }
+        ]);
 
 
-    global.dialogo_instancia.abrir(
-    [
-        {
-            nome: "",
-            texto:
-                "Você encontrou um balde vazio."
-        }
-    ]);
+    // Só coleta e remove o balde quando
+    // o diálogo realmente conseguir abrir
+    if (_dialogo_aberto)
+    {
+        global.balde_coletado = true;
+        pode_interagir = false;
 
-
-    instance_destroy();
+        instance_destroy();
+    }
 };
 
 #endregion

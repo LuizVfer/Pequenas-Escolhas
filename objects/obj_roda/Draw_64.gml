@@ -211,15 +211,13 @@ if (feedback_erro > 0)
         _centro_x,
         272,
         _modo_martelo
-            ? "Voltou ao início"
-            : "Errou"
+            ? "Sequência reiniciada"
+            : "Tente novamente"
     );
 }
 else
 {
-    draw_set_color(
-        _cor_texto_secundario
-    );
+    draw_set_color(_cor_texto_secundario);
 
     draw_text(
         _centro_x,
@@ -416,7 +414,7 @@ draw_set_color(
 draw_text(
     232,
     322,
-    "acertar"
+    "confirmar"
 );
 
 #endregion

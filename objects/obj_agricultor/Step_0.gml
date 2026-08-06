@@ -29,7 +29,7 @@ if (!aguardando_abertura)
 pode_interagir = false;
 
 
-// Aguarda a conversa da entrega terminar.
+// Aguarda a conversa da entrega terminar
 if (
     global.dialogo_ativo
     || transicao_iniciada
@@ -41,10 +41,7 @@ if (
 #endregion
 
 
-#region Iniciar abertura do portão
-
-transicao_iniciada = true;
-
+#region Preparar abertura do portão
 
 var _abrir_portao = method(
     id,
@@ -63,6 +60,7 @@ var _abrir_portao = method(
             0
         );
 
+
         if (_ponto != noone)
         {
             x = _ponto.x;
@@ -77,6 +75,7 @@ var _abrir_portao = method(
         with (obj_portao_vila)
         {
             sprite_index = spr_portao_aberto;
+
             image_index = 0;
             image_speed = 0;
 
@@ -85,7 +84,7 @@ var _abrir_portao = method(
 
 
         // ----------------------------------------------
-        // Remover a colisão do portão
+        // Remover o bloqueio da passagem
         // ----------------------------------------------
 
         with (obj_bloqueio_portao)
@@ -95,21 +94,32 @@ var _abrir_portao = method(
 
 
         // ----------------------------------------------
-        // Som do portão
+        // Reproduzir o som do portão
         // ----------------------------------------------
 
         if (som_portao != noone)
         {
-            global.game_instancia
-                .abaixar_musica_para_efeito(
-                    75,
-                    0.30
-                );
+            if (instance_exists(global.game_instancia))
+            {
+                global.game_instancia
+                    .abaixar_musica_para_efeito(
+                        75,
+                        0.30
+                    );
+            }
 
-            audio_play_sound(
+
+            var _som_abertura = audio_play_sound(
                 som_portao,
                 2,
                 false
+            );
+
+
+            audio_sound_gain(
+                _som_abertura,
+                1,
+                0
             );
         }
 
@@ -121,14 +131,28 @@ var _abrir_portao = method(
         aguardando_abertura = false;
         transicao_iniciada = false;
         pode_interagir = true;
+
+        // O obj_fade devolverá o controle ao jogador
     }
 );
 
+#endregion
 
-global.fade_instancia.iniciar(
-    _abrir_portao,
-    0.05,
-    60
-);
+
+#region Iniciar transição
+
+var _fade_iniciado =
+    global.fade_instancia.iniciar(
+        _abrir_portao,
+        0.05,
+        60
+    );
+
+
+// Só registra a transição caso o fade comece
+if (_fade_iniciado)
+{
+    transicao_iniciada = true;
+}
 
 #endregion

@@ -1,4 +1,7 @@
-// Libera o controle após fechar
+// ==================================================
+// LIBERAR CONTROLE APÓS FECHAR
+// ==================================================
+
 if (desbloqueio_atrasado > 0)
 {
     desbloqueio_atrasado--;
@@ -6,13 +9,30 @@ if (desbloqueio_atrasado > 0)
 
     if (desbloqueio_atrasado <= 0)
     {
-        var _fade_ativo =
-            instance_exists(global.fade_instancia)
-            && global.fade_instancia.ativo;
+        var _fade_ativo = false;
 
 
-        // Não libera o jogador enquanto outro fade acontece
-        if (_fade_ativo)
+        if (
+            variable_global_exists(
+                "fade_instancia"
+            )
+            && instance_exists(
+                global.fade_instancia
+            )
+        )
+        {
+            _fade_ativo =
+                global.fade_instancia.ativo;
+        }
+
+
+        // Um diálogo pode ter sido aberto novamente
+        // durante o callback anterior
+        if (
+            ativo
+            || global.dialogo_ativo
+            || _fade_ativo
+        )
         {
             global.controle_bloqueado = true;
         }
@@ -27,19 +47,25 @@ if (desbloqueio_atrasado > 0)
 }
 
 
-// Diálogo fechado
+// ==================================================
+// DIÁLOGO FECHADO
+// ==================================================
+
 if (!ativo)
 {
     exit;
 }
 
 
-// Evita que o mesmo E usado para abrir avance
+// Impede o E que abriu o diálogo
+// de avançá-lo no mesmo frame
 if (bloqueio_entrada > 0)
 {
     bloqueio_entrada--;
+
     exit;
 }
+
 
 // ==================================================
 // ESCOLHAS
@@ -47,7 +73,22 @@ if (bloqueio_entrada > 0)
 
 if (modo_escolha)
 {
-    var _quantidade = array_length(opcoes);
+    var _quantidade =
+        array_length(opcoes);
+
+
+    // Proteção contra uma escolha inválida
+    if (_quantidade <= 0)
+    {
+        show_debug_message(
+            "ERRO: diálogo de escolha sem opções."
+        );
+
+        fechar();
+
+        exit;
+    }
+
 
     var _cima =
         keyboard_check_pressed(vk_up)
@@ -62,72 +103,89 @@ if (modo_escolha)
         || keyboard_check_pressed(vk_enter);
 
 
-    var _opcao_antes = opcao_atual;
+    var _opcao_antes =
+        opcao_atual;
 
 
-    // Move para cima
+    // Mover para cima
     if (_cima)
     {
         opcao_atual =
-            (opcao_atual - 1 + _quantidade)
+            (
+                opcao_atual
+                - 1
+                + _quantidade
+            )
             mod _quantidade;
     }
-    
-    
-    // Move para baixo
+
+
+    // Mover para baixo
     if (_baixo)
     {
         opcao_atual =
-            (opcao_atual + 1)
+            (
+                opcao_atual
+                + 1
+            )
             mod _quantidade;
     }
-    
-    
-    // Som ao mudar de opção
+
+
+    // Som de navegação
     if (opcao_atual != _opcao_antes)
     {
-        var _som_mover = audio_play_sound(
-            snd_opcao_mover,
-            0,
-            false
-        );
-    
+        var _som_mover =
+            audio_play_sound(
+                snd_opcao_mover,
+                0,
+                false
+            );
+
+
         audio_sound_gain(
             _som_mover,
             0.35,
             0
         );
-    
+
         audio_sound_pitch(
             _som_mover,
             0.90
         );
     }
-    
-    
-    // Confirma a opção
+
+
+    // Confirmar opção
     if (_confirmar)
     {
-        var _som_confirmar = audio_play_sound(
-            snd_opcao_confirmar,
-            1,
-            false
-        );
-    
+        var _som_confirmar =
+            audio_play_sound(
+                snd_opcao_confirmar,
+                1,
+                false
+            );
+
+
         audio_sound_gain(
             _som_confirmar,
             0.55,
             0
         );
-    
-    
-        var _resultado = opcao_atual;
-        var _funcao = funcao_escolha;
-        
-        // Fecha a caixa antes de aplicar o resultado
+
+
+        var _resultado =
+            opcao_atual;
+
+        var _funcao =
+            funcao_escolha;
+
+
+        // Fecha antes do callback para permitir
+        // que ele abra o diálogo de resultado
         fechar();
-        
-        // Executa o callback da escolha
+
+
         if (is_method(_funcao))
         {
             method_call(
@@ -138,24 +196,51 @@ if (modo_escolha)
         else
         {
             show_debug_message(
-                "ERRO: funcao_escolha não contém um método válido."
+                "ERRO: callback da escolha inválido."
             );
         }
     }
+
 
     exit;
 }
 
 
-// Texto da página atual
-var _texto_atual = paginas[pagina_atual].texto;
-var _tamanho_texto = string_length(_texto_atual);
+// ==================================================
+// VERIFICAR PÁGINA ATUAL
+// ==================================================
+
+var _quantidade_paginas =
+    array_length(paginas);
 
 
+if (_quantidade_paginas <= 0)
+{
+    fechar();
+
+    exit;
+}
+
+
+pagina_atual =
+    clamp(
+        pagina_atual,
+        0,
+        _quantidade_paginas - 1
+    );
+
+
+var _texto_atual =
+    string(
+        paginas[pagina_atual].texto
+    );
+
+var _tamanho_texto =
+    string_length(_texto_atual);
 
 
 // ==================================================
-// MÁQUINA DE ESCREVER E SOM DO TEXTO
+// MÁQUINA DE ESCREVER
 // ==================================================
 
 if (texto_visivel < _tamanho_texto)
@@ -164,20 +249,21 @@ if (texto_visivel < _tamanho_texto)
         floor(texto_visivel);
 
 
-    texto_visivel = min(
-        texto_visivel + velocidade_texto,
-        _tamanho_texto
-    );
+    texto_visivel =
+        min(
+            texto_visivel
+            + velocidade_texto,
+
+            _tamanho_texto
+        );
 
 
     var _caracteres_agora =
         floor(texto_visivel);
 
 
-    // A quantidade de caracteres realmente aumentou
     if (_caracteres_agora > _caracteres_antes)
     {
-        // Evita tocar um efeito em todas as letras
         if (
             _caracteres_agora
             >= ultimo_caractere_som
@@ -188,28 +274,30 @@ if (texto_visivel < _tamanho_texto)
                 _caracteres_agora;
 
 
-            // Evita muitos efeitos sobrepostos
+            // Evita muitos sons sobrepostos
             if (!audio_is_playing(snd_texto))
             {
-                var _som_texto = audio_play_sound(
-                    snd_texto,
-                    0,
-                    false
-                );
-                
-                
-                // Alterna entre um som levemente grave e agudo
+                var _som_texto =
+                    audio_play_sound(
+                        snd_texto,
+                        0,
+                        false
+                    );
+
+
                 var _pitch_texto = 1.30;
-                
+
+
                 if (pitch_texto_alternado)
                 {
                     _pitch_texto = 1.50;
                 }
-                
+
+
                 pitch_texto_alternado =
                     !pitch_texto_alternado;
-                
-                
+
+
                 audio_sound_pitch(
                     _som_texto,
                     _pitch_texto
@@ -220,6 +308,10 @@ if (texto_visivel < _tamanho_texto)
 }
 
 
+// ==================================================
+// AVANÇAR TEXTO
+// ==================================================
+
 var _confirmar =
     keyboard_check_pressed(ord("E"))
     || keyboard_check_pressed(vk_enter);
@@ -227,15 +319,26 @@ var _confirmar =
 
 if (_confirmar)
 {
+    // Completa imediatamente a máquina de escrever
     if (texto_visivel < _tamanho_texto)
     {
-        texto_visivel = _tamanho_texto;
+        texto_visivel =
+            _tamanho_texto;
+
+        ultimo_caractere_som =
+            _tamanho_texto;
     }
+
+    // Avança para a próxima página
     else
     {
         pagina_atual++;
 
-        if (pagina_atual >= array_length(paginas))
+
+        if (
+            pagina_atual
+            >= array_length(paginas)
+        )
         {
             fechar();
         }
@@ -243,7 +346,7 @@ if (_confirmar)
         {
             texto_visivel = 0;
             ultimo_caractere_som = 0;
+            pitch_texto_alternado = false;
         }
     }
 }
-

@@ -5,42 +5,41 @@ if (instance_number(obj_dialogo) > 1)
     exit;
 }
 
-// Referência global para abrir o diálogo
+
+// Referência global
 global.dialogo_instancia = id;
 
-// Estado geral
+
+// ==================================================
+// ESTADO GERAL
+// ==================================================
+
 ativo = false;
 
-// Array contendo as páginas atuais
 paginas = [];
-
-// Página exibida
 pagina_atual = 0;
 
-// Impede o mesmo E que abriu o diálogo
-// de avançar imediatamente
 bloqueio_entrada = 0;
-
-// Aguarda um frame antes de devolver
-// o controle ao jogador
 desbloqueio_atrasado = 0;
 
-// Máquina de escrever
-texto_visivel = 0;
 
-// Caracteres adicionados por frame
+// ==================================================
+// MÁQUINA DE ESCREVER
+// ==================================================
+
+texto_visivel = 0;
 velocidade_texto = 0.7;
 
-// Controle do som da máquina de escrever
 ultimo_caractere_som = 0;
-
-// Toca um som a cada 2 caracteres
 intervalo_som_texto = 2;
 
-// Alternância do pitch da máquina de escrever
 pitch_texto_alternado = false;
 
-// Sistema de escolhas
+
+// ==================================================
+// SISTEMA DE ESCOLHAS
+// ==================================================
+
 modo_escolha = false;
 
 nome_escolha = "";
@@ -51,30 +50,42 @@ opcao_atual = 0;
 
 funcao_escolha = noone;
 
+
 // ==================================================
-// CONFIGURAÇÃO VISUAL DO DIÁLOGO
+// CONFIGURAÇÃO VISUAL
 // ==================================================
 
 caixa_x = 64;
 caixa_y = 16;
+
 caixa_largura = 512;
 caixa_altura = 108;
 
-// Espaço lateral, incluindo o indicador E
-texto_largura = caixa_largura - 56;
+texto_largura =
+    caixa_largura - 56;
 
-// Espaço disponível quando existe nome
 texto_altura_com_nome = 52;
-
-// Espaço disponível para mensagens sem nome
 texto_altura_sem_nome = 76;
+
+
+// ==================================================
+// PAGINAR DIÁLOGOS
+// ==================================================
 
 paginar_dialogo = function(_paginas_originais)
 {
     var _paginas_novas = [];
 
-    // A medição precisa usar a mesma fonte do Draw GUI
+
+    if (!is_array(_paginas_originais))
+    {
+        return _paginas_novas;
+    }
+
+
+    // Usa a mesma fonte do Draw GUI
     draw_set_font(fnt_dialogo);
+
 
     for (
         var _i = 0;
@@ -82,31 +93,46 @@ paginar_dialogo = function(_paginas_originais)
         _i++
     )
     {
-        var _pagina_original = _paginas_originais[_i];
+        var _pagina_original =
+            _paginas_originais[_i];
 
-        var _nome = _pagina_original.nome;
-        var _texto = string(_pagina_original.texto);
 
-        var _tem_nome = string_length(_nome) > 0;
+        if (!is_struct(_pagina_original))
+        {
+            continue;
+        }
+
+
+        var _nome =
+            string(_pagina_original.nome);
+
+        var _texto =
+            string(_pagina_original.texto);
+
+        var _tem_nome =
+            string_length(_nome) > 0;
 
         var _altura_maxima;
 
+
         if (_tem_nome)
         {
-            _altura_maxima = texto_altura_com_nome;
+            _altura_maxima =
+                texto_altura_com_nome;
         }
         else
         {
-            _altura_maxima = texto_altura_sem_nome;
+            _altura_maxima =
+                texto_altura_sem_nome;
         }
 
 
-        // Separa a mensagem em palavras
-        var _palavras = string_split(
-            _texto,
-            " ",
-            true
-        );
+        var _palavras =
+            string_split(
+                _texto,
+                " ",
+                true
+            );
 
         var _texto_pagina = "";
 
@@ -117,13 +143,16 @@ paginar_dialogo = function(_paginas_originais)
             _j++
         )
         {
-            var _palavra = _palavras[_j];
+            var _palavra =
+                _palavras[_j];
+
             var _texto_teste;
 
 
             if (_texto_pagina == "")
             {
-                _texto_teste = _palavra;
+                _texto_teste =
+                    _palavra;
             }
             else
             {
@@ -134,21 +163,21 @@ paginar_dialogo = function(_paginas_originais)
             }
 
 
-            // Mede como o texto ficaria com quebra de linha
-            var _altura_teste = string_height_ext(
-                _texto_teste,
-                -1,
-                texto_largura
-            );
+            var _altura_teste =
+                string_height_ext(
+                    _texto_teste,
+                    -1,
+                    texto_largura
+                );
 
 
             if (_altura_teste <= _altura_maxima)
             {
-                _texto_pagina = _texto_teste;
+                _texto_pagina =
+                    _texto_teste;
             }
             else
             {
-                // Salva a parte que já cabe
                 if (_texto_pagina != "")
                 {
                     array_push(
@@ -160,13 +189,13 @@ paginar_dialogo = function(_paginas_originais)
                     );
                 }
 
-                // Começa uma nova página
-                _texto_pagina = _palavra;
+
+                _texto_pagina =
+                    _palavra;
             }
         }
 
 
-        // Salva o texto restante
         if (_texto_pagina != "")
         {
             array_push(
@@ -179,41 +208,73 @@ paginar_dialogo = function(_paginas_originais)
         }
     }
 
+
     return _paginas_novas;
 };
 
 
-// Abre um novo diálogo
+// ==================================================
+// ABRIR DIÁLOGO NORMAL
+// ==================================================
+
 abrir = function(_paginas)
 {
-    if (ativo)
-    {
-        exit;
-    }
-
-    paginas = paginar_dialogo(_paginas);
-    
-    if (array_length(paginas) <= 0)
+    if (
+        ativo
+        || !is_array(_paginas)
+    )
     {
         return false;
     }
 
+
+    var _paginas_processadas =
+        paginar_dialogo(_paginas);
+
+
+    if (array_length(_paginas_processadas) <= 0)
+    {
+        return false;
+    }
+
+
+    paginas =
+        _paginas_processadas;
+
     pagina_atual = 0;
     texto_visivel = 0;
-    
+
     ultimo_caractere_som = 0;
+    pitch_texto_alternado = false;
+
 
     modo_escolha = false;
 
+    nome_escolha = "";
+    texto_escolha = "";
+
+    opcoes = [];
+    opcao_atual = 0;
+
+    funcao_escolha = noone;
+
+
     ativo = true;
+
     bloqueio_entrada = 1;
     desbloqueio_atrasado = 0;
 
     global.dialogo_ativo = true;
     global.controle_bloqueado = true;
-    
+
+
     return true;
 };
+
+
+// ==================================================
+// ABRIR ESCOLHA
+// ==================================================
 
 abrir_escolha = function(
     _nome,
@@ -224,16 +285,51 @@ abrir_escolha = function(
 {
     if (ativo)
     {
-        exit;
+        return false;
     }
 
-    nome_escolha = _nome;
-    texto_escolha = _texto;
+
+    if (
+        !is_array(_opcoes)
+        || array_length(_opcoes) <= 0
+    )
+    {
+        show_debug_message(
+            "ERRO: diálogo de escolha sem opções."
+        );
+
+        return false;
+    }
+
+
+    if (!is_method(_funcao))
+    {
+        show_debug_message(
+            "ERRO: callback da escolha inválido."
+        );
+
+        return false;
+    }
+
+
+    paginas = [];
+    pagina_atual = 0;
+    texto_visivel = 0;
+
+    ultimo_caractere_som = 0;
+
+
+    nome_escolha =
+        string(_nome);
+
+    texto_escolha =
+        string(_texto);
 
     opcoes = _opcoes;
     opcao_atual = 0;
 
     funcao_escolha = _funcao;
+
 
     modo_escolha = true;
     ativo = true;
@@ -243,10 +339,16 @@ abrir_escolha = function(
 
     global.dialogo_ativo = true;
     global.controle_bloqueado = true;
+
+
+    return true;
 };
 
 
-// Fecha o diálogo
+// ==================================================
+// FECHAR DIÁLOGO
+// ==================================================
+
 fechar = function()
 {
     ativo = false;
@@ -256,11 +358,22 @@ fechar = function()
     pagina_atual = 0;
     texto_visivel = 0;
 
+    ultimo_caractere_som = 0;
+
+    nome_escolha = "";
+    texto_escolha = "";
+
     opcoes = [];
     opcao_atual = 0;
+
     funcao_escolha = noone;
+
+    bloqueio_entrada = 0;
 
     global.dialogo_ativo = false;
 
+
+    // Aguarda um frame para permitir que o callback
+    // abra outro diálogo ou inicie um fade
     desbloqueio_atrasado = 1;
 };

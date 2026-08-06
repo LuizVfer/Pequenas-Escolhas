@@ -1,16 +1,26 @@
 event_inherited();
 
-prioridade_interacao = 0;
-distancia_interacao = 48;
+// Ajuste visual exclusivo do guarda
 offset_indicador_y = 12;
 
+// Interação com o guarda
 interagir = function()
 {
     global.dialogo_instancia.abrir(
     [
         {
             nome: "Guarda",
-            texto: "Continue andando. Não há nada para ver aqui."
+            texto: "Continue andando. A praça não está aberta para curiosos."
+        },
+
+        {
+            nome: "Mensageiro",
+            texto: "Não pretendo causar problemas."
+        },
+
+        {
+            nome: "Guarda",
+            texto: "Então não permaneça aqui por muito tempo."
         }
     ]);
 };

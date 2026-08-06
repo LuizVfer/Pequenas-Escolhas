@@ -22,16 +22,21 @@ som_portao = snd_portao_abrindo;
 #endregion
 
 
-#region Restaurar estado do portão
+#region Restaurar estado
+
+image_index = 0;
+image_speed = 0;
+
 
 // Caso o portão já esteja aberto,
-// posiciona o agricultor próximo dele.
+// posiciona o agricultor próximo dele
 if (global.portao_aberto)
 {
     var _ponto = instance_find(
         obj_ponto_agricultor_portao,
         0
     );
+
 
     if (_ponto != noone)
     {
@@ -43,20 +48,13 @@ if (global.portao_aberto)
 #endregion
 
 
-#region Função de interação
+#region Interação
 
 interagir = function()
 {
-    if (!pode_interagir)
-    {
-        exit;
-    }
-
-
-    // Evita repetir o acionamento enquanto
-    // o portão está sendo aberto.
     if (
-        aguardando_abertura
+        !pode_interagir
+        || aguardando_abertura
         || transicao_iniciada
     )
     {
@@ -74,8 +72,17 @@ interagir = function()
         [
             {
                 nome: "Agricultor",
-                texto:
-                    "Pronto. O caminho está livre novamente."
+                texto: "Pronto. O caminho está livre novamente."
+            },
+
+            {
+                nome: "Mensageiro",
+                texto: "Obrigado."
+            },
+
+            {
+                nome: "Agricultor",
+                texto: "Boa viagem, mensageiro. Que encontre o que procura no fim dessa estrada."
             }
         ]);
 
@@ -93,8 +100,7 @@ interagir = function()
         [
             {
                 nome: "Agricultor",
-                texto:
-                    "O trabalho na plantação parece nunca terminar."
+                texto: "O trabalho na plantação parece nunca terminar."
             }
         ]);
 
@@ -103,11 +109,11 @@ interagir = function()
 
 
     // ==================================================
-    // CABO JÁ FOI ENTREGUE
+    // CABO JÁ ENTREGUE
     // ==================================================
 
-    // Segurança para o caso de a entrega já ter ocorrido,
-    // mas a abertura ainda não ter começado.
+    // Segurança para o caso de a entrega já ter sido
+    // registrada, mas a abertura ainda não ter começado
     if (global.cabo_enxada_entregue)
     {
         aguardando_abertura = true;
@@ -118,87 +124,90 @@ interagir = function()
 
 
     // ==================================================
-    // JOGADOR AINDA NÃO TEM O CABO
+    // JOGADOR AINDA NÃO POSSUI O CABO
     // ==================================================
 
     if (!global.cabo_enxada_coletado)
     {
-        global.quest_cabo_iniciada = true;
-    
-        global.dialogo_instancia.abrir(
-        [
-            {
-                nome: "Mensageiro",
-                texto:
-                    "Preciso atravessar o portão para continuar minha viagem."
-            },
-    
-            {
-                nome: "Agricultor",
-                texto:
-                    "Eu poderia abrir o mecanismo, mas o cabo da minha enxada quebrou."
-            },
-    
-            {
-                nome: "Agricultor",
-                texto:
-                    "Sem terminar este trabalho, não posso abandonar a plantação."
-            },
-    
-            {
-                nome: "Agricultor",
-                texto:
-                    "Talvez alguém perto das casas tenha encontrado outro cabo."
-            }
-        ]);
-    
+        var _dialogo_missao_aberto =
+            global.dialogo_instancia.abrir(
+            [
+                {
+                    nome: "Mensageiro",
+                    texto: "Preciso atravessar o portão para continuar minha viagem."
+                },
+
+                {
+                    nome: "Agricultor",
+                    texto: "Eu poderia abri-lo, mas o cabo da minha enxada quebrou."
+                },
+
+                {
+                    nome: "Agricultor",
+                    texto: "Sem terminar este trabalho, não posso abandonar a plantação."
+                },
+
+                {
+                    nome: "Agricultor",
+                    texto: "Talvez alguém perto das casas tenha encontrado outro cabo."
+                }
+            ]);
+
+
+        // Libera a procura pelo cabo somente se
+        // o diálogo realmente conseguir abrir
+        if (_dialogo_missao_aberto)
+        {
+            global.quest_cabo_iniciada = true;
+        }
+
         exit;
     }
 
 
     // ==================================================
-    // ENTREGA DO CABO DA ENXADA
+    // ENTREGAR O CABO DA ENXADA
     // ==================================================
 
-    global.cabo_enxada_coletado = false;
-    global.cabo_enxada_entregue = true;
+    var _dialogo_entrega_aberto =
+        global.dialogo_instancia.abrir(
+        [
+            {
+                nome: "Mensageiro",
+                texto: "Encontrei um cabo que pode servir na sua enxada."
+            },
 
-    aguardando_abertura = true;
-    pode_interagir = false;
+            {
+                nome: "Agricultor",
+                texto: "Sim. Este cabo deve funcionar."
+            },
+
+            {
+                nome: "",
+                texto: "O mensageiro entrega o cabo da enxada."
+            },
+
+            {
+                nome: "Agricultor",
+                texto: "Agora posso terminar o trabalho."
+            },
+
+            {
+                nome: "Agricultor",
+                texto: "Depois disso, abrirei o portão para você."
+            }
+        ]);
 
 
-    global.dialogo_instancia.abrir(
-    [
-        {
-            nome: "Mensageiro",
-            texto:
-                "Encontrei um cabo que pode servir na sua enxada."
-        },
+    // O cabo só é consumido quando o diálogo abre
+    if (_dialogo_entrega_aberto)
+    {
+        global.cabo_enxada_coletado = false;
+        global.cabo_enxada_entregue = true;
 
-        {
-            nome: "Agricultor",
-            texto:
-                "Sim. Este cabo deve funcionar."
-        },
-
-        {
-            nome: "",
-            texto:
-                "Você entregou o cabo da enxada."
-        },
-
-        {
-            nome: "Agricultor",
-            texto:
-                "Agora posso terminar o trabalho."
-        },
-
-        {
-            nome: "Agricultor",
-            texto:
-                "Depois disso, abrirei o portão para você."
-        }
-    ]);
+        aguardando_abertura = true;
+        pode_interagir = false;
+    }
 };
 
 #endregion

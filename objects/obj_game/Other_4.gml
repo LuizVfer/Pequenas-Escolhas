@@ -1,63 +1,75 @@
-// ==================================================
-// MÚSICA DE CADA ROOM
-// ==================================================
+#region Música da room
 
 switch (room)
 {
-    // Menu e introdução compartilham a mesma música
+    // Menu e introdução compartilham
+    // a mesma música
     case rm_menu:
     case rm_intro:
+
         agendar_musica(
             snd_mus_titulo_intro,
             atraso_musica
         );
+
     break;
 
 
     case rm_cidade:
+
         agendar_musica(
             snd_mus_cidade,
             atraso_musica
         );
+
     break;
 
 
     case rm_floresta:
+
         agendar_musica(
             snd_mus_floresta,
             atraso_musica
         );
+
     break;
 
 
     case rm_vila:
+
         agendar_musica(
             snd_mus_vila,
             atraso_musica
         );
+
     break;
 
 
-    // Destino e final compartilham a mesma música
+    // Destino e livro final compartilham
+    // a mesma música
     case rm_destino:
     case rm_final_livro:
+
         agendar_musica(
             snd_mus_destino_final,
             atraso_musica
         );
+
     break;
 
 
+    // Rooms sem música configurada
     default:
-        alarm[0] = -1;
-        musica_pendente = noone;
+
         parar_musica();
+
     break;
 }
 
-// ==================================================
-// CRIAR MENU DE PAUSA
-// ==================================================
+#endregion
+
+
+#region Menu de pausa
 
 var _room_permite_pausa =
     room == rm_cidade
@@ -78,3 +90,5 @@ if (
         obj_pausa
     );
 }
+
+#endregion

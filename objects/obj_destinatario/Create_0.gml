@@ -3,12 +3,10 @@ event_inherited();
 
 #region Configuração da interação
 
-distancia_interacao = 48;
+// Ajuste visual exclusivo do destinatário
 offset_indicador_y = 12;
-prioridade_interacao = 0;
 
-pode_interagir =
-    !global.carta_entregue;
+pode_interagir = !global.carta_entregue;
 
 #endregion
 
@@ -21,10 +19,11 @@ transicao_iniciada = false;
 #endregion
 
 
-#region Função de interação
+#region Interação
 
 interagir = function()
 {
+    // Impede novas interações durante ou depois da entrega
     if (
         global.carta_entregue
         || aguardando_final
@@ -37,7 +36,7 @@ interagir = function()
 
 
     // ==================================================
-    // ESCOLHA DO BRINQUEDO AINDA NÃO FOI FEITA
+    // ESCOLHA DO BRINQUEDO PENDENTE
     // ==================================================
 
     if (global.escolha_brinquedo == -1)
@@ -46,8 +45,7 @@ interagir = function()
         [
             {
                 nome: "",
-                texto:
-                    "Antes de bater à porta, o mensageiro percebe a criança ainda olhando para o brinquedo preso entre os galhos."
+                texto: "Antes de bater à porta, o mensageiro olha para a criança, que ainda tenta alcançar o brinquedo preso entre os galhos."
             }
         ]);
 
@@ -56,45 +54,44 @@ interagir = function()
 
 
     // ==================================================
-    // ENTREGAR A CARTA
+    // ENTREGA DA CARTA
     // ==================================================
 
-    aguardando_final = true;
-    pode_interagir = false;
-
-
-    global.dialogo_instancia.abrir(
+    var _dialogo_aberto = global.dialogo_instancia.abrir(
     [
         {
             nome: "Mensageiro",
-            texto:
-                "Boa tarde. Trago uma carta destinada a você."
+            texto: "Boa tarde. Tenho uma carta para você."
         },
 
         {
             nome: "Destinatário",
-            texto:
-                "Uma carta? Não esperava receber notícias hoje."
+            texto: "Para mim? Não esperava receber notícias hoje."
         },
 
         {
             nome: "Mensageiro",
-            texto:
-                "É uma mensagem sobre um casamento. Pediram que fosse entregue pessoalmente."
+            texto: "Ela traz notícias de um casamento. Pediram que fosse entregue pessoalmente."
         },
 
         {
             nome: "Destinatário",
-            texto:
-                "Entendo. Agradeço por ter atravessado todo esse caminho."
+            texto: "Entendo. Agradeço por tê-la trazido de tão longe."
         },
 
         {
             nome: "Mensageiro",
-            texto:
-                "Era apenas o meu trabalho."
+            texto: "Era meu dever."
         }
     ]);
+
+
+    // Somente inicia o final se o diálogo abrir corretamente
+    if (_dialogo_aberto)
+    {
+        aguardando_final = true;
+        pode_interagir = false;
+    }
 };
 
 #endregion

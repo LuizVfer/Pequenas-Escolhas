@@ -242,8 +242,7 @@ switch (estado_puzzle_roda)
                 [
                     {
                         nome: "Mensageiro",
-                        texto:
-                            "A roda está no lugar. Agora preciso prendê-la."
+                        texto: "A roda está no lugar. Falta apenas fixá-la ao eixo."
                     }
                 ]);
             }
@@ -380,6 +379,8 @@ switch (estado_puzzle_roda)
                     1,
                     0
                 );
+                
+                _player.iniciar_animacao_martelo();
 
 
                 if (

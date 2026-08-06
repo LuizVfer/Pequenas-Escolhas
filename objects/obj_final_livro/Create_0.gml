@@ -1,85 +1,28 @@
-// Consequência exibida atualmente
-sprite_consequencia = noone;
-titulo_consequencia = "";
+#region Estados do encerramento
 
-// Frases da consequência atual
-frases_consequencia = [];
+ESTADO_LIVRO_FECHADO_INICIO = 0;
+ESTADO_CONSEQUENCIAS = 1;
+ESTADO_LIVRO_FECHADO_FINAL = 2;
+ESTADO_MENSAGEM_FINAL = 3;
+ESTADO_CREDITOS = 4;
 
-// Frase que está sendo exibida
-frase_atual = 0;
-
-// Máquina de escrever
-caracteres_visiveis = 0;
-velocidade_frase = 0.7;
-
-// ==================================================
-// SOM DO LÁPIS
-// ==================================================
-
-som_lapis_instancia = -1;
+estado_final =
+    ESTADO_LIVRO_FECHADO_INICIO;
 
 
-iniciar_som_lapis = function()
-{
-    if (
-        som_lapis_instancia == -1
-        || !audio_is_playing(som_lapis_instancia)
-    )
-    {
-        som_lapis_instancia = audio_play_sound(
-            snd_lapis_escrevendo,
-            0,
-            true
-        );
+// Controle das transições
+abertura_iniciada = false;
 
-        audio_sound_gain(
-            som_lapis_instancia,
-            0.30,
-            0
-        );
+transicao_consequencia_iniciada = false;
+transicao_mensagem_iniciada = false;
+transicao_creditos_iniciada = false;
 
-        audio_sound_pitch(
-            som_lapis_instancia,
-            1
-        );
-    }
-};
-
-
-parar_som_lapis = function()
-{
-    if (som_lapis_instancia != -1)
-    {
-        audio_stop_sound(
-            som_lapis_instancia
-        );
-
-        som_lapis_instancia = -1;
-    }
-};
-
-// Indica que todas as frases terminaram
-consequencia_concluida = false;
-
-// ==================================================
-// ESTADOS
-// ==================================================
-
-// 0 = livro fechado
-// 1 = livro aberto / pergaminho
-estado_final = 0;
-
-// Impede iniciar vários fades para o menu
 retorno_menu_iniciado = false;
 
-
-// Tempo que o livro fica fechado antes de abrir
-contador = 0;
-tempo_livro_fechado = 90;
+#endregion
 
 
-// Evita iniciar o fade várias vezes
-abertura_iniciada = false;
+#region Consequências
 
 // 0 = pedra
 // 1 = cachorro
@@ -87,32 +30,245 @@ abertura_iniciada = false;
 // 3 = brinquedo
 consequencia_atual = 0;
 
-// Impede iniciar o mesmo fade várias vezes
-transicao_consequencia_iniciada = false;
+sprite_consequencia = noone;
+titulo_consequencia = "";
+
+frases_consequencia = [];
+
+frase_atual = 0;
+caracteres_visiveis = 0;
+
+velocidade_frase = 0.7;
+
+consequencia_concluida = false;
+
+#endregion
 
 
-// Som provisório
-// Depois trocaremos por snd_livro_abrindo
+#region Tempos do encerramento
+
+contador = 0;
+
+tempo_livro_fechado = 90;
+tempo_livro_fechado_final = 60;
+
+#endregion
+
+
+#region Sons do livro
+
 som_livro_abrindo = snd_livro_abrindo;
 
-// Som mais leve usado ao trocar de consequência
+// O mesmo som é usado com pitch mais baixo
+// durante o fechamento
+som_livro_fechando = snd_livro_abrindo;
+
+#endregion
+
+
+#region Som do lápis
+
+som_lapis_instancia = -1;
+
+
+iniciar_som_lapis = function()
+{
+    if (
+        som_lapis_instancia != -1
+        && audio_is_playing(
+            som_lapis_instancia
+        )
+    )
+    {
+        return;
+    }
+
+
+    som_lapis_instancia =
+        audio_play_sound(
+            snd_lapis_escrevendo,
+            0,
+            true
+        );
+
+
+    if (som_lapis_instancia == -1)
+    {
+        return;
+    }
+
+
+    audio_sound_gain(
+        som_lapis_instancia,
+        0.30,
+        0
+    );
+
+    audio_sound_pitch(
+        som_lapis_instancia,
+        1
+    );
+};
+
+
+parar_som_lapis = function()
+{
+    if (som_lapis_instancia == -1)
+    {
+        return;
+    }
+
+
+    audio_stop_sound(
+        som_lapis_instancia
+    );
+
+    som_lapis_instancia = -1;
+};
+
+#endregion
+
+
+#region Funções de segurança
+
+fade_disponivel = function()
+{
+    return
+        variable_global_exists(
+            "fade_instancia"
+        )
+        && instance_exists(
+            global.fade_instancia
+        );
+};
+
+
+fade_ativo = function()
+{
+    return
+        fade_disponivel()
+        && global.fade_instancia.ativo;
+};
+
+
+iniciar_fade_final = function(
+    _funcao,
+    _velocidade,
+    _duracao
+)
+{
+    if (!fade_disponivel())
+    {
+        show_debug_message(
+            "ERRO: obj_fade não encontrado no livro final."
+        );
+
+        return false;
+    }
+
+
+    if (!is_method(_funcao))
+    {
+        show_debug_message(
+            "ERRO: callback inválido no livro final."
+        );
+
+        return false;
+    }
+
+
+    return global.fade_instancia.iniciar(
+        _funcao,
+        _velocidade,
+        _duracao
+    );
+};
+
+
+abaixar_musica_final = function(
+    _duracao,
+    _volume
+)
+{
+    if (
+        !variable_global_exists(
+            "game_instancia"
+        )
+        || !instance_exists(
+            global.game_instancia
+        )
+    )
+    {
+        return false;
+    }
+
+
+    if (
+        !variable_instance_exists(
+            global.game_instancia,
+            "abaixar_musica_para_efeito"
+        )
+    )
+    {
+        return false;
+    }
+
+
+    var _funcao_abaixar =
+        global.game_instancia
+            .abaixar_musica_para_efeito;
+
+
+    if (!is_method(_funcao_abaixar))
+    {
+        return false;
+    }
+
+
+    method_call(
+        _funcao_abaixar,
+        [
+            _duracao,
+            _volume
+        ]
+    );
+
+
+    return true;
+};
+
+#endregion
+
+
+#region Som de troca de página
+
 tocar_som_pagina = function()
 {
     if (som_livro_abrindo == noone)
     {
-        exit;
+        return;
     }
 
-    global.game_instancia.abaixar_musica_para_efeito(
+
+    abaixar_musica_final(
         55,
         0.20
     );
 
-    var _som_pagina = audio_play_sound(
-        som_livro_abrindo,
-        2,
-        false
-    );
+
+    var _som_pagina =
+        audio_play_sound(
+            som_livro_abrindo,
+            2,
+            false
+        );
+
+
+    if (_som_pagina == -1)
+    {
+        return;
+    }
+
 
     audio_sound_gain(
         _som_pagina,
@@ -126,30 +282,11 @@ tocar_som_pagina = function()
     );
 };
 
-
-// Bloqueia qualquer controle de gameplay
-global.controle_bloqueado = true;
-global.dialogo_ativo = false;
-
-// ==================================================
-// ENCERRAMENTO
-// ==================================================
-
-// 0 = livro fechado no início
-// 1 = consequências
-// 2 = livro fechado no final
-// 3 = mensagem final
-// 4 = título e créditos
-//
-// estado_final já começa em 0
-
-tempo_livro_fechado_final = 60;
-
-// Som será adicionado depois
-som_livro_fechando = snd_livro_abrindo;
+#endregion
 
 
-// Mensagem final
+#region Mensagem final
+
 frases_finais =
 [
     "O mensageiro jamais conheceu as histórias que nasceram pelo caminho.",
@@ -162,16 +299,20 @@ frases_finais =
 ];
 
 frase_final_atual = 0;
+
 caracteres_finais_visiveis = 0;
 velocidade_mensagem_final = 0.7;
 
 mensagem_final_concluida = false;
 
-// ==================================================
-// TÍTULO E CRÉDITOS
-// ==================================================
+#endregion
 
-titulo_final = "Pequenas Escolhas";
+
+#region Título e créditos
+
+titulo_final =
+    "Pequenas Escolhas";
+
 
 creditos =
 [
@@ -187,35 +328,57 @@ creditos =
     "Obrigado por jogar."
 ];
 
+
 alpha_titulo_final = 0;
 alpha_creditos = 0;
 
 contador_creditos = 0;
 
-// Espera antes dos créditos aparecerem
 tempo_antes_creditos = 90;
 
-// Velocidade dos aparecimentos
 velocidade_alpha_titulo = 0.015;
 velocidade_alpha_creditos = 0.012;
 
 final_completo = false;
 
+#endregion
+
+
+#region Configurar consequência da pedra
+
 configurar_consequencia_pedra = function()
 {
     consequencia_atual = 0;
-    transicao_consequencia_iniciada = false;
-    titulo_consequencia = "A pedra no caminho";
+
+    titulo_consequencia =
+        "A pedra no caminho";
 
     frase_atual = 0;
     caracteres_visiveis = 0;
-    consequencia_concluida = false;
 
-    switch (global.escolha_pedra)
+    consequencia_concluida = false;
+    transicao_consequencia_iniciada = false;
+
+
+    var _escolha = 2;
+
+
+    if (
+        variable_global_exists(
+            "escolha_pedra"
+        )
+    )
     {
-        // ==================================================
-        // CHUTAR
-        // ==================================================
+        _escolha =
+            global.escolha_pedra;
+    }
+
+
+    switch (_escolha)
+    {
+        // ----------------------------------------------
+        // Chutar
+        // ----------------------------------------------
 
         case 0:
             sprite_consequencia =
@@ -234,9 +397,9 @@ configurar_consequencia_pedra = function()
         break;
 
 
-        // ==================================================
-        // RETIRAR
-        // ==================================================
+        // ----------------------------------------------
+        // Retirar
+        // ----------------------------------------------
 
         case 1:
             sprite_consequencia =
@@ -255,28 +418,10 @@ configurar_consequencia_pedra = function()
         break;
 
 
-        // ==================================================
-        // IGNORAR
-        // ==================================================
+        // ----------------------------------------------
+        // Ignorar ou escolha inválida
+        // ----------------------------------------------
 
-        case 2:
-            sprite_consequencia =
-                spr_final_pedra_3;
-
-            frases_consequencia =
-            [
-                "A pedra permaneceu no meio da estrada.",
-
-                "Mais tarde, uma carroça passou por aquele caminho e teve uma de suas rodas quebrada.",
-
-                "O artesão que a conduzia perdeu uma viagem importante e nunca conseguiu reencontrar a família que o esperava.",
-
-                "Até a ausência de uma escolha pode mudar uma história."
-            ];
-        break;
-
-
-        // Segurança
         default:
             sprite_consequencia =
                 spr_final_pedra_3;
@@ -295,6 +440,11 @@ configurar_consequencia_pedra = function()
     }
 };
 
+#endregion
+
+
+#region Configurar consequência do cachorro
+
 configurar_consequencia_cachorro = function()
 {
     consequencia_atual = 1;
@@ -304,15 +454,30 @@ configurar_consequencia_cachorro = function()
 
     frase_atual = 0;
     caracteres_visiveis = 0;
+
     consequencia_concluida = false;
     transicao_consequencia_iniciada = false;
 
 
-    switch (global.escolha_cachorro)
+    var _escolha = 2;
+
+
+    if (
+        variable_global_exists(
+            "escolha_cachorro"
+        )
+    )
     {
-        // ==================================================
-        // LIBERTAR
-        // ==================================================
+        _escolha =
+            global.escolha_cachorro;
+    }
+
+
+    switch (_escolha)
+    {
+        // ----------------------------------------------
+        // Libertar
+        // ----------------------------------------------
 
         case 0:
             sprite_consequencia =
@@ -331,9 +496,9 @@ configurar_consequencia_cachorro = function()
         break;
 
 
-        // ==================================================
-        // ALIMENTAR E LIBERTAR
-        // ==================================================
+        // ----------------------------------------------
+        // Alimentar e libertar
+        // ----------------------------------------------
 
         case 1:
             sprite_consequencia =
@@ -352,28 +517,10 @@ configurar_consequencia_cachorro = function()
         break;
 
 
-        // ==================================================
-        // IGNORAR
-        // ==================================================
+        // ----------------------------------------------
+        // Ignorar ou escolha inválida
+        // ----------------------------------------------
 
-        case 2:
-            sprite_consequencia =
-                spr_final_cachorro_3;
-
-            frases_consequencia =
-            [
-                "O cachorro permaneceu preso na armadilha.",
-
-                "Sem sua companhia, o caçador continuou sozinho pela floresta e desapareceu durante uma de suas viagens.",
-
-                "Anos se passaram, mas sua família jamais descobriu o que aconteceu com ele.",
-
-                "Nem toda perda é vista por quem poderia evitá-la."
-            ];
-        break;
-
-
-        // Segurança
         default:
             sprite_consequencia =
                 spr_final_cachorro_3;
@@ -392,6 +539,11 @@ configurar_consequencia_cachorro = function()
     }
 };
 
+#endregion
+
+
+#region Configurar consequência das sementes
+
 configurar_consequencia_sementes = function()
 {
     consequencia_atual = 2;
@@ -406,11 +558,25 @@ configurar_consequencia_sementes = function()
     transicao_consequencia_iniciada = false;
 
 
-    switch (global.escolha_sementes)
+    var _escolha = 1;
+
+
+    if (
+        variable_global_exists(
+            "escolha_sementes"
+        )
+    )
     {
-        // ==================================================
-        // AMARRAR
-        // ==================================================
+        _escolha =
+            global.escolha_sementes;
+    }
+
+
+    switch (_escolha)
+    {
+        // ----------------------------------------------
+        // Amarrar
+        // ----------------------------------------------
 
         case 0:
             sprite_consequencia =
@@ -429,9 +595,9 @@ configurar_consequencia_sementes = function()
         break;
 
 
-        // ==================================================
-        // DEIXAR COMO ESTÁ
-        // ==================================================
+        // ----------------------------------------------
+        // Deixar como está
+        // ----------------------------------------------
 
         case 1:
             sprite_consequencia =
@@ -450,9 +616,9 @@ configurar_consequencia_sementes = function()
         break;
 
 
-        // ==================================================
-        // ABRIR MAIS
-        // ==================================================
+        // ----------------------------------------------
+        // Abrir mais
+        // ----------------------------------------------
 
         case 2:
             sprite_consequencia =
@@ -471,7 +637,10 @@ configurar_consequencia_sementes = function()
         break;
 
 
-        // Segurança
+        // ----------------------------------------------
+        // Escolha inválida
+        // ----------------------------------------------
+
         default:
             sprite_consequencia =
                 spr_final_sementes_2;
@@ -490,6 +659,11 @@ configurar_consequencia_sementes = function()
     }
 };
 
+#endregion
+
+
+#region Configurar consequência do brinquedo
+
 configurar_consequencia_brinquedo = function()
 {
     consequencia_atual = 3;
@@ -504,11 +678,25 @@ configurar_consequencia_brinquedo = function()
     transicao_consequencia_iniciada = false;
 
 
-    switch (global.escolha_brinquedo)
+    var _escolha = 2;
+
+
+    if (
+        variable_global_exists(
+            "escolha_brinquedo"
+        )
+    )
     {
-        // ==================================================
-        // AJUDAR
-        // ==================================================
+        _escolha =
+            global.escolha_brinquedo;
+    }
+
+
+    switch (_escolha)
+    {
+        // ----------------------------------------------
+        // Ajudar
+        // ----------------------------------------------
 
         case 0:
             sprite_consequencia =
@@ -525,9 +713,9 @@ configurar_consequencia_brinquedo = function()
         break;
 
 
-        // ==================================================
-        // DERRUBAR COM UMA PEDRA
-        // ==================================================
+        // ----------------------------------------------
+        // Derrubar com uma pedra
+        // ----------------------------------------------
 
         case 1:
             sprite_consequencia =
@@ -546,28 +734,10 @@ configurar_consequencia_brinquedo = function()
         break;
 
 
-        // ==================================================
-        // IGNORAR
-        // ==================================================
+        // ----------------------------------------------
+        // Ignorar ou escolha inválida
+        // ----------------------------------------------
 
-        case 2:
-            sprite_consequencia =
-                spr_final_brinquedo_3;
-
-            frases_consequencia =
-            [
-                "O mensageiro continuou seu caminho, e a criança permaneceu diante da árvore.",
-
-                "Pouco depois, outro viajante parou para ajudá-la. Aquele encontro deu início a uma amizade que durou muitos anos.",
-
-                "Com o tempo, sua família passou a acolher todos os viajantes que atravessavam aquela estrada.",
-
-                "Quando escolhemos não agir, alguém pode escrever essa história por nós."
-            ];
-        break;
-
-
-        // Segurança
         default:
             sprite_consequencia =
                 spr_final_brinquedo_3;
@@ -585,3 +755,13 @@ configurar_consequencia_brinquedo = function()
         break;
     }
 };
+
+#endregion
+
+
+#region Bloquear gameplay
+
+global.controle_bloqueado = true;
+global.dialogo_ativo = false;
+
+#endregion

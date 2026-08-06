@@ -14,7 +14,7 @@ estado_mecanismo = MECANISMO_PARADO;
 #endregion
 
 
-#region Interação
+#region Configuração da interação
 
 distancia_interacao = 44;
 offset_indicador_y = 12;
@@ -30,16 +30,16 @@ pode_interagir =
 #endregion
 
 
-#region Puzzle
+#region Configuração do puzzle
 
+// Posições das marcas:
 // 0 = cima
 // 1 = direita
 // 2 = baixo
 posicoes_rodas = [1, 2, 2];
 
-roda_selecionada = 0;
-
 quantidade_rodas = 3;
+roda_selecionada = 0;
 
 contador_conclusao = 0;
 espera_conclusao = 18;
@@ -69,7 +69,7 @@ girar_roda = function(_indice)
 {
     girar_posicao(_indice);
 
-    // Cada roda movimenta a próxima
+    // Cada roda também movimenta a seguinte
     if (_indice < quantidade_rodas - 1)
     {
         girar_posicao(_indice + 1);
@@ -97,8 +97,7 @@ puzzle_resolvido = function()
 
 abrir_puzzle = function()
 {
-    estado_mecanismo =
-        MECANISMO_PUZZLE;
+    estado_mecanismo = MECANISMO_PUZZLE;
 
     global.controle_bloqueado = true;
     pode_interagir = false;
@@ -107,12 +106,11 @@ abrir_puzzle = function()
 
 fechar_puzzle = function()
 {
-    // Impede que o mesmo Esc abra a pausa
+    // Impede que o mesmo Esc abra o menu de pausa
     global.bloquear_pause_frames = 2;
     keyboard_clear(vk_escape);
 
-    estado_mecanismo =
-        MECANISMO_PARADO;
+    estado_mecanismo = MECANISMO_PARADO;
 
     global.controle_bloqueado = false;
 
@@ -131,8 +129,7 @@ interagir = function()
     if (
         !global.ponte_descoberta
         || global.ponte_abaixada
-        || estado_mecanismo
-            != MECANISMO_PARADO
+        || estado_mecanismo != MECANISMO_PARADO
         || transicao_iniciada
     )
     {
@@ -140,42 +137,45 @@ interagir = function()
     }
 
 
-    pode_interagir = false;
+    // ==================================================
+    // PRIMEIRA ANÁLISE DO MECANISMO
+    // ==================================================
 
-
-    // Primeira vez examinando o mecanismo
     if (!mecanismo_examinado)
     {
-        mecanismo_examinado = true;
+        var _dialogo_aberto =
+            global.dialogo_instancia.abrir(
+            [
+                {
+                    nome: "Mensageiro",
+                    texto: "Este mecanismo possui três rodas ligadas entre si."
+                },
 
-        estado_mecanismo =
-            MECANISMO_DIALOGO;
+                {
+                    nome: "Mensageiro",
+                    texto: "Quando uma delas gira, a roda seguinte também se move."
+                },
+
+                {
+                    nome: "Mensageiro",
+                    texto: "Se eu alinhar as três marcas, talvez consiga baixar a ponte."
+                }
+            ]);
 
 
-        global.dialogo_instancia.abrir(
-        [
-            {
-                nome: "Mensageiro",
-                texto:
-                    "Três rodas controlam o mecanismo."
-            },
-            {
-                nome: "Mensageiro",
-                texto:
-                    "Quando uma gira, a próxima também se move."
-            },
-            {
-                nome: "Mensageiro",
-                texto:
-                    "Preciso alinhar as três marcas."
-            }
-        ]);
+        // Só registra a análise se o diálogo abrir
+        if (_dialogo_aberto)
+        {
+            mecanismo_examinado = true;
+            estado_mecanismo = MECANISMO_DIALOGO;
+            pode_interagir = false;
+        }
 
         exit;
     }
 
 
-    // Nas próximas interações abre diretamente
+    // Nas próximas interações, abre diretamente o puzzle
     abrir_puzzle();
 };
 

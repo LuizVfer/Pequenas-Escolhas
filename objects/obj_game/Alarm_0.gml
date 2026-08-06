@@ -1,8 +1,19 @@
-if (musica_pendente != noone)
+#region Iniciar música pendente
+
+if (musica_pendente == noone)
 {
-    var _musica = musica_pendente;
-
-    musica_pendente = noone;
-
-    tocar_musica(_musica);
+    exit;
 }
+
+
+var _musica =
+    musica_pendente;
+
+musica_pendente = noone;
+
+
+tocar_musica(
+    _musica
+);
+
+#endregion

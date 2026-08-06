@@ -1,18 +1,17 @@
-
 #region Segurança
 
 if (global.ponte_abaixada)
 {
-    estado_mecanismo =
-        MECANISMO_CONCLUIDO;
-
+    estado_mecanismo = MECANISMO_CONCLUIDO;
     pode_interagir = false;
+
     exit;
 }
 
 #endregion
 
 
+// Movimento visual da interface
 anim_puzzle += 0.08;
 
 
@@ -20,28 +19,29 @@ anim_puzzle += 0.08;
 
 switch (estado_mecanismo)
 {
-    // --------------------------------------------------
-    // Mecanismo disponível
-    // --------------------------------------------------
+    // ==================================================
+    // MECANISMO DISPONÍVEL
+    // ==================================================
 
     case MECANISMO_PARADO:
     {
         pode_interagir =
             global.ponte_descoberta
-            && !global.ponte_abaixada;
+            && !global.ponte_abaixada
+            && !transicao_iniciada;
     }
     break;
 
 
-    // --------------------------------------------------
-    // Aguarda o diálogo terminar
-    // --------------------------------------------------
+    // ==================================================
+    // AGUARDAR O DIÁLOGO INICIAL
+    // ==================================================
 
     case MECANISMO_DIALOGO:
     {
         pode_interagir = false;
 
-
+        // Abre o puzzle depois que o diálogo terminar
         if (!global.controle_bloqueado)
         {
             abrir_puzzle();
@@ -50,9 +50,9 @@ switch (estado_mecanismo)
     break;
 
 
-    // --------------------------------------------------
-    // Puzzle das rodas
-    // --------------------------------------------------
+    // ==================================================
+    // PUZZLE DAS RODAS
+    // ==================================================
 
     case MECANISMO_PUZZLE:
     {
@@ -76,92 +76,7 @@ switch (estado_mecanismo)
             keyboard_check_pressed(vk_escape);
 
 
-        // Selecionar roda
-        if (_esquerda)
-        {
-            roda_selecionada--;
-
-            if (roda_selecionada < 0)
-            {
-                roda_selecionada =
-                    quantidade_rodas - 1;
-            }
-
-
-            var _som = audio_play_sound(
-                snd_opcao_mover,
-                0,
-                false
-            );
-
-            audio_sound_gain(
-                _som,
-                0.35,
-                0
-            );
-        }
-        else if (_direita)
-        {
-            roda_selecionada++;
-
-            if (
-                roda_selecionada
-                >= quantidade_rodas
-            )
-            {
-                roda_selecionada = 0;
-            }
-
-
-            var _som = audio_play_sound(
-                snd_opcao_mover,
-                0,
-                false
-            );
-
-            audio_sound_gain(
-                _som,
-                0.35,
-                0
-            );
-        }
-
-
-        // Girar a roda selecionada
-        if (_girar)
-        {
-            girar_roda(
-                roda_selecionada
-            );
-
-
-            var _som_girar = audio_play_sound(
-                snd_opcao_confirmar,
-                1,
-                false
-            );
-
-            audio_sound_gain(
-                _som_girar,
-                0.50,
-                0
-            );
-
-
-            if (puzzle_resolvido())
-            {
-                estado_mecanismo =
-                    MECANISMO_CONCLUIDO;
-
-                contador_conclusao =
-                    espera_conclusao;
-
-                transicao_iniciada = false;
-            }
-        }
-
-
-        // Sair sem perder o progresso
+        // Sair possui prioridade sobre os outros comandos
         if (_sair)
         {
             var _som_sair = audio_play_sound(
@@ -178,21 +93,117 @@ switch (estado_mecanismo)
 
             fechar_puzzle();
         }
+        else
+        {
+            // ------------------------------------------
+            // SELECIONAR A RODA ANTERIOR
+            // ------------------------------------------
+
+            if (_esquerda)
+            {
+                roda_selecionada--;
+
+                if (roda_selecionada < 0)
+                {
+                    roda_selecionada =
+                        quantidade_rodas - 1;
+                }
+
+                var _som_esquerda =
+                    audio_play_sound(
+                        snd_opcao_mover,
+                        0,
+                        false
+                    );
+
+                audio_sound_gain(
+                    _som_esquerda,
+                    0.35,
+                    0
+                );
+            }
+
+
+            // ------------------------------------------
+            // SELECIONAR A PRÓXIMA RODA
+            // ------------------------------------------
+
+            else if (_direita)
+            {
+                roda_selecionada++;
+
+                if (
+                    roda_selecionada
+                    >= quantidade_rodas
+                )
+                {
+                    roda_selecionada = 0;
+                }
+
+                var _som_direita =
+                    audio_play_sound(
+                        snd_opcao_mover,
+                        0,
+                        false
+                    );
+
+                audio_sound_gain(
+                    _som_direita,
+                    0.35,
+                    0
+                );
+            }
+
+
+            // ------------------------------------------
+            // GIRAR A RODA SELECIONADA
+            // ------------------------------------------
+
+            if (_girar)
+            {
+                girar_roda(roda_selecionada);
+
+                var _som_girar =
+                    audio_play_sound(
+                        snd_opcao_confirmar,
+                        1,
+                        false
+                    );
+
+                audio_sound_gain(
+                    _som_girar,
+                    0.50,
+                    0
+                );
+
+
+                if (puzzle_resolvido())
+                {
+                    estado_mecanismo =
+                        MECANISMO_CONCLUIDO;
+
+                    contador_conclusao =
+                        espera_conclusao;
+
+                    transicao_iniciada = false;
+                }
+            }
+        }
     }
     break;
 
 
-    // --------------------------------------------------
-    // Mostra o resultado antes do fade
-    // --------------------------------------------------
+    // ==================================================
+    // MOSTRAR A SOLUÇÃO ANTES DO FADE
+    // ==================================================
 
     case MECANISMO_CONCLUIDO:
     {
         global.controle_bloqueado = true;
         pode_interagir = false;
 
-
-        contador_conclusao--;
+        contador_conclusao =
+            max(0, contador_conclusao - 1);
 
 
         if (
@@ -200,12 +211,6 @@ switch (estado_mecanismo)
             && !transicao_iniciada
         )
         {
-            transicao_iniciada = true;
-
-            estado_mecanismo =
-                MECANISMO_FADE;
-
-
             var _abaixar_ponte = method(
                 id,
 
@@ -222,6 +227,8 @@ switch (estado_mecanismo)
 
                         image_index = 0;
                         image_speed = 0;
+
+                        pode_interagir = false;
                     }
 
 
@@ -232,7 +239,7 @@ switch (estado_mecanismo)
                     }
 
 
-                    // Destaca o som da ponte
+                    // Abaixa a música para destacar o efeito
                     if (
                         instance_exists(
                             global.game_instancia
@@ -264,25 +271,37 @@ switch (estado_mecanismo)
                     estado_mecanismo =
                         MECANISMO_CONCLUIDO;
 
+                    transicao_iniciada = false;
                     pode_interagir = false;
-                    global.controle_bloqueado = false;
+
+                    // O obj_fade devolverá o controle
+                    // quando a transição terminar
                 }
             );
 
 
-            global.fade_instancia.iniciar(
-                _abaixar_ponte,
-                0.04,
-                45
-            );
+            var _fade_iniciado =
+                global.fade_instancia.iniciar(
+                    _abaixar_ponte,
+                    0.04,
+                    45
+                );
+
+
+            // Só muda de estado se o fade começar
+            if (_fade_iniciado)
+            {
+                transicao_iniciada = true;
+                estado_mecanismo = MECANISMO_FADE;
+            }
         }
     }
     break;
 
 
-    // --------------------------------------------------
-    // Aguarda o fade
-    // --------------------------------------------------
+    // ==================================================
+    // AGUARDAR O FADE
+    // ==================================================
 
     case MECANISMO_FADE:
     {

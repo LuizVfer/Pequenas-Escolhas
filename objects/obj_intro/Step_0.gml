@@ -1,46 +1,105 @@
-// ==================================================
-// AGUARDA O FADE TERMINAR
-// ==================================================
+#region Bloquear gameplay
 
-if (
-    instance_exists(global.fade_instancia)
-    && global.fade_instancia.ativo
-)
+// O controle deve permanecer bloqueado
+// durante toda a introdução
+global.controle_bloqueado = true;
+
+#endregion
+
+
+#region Aguardar fade
+
+if (fade_intro_ativo())
 {
     parar_som_lapis();
     exit;
 }
 
+#endregion
+
+
+#region Entrada do jogador
 
 var _confirmar =
-    keyboard_check_pressed(ord("E"))
-    || keyboard_check_pressed(vk_enter);
+    keyboard_check_pressed(
+        ord("E")
+    )
+    || keyboard_check_pressed(
+        vk_enter
+    );
+
+#endregion
 
 
-// ==================================================
-// ESTADO 0 — TEXTOS DA INTRODUÇÃO
-// ==================================================
+#region Textos da introdução
 
-if (estado_intro == 0)
+if (estado_intro == ESTADO_TEXTOS)
 {
+    var _quantidade_frases =
+        array_length(
+            frases_intro
+        );
+
+
+    if (_quantidade_frases <= 0)
+    {
+        parar_som_lapis();
+
+        show_debug_message(
+            "ERRO: introdução sem frases."
+        );
+
+        estado_intro = ESTADO_TITULO;
+        alpha_titulo = 0;
+
+        exit;
+    }
+
+
+    frase_atual =
+        clamp(
+            frase_atual,
+            0,
+            _quantidade_frases - 1
+        );
+
+
     var _frase =
-        frases_intro[frase_atual];
+        string(
+            frases_intro[
+                frase_atual
+            ]
+        );
+
 
     var _tamanho =
-        string_length(_frase);
+        string_length(
+            _frase
+        );
 
 
+    // ----------------------------------------------
     // Máquina de escrever
+    // ----------------------------------------------
+
     if (caracteres_visiveis < _tamanho)
     {
         iniciar_som_lapis();
-    
-        caracteres_visiveis = min(
-            caracteres_visiveis + velocidade_texto,
-            _tamanho
-        );
-    
-        if (caracteres_visiveis >= _tamanho)
+
+
+        caracteres_visiveis =
+            min(
+                caracteres_visiveis
+                    + velocidade_texto,
+
+                _tamanho
+            );
+
+
+        if (
+            caracteres_visiveis
+            >= _tamanho
+        )
         {
             parar_som_lapis();
         }
@@ -51,124 +110,191 @@ if (estado_intro == 0)
     }
 
 
-    if (_confirmar)
+    if (!_confirmar)
     {
-        // Completa imediatamente a frase
-        if (caracteres_visiveis < _tamanho)
-        {
-            caracteres_visiveis = _tamanho;
-        
-            parar_som_lapis();
-        }
-
-        // Próxima frase
-        else if (
-            frase_atual
-            < array_length(frases_intro) - 1
-        )
-        {
-            if (!transicao_iniciada)
-            {
-                transicao_iniciada = true;
-
-
-                var _proxima_frase = method(
-                    id,
-
-                    function()
-                    {
-                        frase_atual++;
-                        caracteres_visiveis = 0;
-                        transicao_iniciada = false;
-                    }
-                );
-
-
-                global.fade_instancia.iniciar(
-                    _proxima_frase,
-                    0.05,
-                    15
-                );
-            }
-        }
-
-        // Terminou a introdução: mostra o título
-        else
-        {
-            if (!transicao_iniciada)
-            {
-                transicao_iniciada = true;
-
-
-                var _mostrar_titulo = method(
-                    id,
-
-                    function()
-                    {
-                        estado_intro = 1;
-                        alpha_titulo = 0;
-                        transicao_iniciada = false;
-                    }
-                );
-
-
-                global.fade_instancia.iniciar(
-                    _mostrar_titulo,
-                    0.04,
-                    30
-                );
-            }
-        }
+        exit;
     }
 
-    exit;
-}
+
+    // ----------------------------------------------
+    // Completar a frase atual
+    // ----------------------------------------------
+
+    if (caracteres_visiveis < _tamanho)
+    {
+        caracteres_visiveis =
+            _tamanho;
+
+        parar_som_lapis();
+
+        exit;
+    }
 
 
-// ==================================================
-// ESTADO 1 — TÍTULO DO JOGO
-// ==================================================
+    if (transicao_iniciada)
+    {
+        exit;
+    }
 
-if (estado_intro == 1)
-{
-    alpha_titulo = min(
-        alpha_titulo + velocidade_alpha_titulo,
-        1
-    );
 
+    // ----------------------------------------------
+    // Próxima frase
+    // ----------------------------------------------
 
     if (
-        _confirmar
-        && alpha_titulo >= 1
-        && !transicao_iniciada
+        frase_atual
+        < _quantidade_frases - 1
     )
     {
-        transicao_iniciada = true;
+        var _mostrar_proxima_frase =
+            method(
+                id,
+
+                function()
+                {
+                    frase_atual++;
+
+                    caracteres_visiveis = 0;
+
+                    transicao_iniciada =
+                        false;
+                }
+            );
 
 
-        var _entrar_na_cidade = method(
+        transicao_iniciada =
+            iniciar_fade_intro(
+                _mostrar_proxima_frase,
+                0.05,
+                15
+            );
+
+
+        exit;
+    }
+
+
+    // ----------------------------------------------
+    // Mostrar o título
+    // ----------------------------------------------
+
+    var _mostrar_titulo =
+        method(
             id,
 
             function()
             {
-                // Entrada inicial do Capítulo 1
-                global.usar_spawn = true;
-                global.spawn_x = 96;
-                global.spawn_y = 304;
+                parar_som_lapis();
 
-                global.controle_bloqueado = false;
+                estado_intro =
+                    ESTADO_TITULO;
 
-                room_goto(rm_cidade);
+                alpha_titulo = 0;
+
+                transicao_iniciada =
+                    false;
             }
         );
 
 
-        global.fade_instancia.iniciar(
+    transicao_iniciada =
+        iniciar_fade_intro(
+            _mostrar_titulo,
+            0.04,
+            30
+        );
+
+
+    exit;
+}
+
+#endregion
+
+
+#region Título do jogo
+
+if (estado_intro == ESTADO_TITULO)
+{
+    parar_som_lapis();
+
+
+    alpha_titulo =
+        min(
+            alpha_titulo
+                + velocidade_alpha_titulo,
+
+            1
+        );
+
+
+    if (
+        !_confirmar
+        || alpha_titulo < 1
+        || transicao_iniciada
+    )
+    {
+        exit;
+    }
+
+
+    var _entrar_na_cidade =
+        method(
+            id,
+
+            function()
+            {
+                parar_som_lapis();
+
+
+                // Entrada inicial do Capítulo 1
+                global.usar_spawn = true;
+
+                global.spawn_x = 96;
+                global.spawn_y = 304;
+
+
+                global.controle_bloqueado =
+                    false;
+
+
+                room_goto(
+                    rm_cidade
+                );
+            }
+        );
+
+
+    transicao_iniciada =
+        iniciar_fade_intro(
             _entrar_na_cidade,
             0.03,
             45
         );
-    }
+
 
     exit;
 }
+
+#endregion
+
+
+#region Proteção contra estado inválido
+
+parar_som_lapis();
+
+
+show_debug_message(
+    "ERRO: estado inválido no obj_intro."
+);
+
+
+estado_intro = ESTADO_TEXTOS;
+
+frase_atual = 0;
+caracteres_visiveis = 0;
+
+alpha_titulo = 0;
+
+transicao_iniciada = false;
+
+#endregion

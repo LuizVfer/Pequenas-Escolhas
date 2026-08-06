@@ -1,9 +1,13 @@
-
-
 if (!ativo)
 {
     exit;
 }
+
+
+draw_set_font(fnt_dialogo);
+draw_set_halign(fa_left);
+draw_set_valign(fa_top);
+
 
 // ==================================================
 // CAIXA DE ESCOLHAS
@@ -11,31 +15,34 @@ if (!ativo)
 
 if (modo_escolha)
 {
-    var _cx = 64;
-    var _cy = 16;
-    var _cw = 512;
+    var _cx =
+        caixa_x;
 
-    draw_set_font(fnt_dialogo);
-    draw_set_halign(fa_left);
-    draw_set_valign(fa_top);
+    var _cy =
+        caixa_y;
+
+    var _cw =
+        caixa_largura;
 
 
-    // ==================================================
-    // MEDIDAS AUTOMÁTICAS
-    // ==================================================
+    var _pergunta_x =
+        _cx + 18;
 
-    var _pergunta_x = _cx + 18;
-    var _pergunta_y = _cy + 40;
-    var _pergunta_largura = _cw - 36;
+    var _pergunta_y =
+        _cy + 40;
 
-    // Mede quantos pixels a pergunta ocupará
-    var _pergunta_altura = string_height_ext(
-        texto_escolha,
-        -1,
-        _pergunta_largura
-    );
+    var _pergunta_largura =
+        _cw - 36;
 
-    // As opções começam depois da pergunta
+
+    var _pergunta_altura =
+        string_height_ext(
+            texto_escolha,
+            -1,
+            _pergunta_largura
+        );
+
+
     var _opcoes_y =
         _pergunta_y
         + _pergunta_altura
@@ -47,19 +54,25 @@ if (modo_escolha)
     var _quantidade_opcoes =
         array_length(opcoes);
 
-    // Altura automática da caixa
+
     var _ch =
         (_opcoes_y - _cy)
-        + (_quantidade_opcoes * _altura_opcao)
+        + (
+            _quantidade_opcoes
+            * _altura_opcao
+        )
         + 24;
 
-    // Altura mínima
-    _ch = max(_ch, 156);
+
+    _ch = max(
+        _ch,
+        156
+    );
 
 
-    // ==================================================
-    // CAIXA
-    // ==================================================
+    // ----------------------------------------------
+    // Caixa
+    // ----------------------------------------------
 
     draw_sprite_stretched(
         spr_caixa_dialogo,
@@ -71,12 +84,16 @@ if (modo_escolha)
     );
 
 
-    // ==================================================
-    // NOME
-    // ==================================================
+    // ----------------------------------------------
+    // Nome
+    // ----------------------------------------------
 
     draw_set_color(
-        make_color_rgb(110, 65, 38)
+        make_color_rgb(
+            110,
+            65,
+            38
+        )
     );
 
     draw_text(
@@ -86,9 +103,16 @@ if (modo_escolha)
     );
 
 
+    // ----------------------------------------------
     // Linha separadora
+    // ----------------------------------------------
+
     draw_set_color(
-        make_color_rgb(130, 95, 60)
+        make_color_rgb(
+            130,
+            95,
+            60
+        )
     );
 
     draw_rectangle(
@@ -100,12 +124,16 @@ if (modo_escolha)
     );
 
 
-    // ==================================================
-    // PERGUNTA
-    // ==================================================
+    // ----------------------------------------------
+    // Pergunta
+    // ----------------------------------------------
 
     draw_set_color(
-        make_color_rgb(45, 35, 25)
+        make_color_rgb(
+            45,
+            35,
+            25
+        )
     );
 
     draw_text_ext(
@@ -117,9 +145,9 @@ if (modo_escolha)
     );
 
 
-    // ==================================================
-    // OPÇÕES
-    // ==================================================
+    // ----------------------------------------------
+    // Opções
+    // ----------------------------------------------
 
     for (
         var _i = 0;
@@ -135,21 +163,33 @@ if (modo_escolha)
         if (_i == opcao_atual)
         {
             draw_set_color(
-                make_color_rgb(110, 65, 38)
+                make_color_rgb(
+                    110,
+                    65,
+                    38
+                )
             );
+
 
             draw_sprite(
                 spr_marcador_opcao_placeholder,
                 0,
                 _cx + 27,
                 _linha_y
-                    + string_height(opcoes[_i]) * 0.5
+                    + string_height(
+                        string(opcoes[_i])
+                    )
+                    * 0.5
             );
         }
         else
         {
             draw_set_color(
-                make_color_rgb(45, 35, 25)
+                make_color_rgb(
+                    45,
+                    35,
+                    25
+                )
             );
         }
 
@@ -157,14 +197,14 @@ if (modo_escolha)
         draw_text(
             _cx + 44,
             _linha_y,
-            opcoes[_i]
+            string(opcoes[_i])
         );
     }
 
 
-    // ==================================================
-    // INDICADOR E
-    // ==================================================
+    // ----------------------------------------------
+    // Indicador E
+    // ----------------------------------------------
 
     draw_sprite(
         spr_tecla_E_placeholder,
@@ -182,13 +222,35 @@ if (modo_escolha)
 }
 
 
-// Página atual
-var _pagina = paginas[pagina_atual];
+// ==================================================
+// VERIFICAR PÁGINA
+// ==================================================
 
-var _nome = _pagina.nome;
-var _texto = _pagina.texto;
+if (
+    array_length(paginas) <= 0
+    || pagina_atual < 0
+    || pagina_atual >= array_length(paginas)
+)
+{
+    draw_set_color(c_white);
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
 
-var _tem_nome = string_length(_nome) > 0;
+    exit;
+}
+
+
+var _pagina =
+    paginas[pagina_atual];
+
+var _nome =
+    string(_pagina.nome);
+
+var _texto =
+    string(_pagina.texto);
+
+var _tem_nome =
+    string_length(_nome) > 0;
 
 
 // ==================================================
@@ -206,22 +268,17 @@ draw_sprite_stretched(
 
 
 // ==================================================
-// CONFIGURAÇÃO
-// ==================================================
-
-draw_set_font(fnt_dialogo);
-draw_set_halign(fa_left);
-draw_set_valign(fa_top);
-
-
-// ==================================================
 // NOME
 // ==================================================
 
 if (_tem_nome)
 {
     draw_set_color(
-        make_color_rgb(110, 65, 38)
+        make_color_rgb(
+            110,
+            65,
+            38
+        )
     );
 
     draw_text(
@@ -231,9 +288,12 @@ if (_tem_nome)
     );
 
 
-    // Linha mais grossa e mais afastada do nome
     draw_set_color(
-        make_color_rgb(130, 95, 60)
+        make_color_rgb(
+            130,
+            95,
+            60
+        )
     );
 
     draw_rectangle(
@@ -250,22 +310,39 @@ if (_tem_nome)
 // TEXTO
 // ==================================================
 
-var _texto_x = caixa_x + 18;
+var _texto_x =
+    caixa_x + 18;
+
 var _texto_y;
+
 
 if (_tem_nome)
 {
-    _texto_y = caixa_y + 40;
+    _texto_y =
+        caixa_y + 40;
 }
 else
 {
-    _texto_y = caixa_y + 16;
+    _texto_y =
+        caixa_y + 16;
 }
 
-var _texto_mostrado = string_copy(
-    _texto,
-    1,
-    floor(texto_visivel)
+
+var _texto_mostrado =
+    string_copy(
+        _texto,
+        1,
+        floor(texto_visivel)
+    );
+
+
+// Garante a mesma cor do texto com ou sem nome
+draw_set_color(
+    make_color_rgb(
+        45,
+        35,
+        25
+    )
 );
 
 draw_text_ext(
@@ -281,7 +358,10 @@ draw_text_ext(
 // INDICADOR E
 // ==================================================
 
-if (texto_visivel >= string_length(_texto))
+if (
+    texto_visivel
+    >= string_length(_texto)
+)
 {
     draw_sprite(
         spr_tecla_E_placeholder,
@@ -293,7 +373,7 @@ if (texto_visivel >= string_length(_texto))
 
 
 // ==================================================
-// RESTAURAÇÃO
+// RESTAURAR CONFIGURAÇÕES
 // ==================================================
 
 draw_set_color(c_white);

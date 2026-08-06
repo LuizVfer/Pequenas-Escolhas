@@ -211,19 +211,33 @@ posicionar_player_empurrando =
 function(_player, _animar)
 {
     _player.hsp = 0;
-
     _player.x =
         x - distancia_player_roda;
 
-    _player.sprite_index =
-        spr_player_empurrando;
+
+    // Só reinicia quando realmente
+    // começa a animação de empurrar
+    if (
+        _player.sprite_index
+        != spr_player_empurrando
+    )
+    {
+        _player.sprite_index =
+            spr_player_empurrando;
+
+        _player.image_index = 0;
+    }
+
 
     _player.image_xscale = 1;
     _player.direcao = 1;
 
+
     if (_animar)
     {
-        _player.image_speed = 0.18;
+        // Usa a velocidade configurada
+        // diretamente no Sprite Editor
+        _player.image_speed = 1;
     }
     else
     {
@@ -233,9 +247,26 @@ function(_player, _animar)
 };
 
 
-posicionar_player_idle = function(_player)
+posicionar_player_idle = function(
+    _player
+)
 {
     _player.hsp = 0;
+
+
+    // Não deixa o minigame substituir
+    // a martelada por idle
+    if (
+        variable_instance_exists(
+            _player,
+            "animacao_martelo_ativa"
+        )
+        && _player.animacao_martelo_ativa
+    )
+    {
+        return;
+    }
+
 
     _player.sprite_index =
         spr_player_idle;
@@ -379,29 +410,26 @@ concluir_reparo_carroca = function()
 
 interagir = function()
 {
+    // A roda só pode ser usada depois da conversa
+    // com o ferreiro e antes do reparo
     if (
         !global.roda_liberada
         || global.roda_usada
-        || estado_puzzle_roda
-            != ESTADO_PARADO
+        || estado_puzzle_roda != ESTADO_PARADO
     )
     {
         exit;
     }
 
-
-    var _player =
-        instance_find(obj_player, 0);
+    var _player = instance_find(obj_player, 0);
 
     if (!instance_exists(_player))
     {
         exit;
     }
 
-
-    alvo_roda =
-        encontrar_alvo_roda();
-
+    // Procura o ponto onde a roda deverá parar
+    alvo_roda = encontrar_alvo_roda();
 
     if (!instance_exists(alvo_roda))
     {
@@ -409,15 +437,28 @@ interagir = function()
         [
             {
                 nome: "Mensageiro",
-                texto:
-                    "Não parece haver lugar para levar esta roda."
+                texto: "Não vejo como levar esta roda até a carroça daqui."
             }
         ]);
 
         exit;
     }
 
+    // Primeiro confirma que o diálogo realmente abriu
+    var _dialogo_aberto = global.dialogo_instancia.abrir(
+    [
+        {
+            nome: "Mensageiro",
+            texto: "Certo. Vou empurrá-la até a carroça."
+        }
+    ]);
 
+    if (!_dialogo_aberto)
+    {
+        exit;
+    }
+
+    // Prepara a sequência do puzzle
     x_inicio_sequencia = x;
     x_destino_sequencia = alvo_roda.x;
 
@@ -428,18 +469,7 @@ interagir = function()
     sendo_empurrada = true;
     pode_interagir = false;
 
-    estado_puzzle_roda =
-        ESTADO_DIALOGO_RODA;
-
-
-    global.dialogo_instancia.abrir(
-    [
-        {
-            nome: "Mensageiro",
-            texto:
-                "Vou empurrá-la até a carroça."
-        }
-    ]);
+    estado_puzzle_roda = ESTADO_DIALOGO_RODA;
 };
 
 #endregion

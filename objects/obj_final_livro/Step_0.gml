@@ -1,14 +1,17 @@
+// O livro final mantém o gameplay bloqueado
+global.controle_bloqueado = true;
+
+
 // ==================================================
-// LIVRO FECHADO
+// LIVRO FECHADO NO INÍCIO
 // ==================================================
 
-if (estado_final == 0)
+if (
+    estado_final
+    == ESTADO_LIVRO_FECHADO_INICIO
+)
 {
-    // Aguarda o fade da troca de room terminar
-    if (
-        instance_exists(global.fade_instancia)
-        && global.fade_instancia.ativo
-    )
+    if (fade_ativo())
     {
         exit;
     }
@@ -22,95 +25,145 @@ if (estado_final == 0)
         && !abertura_iniciada
     )
     {
-        abertura_iniciada = true;
-
-
         var _abrir_livro = method(
             id,
 
             function()
             {
-                // Toca o som durante a tela preta
                 if (som_livro_abrindo != noone)
                 {
-                    global.game_instancia
-                        .abaixar_musica_para_efeito(
-                            70,
-                            0.15
+                    abaixar_musica_final(
+                        70,
+                        0.15
+                    );
+
+
+                    var _som_abrindo =
+                        audio_play_sound(
+                            som_livro_abrindo,
+                            2,
+                            false
                         );
-                
-                    var _som_abrindo = audio_play_sound(
-                        som_livro_abrindo,
-                        2,
-                        false
-                    );
-                
-                    audio_sound_gain(
-                        _som_abrindo,
-                        1,
-                        0
-                    );
+
+
+                    if (_som_abrindo != -1)
+                    {
+                        audio_sound_gain(
+                            _som_abrindo,
+                            1,
+                            0
+                        );
+                    }
                 }
 
 
-                estado_final = 1;
+                estado_final =
+                    ESTADO_CONSEQUENCIAS;
+
                 contador = 0;
+
                 configurar_consequencia_pedra();
             }
         );
 
 
-        global.fade_instancia.iniciar(
-            _abrir_livro,
-            0.03,
-            60
-        );
+        var _fade_abertura_iniciado =
+            iniciar_fade_final(
+                _abrir_livro,
+                0.03,
+                60
+            );
+
+
+        abertura_iniciada =
+            _fade_abertura_iniciado;
     }
+
+
+    exit;
 }
 
+
 // ==================================================
-// CONSEQUÊNCIA SENDO CONTADA
+// CONSEQUÊNCIAS
 // ==================================================
 
-if (estado_final == 1)
+if (
+    estado_final
+    == ESTADO_CONSEQUENCIAS
+)
 {
-    
-    // Aguarda o fade terminar antes de começar a escrever
+    if (fade_ativo())
+    {
+        parar_som_lapis();
+        exit;
+    }
+
+
+    var _quantidade_consequencia =
+        array_length(
+            frases_consequencia
+        );
+
+
+    if (_quantidade_consequencia <= 0)
+    {
+        parar_som_lapis();
+
+        show_debug_message(
+            "ERRO: consequência sem frases."
+        );
+
+        exit;
+    }
+
+
+    frase_atual =
+        clamp(
+            frase_atual,
+            0,
+            _quantidade_consequencia - 1
+        );
+
+
+    var _frase_consequencia =
+        string(
+            frases_consequencia[
+                frase_atual
+            ]
+        );
+
+    var _tamanho_consequencia =
+        string_length(
+            _frase_consequencia
+        );
+
+
+    // ----------------------------------------------
+    // Máquina de escrever
+    // ----------------------------------------------
+
     if (
-        instance_exists(global.fade_instancia)
-        && global.fade_instancia.ativo
+        caracteres_visiveis
+        < _tamanho_consequencia
     )
     {
-        parar_som_lapis();
-        exit;
-    }
-    if (array_length(frases_consequencia) <= 0)
-    {
-        parar_som_lapis();
-        exit;
-    }
-
-
-    var _frase =
-        frases_consequencia[frase_atual];
-
-    var _tamanho =
-        string_length(_frase);
-
-
-    // Máquina de escrever
-    if (caracteres_visiveis < _tamanho)
-    {
         iniciar_som_lapis();
-    
-        caracteres_visiveis = min(
+
+
+        caracteres_visiveis =
+            min(
+                caracteres_visiveis
+                    + velocidade_frase,
+
+                _tamanho_consequencia
+            );
+
+
+        if (
             caracteres_visiveis
-                + velocidade_frase,
-    
-            _tamanho
-        );
-    
-        if (caracteres_visiveis >= _tamanho)
+            >= _tamanho_consequencia
+        )
         {
             parar_som_lapis();
         }
@@ -121,206 +174,195 @@ if (estado_final == 1)
     }
 
 
-    var _confirmar =
-        keyboard_check_pressed(ord("E"))
-        || keyboard_check_pressed(vk_enter);
-
-
-    if (_confirmar)
-    {
-        // Completa imediatamente a frase
-        if (caracteres_visiveis < _tamanho)
-        {
-            caracteres_visiveis = _tamanho;
-        
-            parar_som_lapis();
-        }
-
-        // Vai para a próxima frase
-        else if (
-            frase_atual
-            < array_length(frases_consequencia) - 1
+    var _confirmar_consequencia =
+        keyboard_check_pressed(
+            ord("E")
         )
-        {
-            frase_atual++;
-            caracteres_visiveis = 0;
-        }
+        || keyboard_check_pressed(
+            vk_enter
+        );
 
-        // Terminou todas as frases
-       else
-       {
-           if (transicao_consequencia_iniciada)
-           {
-               exit;
-           }
-       
-       
-           transicao_consequencia_iniciada = true;
-       
-       
-           switch (consequencia_atual)
-           {
-               // ==================================================
-               // PEDRA → CACHORRO
-               // ==================================================
-       
-               case 0:
-               {
-                   var _mostrar_cachorro = method(
-                       id,
-       
-                       function()
-                       {
-                           tocar_som_pagina();
-                           configurar_consequencia_cachorro();
-                       }
-                   );
-       
-       
-                   global.fade_instancia.iniciar(
-                       _mostrar_cachorro,
-                       0.03,
-                       45
-                   );
-               }
-               break;
-       
-       
-               // ==================================================
-               // CACHORRO → SEMENTES
-               // ==================================================
-       
-               case 1:
-               {
-                   var _mostrar_sementes = method(
-                       id,
-       
-                       function()
-                       {
-                           tocar_som_pagina();
-                           configurar_consequencia_sementes();
-                       }
-                   );
-       
-       
-                   global.fade_instancia.iniciar(
-                       _mostrar_sementes,
-                       0.03,
-                       45
-                   );
-               }
-               break;
-       
-       
-               // ==================================================
-               // SEMENTES → BRINQUEDO
-               // ==================================================
-       
-               case 2:
-               {
-                   var _mostrar_brinquedo = method(
-                       id,
-       
-                       function()
-                       {
-                           tocar_som_pagina();
-                           configurar_consequencia_brinquedo();
-                       }
-                   );
-       
-       
-                   global.fade_instancia.iniciar(
-                       _mostrar_brinquedo,
-                       0.03,
-                       45
-                   );
-               }
-               break;
-       
-       
-               // ==================================================
-               // BRINQUEDO → FECHAR LIVRO
-               // ==================================================
-       
-               case 3:
-               {
-                   var _fechar_livro = method(
-                       id,
-       
-                       function()
-                       {
-                           consequencia_concluida = true;
-                           parar_som_lapis();
-       
-       
-                           // Som do livro fechando
-                           if (som_livro_fechando != noone)
-                           {
-                               if (
-                                   instance_exists(
-                                       global.game_instancia
-                                   )
-                               )
-                               {
-                                   global.game_instancia
-                                       .abaixar_musica_para_efeito(
-                                           75,
-                                           0.15
-                                       );
-                               }
-       
-       
-                               var _som_fechando =
-                                   audio_play_sound(
-                                       som_livro_fechando,
-                                       2,
-                                       false
-                                   );
-       
-       
-                               audio_sound_gain(
-                                   _som_fechando,
-                                   1,
-                                   0
-                               );
-       
-       
-                               audio_sound_pitch(
-                                   _som_fechando,
-                                   0.85
-                               );
-                           }
-       
-       
-                           estado_final = 2;
-                           contador = 0;
-                       }
-                   );
-       
-       
-                   global.fade_instancia.iniciar(
-                       _fechar_livro,
-                       0.03,
-                       60
-                   );
-               }
-               break;
-           }
-       }
+
+    if (!_confirmar_consequencia)
+    {
+        exit;
     }
+
+
+    // Completa a frase atual
+    if (
+        caracteres_visiveis
+        < _tamanho_consequencia
+    )
+    {
+        caracteres_visiveis =
+            _tamanho_consequencia;
+
+        parar_som_lapis();
+
+        exit;
+    }
+
+
+    // Avança para a próxima frase
+    if (
+        frase_atual
+        < _quantidade_consequencia - 1
+    )
+    {
+        frase_atual++;
+        caracteres_visiveis = 0;
+
+        exit;
+    }
+
+
+    if (transicao_consequencia_iniciada)
+    {
+        exit;
+    }
+
+
+    // ----------------------------------------------
+    // Próxima consequência
+    // ----------------------------------------------
+
+    if (consequencia_atual < 3)
+    {
+        var _mostrar_proxima = method(
+            id,
+
+            function()
+            {
+                tocar_som_pagina();
+
+
+                switch (consequencia_atual)
+                {
+                    case 0:
+                        configurar_consequencia_cachorro();
+                    break;
+
+
+                    case 1:
+                        configurar_consequencia_sementes();
+                    break;
+
+
+                    case 2:
+                        configurar_consequencia_brinquedo();
+                    break;
+
+
+                    default:
+                        show_debug_message(
+                            "ERRO: consequência atual inválida."
+                        );
+                    break;
+                }
+            }
+        );
+
+
+        var _fade_proxima_iniciado =
+            iniciar_fade_final(
+                _mostrar_proxima,
+                0.03,
+                45
+            );
+
+
+        transicao_consequencia_iniciada =
+            _fade_proxima_iniciado;
+
+
+        exit;
+    }
+
+
+    // ----------------------------------------------
+    // Fechar o livro
+    // ----------------------------------------------
+
+    var _fechar_livro = method(
+        id,
+
+        function()
+        {
+            consequencia_concluida = true;
+
+            parar_som_lapis();
+
+
+            if (som_livro_fechando != noone)
+            {
+                abaixar_musica_final(
+                    75,
+                    0.15
+                );
+
+
+                var _som_fechando =
+                    audio_play_sound(
+                        som_livro_fechando,
+                        2,
+                        false
+                    );
+
+
+                if (_som_fechando != -1)
+                {
+                    audio_sound_gain(
+                        _som_fechando,
+                        1,
+                        0
+                    );
+
+                    audio_sound_pitch(
+                        _som_fechando,
+                        0.85
+                    );
+                }
+            }
+
+
+            estado_final =
+                ESTADO_LIVRO_FECHADO_FINAL;
+
+            contador = 0;
+
+            transicao_mensagem_iniciada =
+                false;
+        }
+    );
+
+
+    var _fade_fechamento_iniciado =
+        iniciar_fade_final(
+            _fechar_livro,
+            0.03,
+            60
+        );
+
+
+    transicao_consequencia_iniciada =
+        _fade_fechamento_iniciado;
+
+
+    exit;
 }
+
 
 // ==================================================
 // LIVRO FECHADO NO ENCERRAMENTO
 // ==================================================
 
-if (estado_final == 2)
+if (
+    estado_final
+    == ESTADO_LIVRO_FECHADO_FINAL
+)
 {
-    // Aguarda o fade anterior terminar
-    if (
-        instance_exists(global.fade_instancia)
-        && global.fade_instancia.ativo
-    )
+    if (fade_ativo())
     {
         exit;
     }
@@ -329,79 +371,142 @@ if (estado_final == 2)
     contador++;
 
 
-    if (contador >= tempo_livro_fechado_final)
+    if (
+        contador
+            >= tempo_livro_fechado_final
+
+        && !transicao_mensagem_iniciada
+    )
     {
-        var _mostrar_mensagem_final = method(
-            id,
+        var _mostrar_mensagem_final =
+            method(
+                id,
 
-            function()
-            {
-                estado_final = 3;
+                function()
+                {
+                    estado_final =
+                        ESTADO_MENSAGEM_FINAL;
 
-                frase_final_atual = 0;
-                caracteres_finais_visiveis = 0;
+                    frase_final_atual = 0;
 
-                mensagem_final_concluida = false;
-            }
-        );
+                    caracteres_finais_visiveis =
+                        0;
+
+                    mensagem_final_concluida =
+                        false;
+
+                    transicao_creditos_iniciada =
+                        false;
+                }
+            );
 
 
-        global.fade_instancia.iniciar(
-            _mostrar_mensagem_final,
-            0.03,
-            45
-        );
+        var _fade_mensagem_iniciado =
+            iniciar_fade_final(
+                _mostrar_mensagem_final,
+                0.03,
+                45
+            );
+
+
+        transicao_mensagem_iniciada =
+            _fade_mensagem_iniciado;
     }
+
 
     exit;
 }
+
 
 // ==================================================
 // MENSAGEM FINAL
 // ==================================================
 
-if (estado_final == 3)
+if (
+    estado_final
+    == ESTADO_MENSAGEM_FINAL
+)
 {
-    // Só começa depois que o fade terminar
-   if (
-        instance_exists(global.fade_instancia)
-        && global.fade_instancia.ativo
+    if (fade_ativo())
+    {
+        parar_som_lapis();
+        exit;
+    }
+
+
+    if (
+        mensagem_final_concluida
+        || transicao_creditos_iniciada
     )
     {
         parar_som_lapis();
         exit;
     }
-    
 
-    if (mensagem_final_concluida)
+
+    var _quantidade_finais =
+        array_length(
+            frases_finais
+        );
+
+
+    if (_quantidade_finais <= 0)
     {
         parar_som_lapis();
+
+        show_debug_message(
+            "ERRO: mensagem final sem frases."
+        );
+
         exit;
     }
 
 
-    var _frase =
-        frases_finais[frase_final_atual];
+    frase_final_atual =
+        clamp(
+            frase_final_atual,
+            0,
+            _quantidade_finais - 1
+        );
 
-    var _tamanho =
-        string_length(_frase);
+
+    var _frase_final =
+        string(
+            frases_finais[
+                frase_final_atual
+            ]
+        );
+
+    var _tamanho_final =
+        string_length(
+            _frase_final
+        );
 
 
+    // ----------------------------------------------
     // Máquina de escrever
-    if (caracteres_finais_visiveis < _tamanho)
+    // ----------------------------------------------
+
+    if (
+        caracteres_finais_visiveis
+        < _tamanho_final
+    )
     {
         iniciar_som_lapis();
-    
-        caracteres_finais_visiveis = min(
-            caracteres_finais_visiveis
-                + velocidade_mensagem_final,
-    
-            _tamanho
-        );
-    
+
+
+        caracteres_finais_visiveis =
+            min(
+                caracteres_finais_visiveis
+                    + velocidade_mensagem_final,
+
+                _tamanho_final
+            );
+
+
         if (
             caracteres_finais_visiveis
-            >= _tamanho
+            >= _tamanho_final
         )
         {
             parar_som_lapis();
@@ -413,74 +518,101 @@ if (estado_final == 3)
     }
 
 
-    var _confirmar =
-        keyboard_check_pressed(ord("E"))
-        || keyboard_check_pressed(vk_enter);
-
-
-    if (_confirmar)
-    {
-        // Completa a frase atual
-        if (caracteres_finais_visiveis < _tamanho)
-        {
-            caracteres_finais_visiveis = _tamanho;
-        
-            parar_som_lapis();
-        }
-        
-        // Avança para a próxima frase
-        else if (
-            frase_final_atual
-            < array_length(frases_finais) - 1
+    var _confirmar_mensagem =
+        keyboard_check_pressed(
+            ord("E")
         )
-        {
-            frase_final_atual++;
-            caracteres_finais_visiveis = 0;
-        }
+        || keyboard_check_pressed(
+            vk_enter
+        );
 
-        // Todas as frases terminaram
-        else
-        {
-            mensagem_final_concluida = true;
-       
-            var _mostrar_creditos = method(
-                id,
-       
-                function()
-                {
-                    estado_final = 4;
-       
-                    contador_creditos = 0;
-       
-                    alpha_titulo_final = 0;
-                    alpha_creditos = 0;
-       
-                    final_completo = false;
-                }
-            );
-       
-            global.fade_instancia.iniciar(
-                _mostrar_creditos,
-                0.03,
-                60
-            );
-        }
+
+    if (!_confirmar_mensagem)
+    {
+        exit;
     }
+
+
+    // Completa a frase atual
+    if (
+        caracteres_finais_visiveis
+        < _tamanho_final
+    )
+    {
+        caracteres_finais_visiveis =
+            _tamanho_final;
+
+        parar_som_lapis();
+
+        exit;
+    }
+
+
+    // Avança para a próxima frase
+    if (
+        frase_final_atual
+        < _quantidade_finais - 1
+    )
+    {
+        frase_final_atual++;
+        caracteres_finais_visiveis = 0;
+
+        exit;
+    }
+
+
+    // ----------------------------------------------
+    // Mostrar créditos
+    // ----------------------------------------------
+
+    var _mostrar_creditos = method(
+        id,
+
+        function()
+        {
+            mensagem_final_concluida =
+                true;
+
+            estado_final =
+                ESTADO_CREDITOS;
+
+            contador_creditos = 0;
+
+            alpha_titulo_final = 0;
+            alpha_creditos = 0;
+
+            final_completo = false;
+            retorno_menu_iniciado = false;
+        }
+    );
+
+
+    var _fade_creditos_iniciado =
+        iniciar_fade_final(
+            _mostrar_creditos,
+            0.03,
+            60
+        );
+
+
+    transicao_creditos_iniciada =
+        _fade_creditos_iniciado;
+
 
     exit;
 }
 
+
 // ==================================================
-// ESTADO 4 — TÍTULO FINAL E CRÉDITOS
+// TÍTULO E CRÉDITOS
 // ==================================================
 
-if (estado_final == 4)
+if (
+    estado_final
+    == ESTADO_CREDITOS
+)
 {
-    // Aguarda o fade terminar
-    if (
-        instance_exists(global.fade_instancia)
-        && global.fade_instancia.ativo
-    )
+    if (fade_ativo())
     {
         exit;
     }
@@ -489,89 +621,113 @@ if (estado_final == 4)
     contador_creditos++;
 
 
-    // ==================================================
-    // TÍTULO APARECE PRIMEIRO
-    // ==================================================
+    // Título aparece primeiro
+    alpha_titulo_final =
+        min(
+            alpha_titulo_final
+                + velocidade_alpha_titulo,
 
-    alpha_titulo_final = min(
-        alpha_titulo_final
-            + velocidade_alpha_titulo,
-        1
-    );
-
-
-    // ==================================================
-    // CRÉDITOS APARECEM DEPOIS
-    // ==================================================
-
-    if (contador_creditos >= tempo_antes_creditos)
-    {
-        alpha_creditos = min(
-            alpha_creditos
-                + velocidade_alpha_creditos,
             1
         );
+
+
+    // Créditos aparecem depois
+    if (
+        contador_creditos
+        >= tempo_antes_creditos
+    )
+    {
+        alpha_creditos =
+            min(
+                alpha_creditos
+                    + velocidade_alpha_creditos,
+
+                1
+            );
     }
 
 
-    // ==================================================
-    // CRÉDITOS CONCLUÍDOS
-    // ==================================================
-
+    // Final completamente visível
     if (
         alpha_titulo_final >= 1
         && alpha_creditos >= 1
+        && !final_completo
     )
     {
-        if (!final_completo)
-        {
-            final_completo = true;
+        final_completo = true;
 
-            // O menu mostrará "Jogar novamente"
-            global.jogo_concluido = true;
-        }
+        global.jogo_concluido = true;
     }
 
 
-    // ==================================================
-    // VOLTAR AO MENU
-    // ==================================================
-
-    if (final_completo)
-    {
-        var _confirmar =
-            keyboard_check_pressed(ord("E"))
-            || keyboard_check_pressed(vk_enter);
-
-
-        if (
-            _confirmar
-            && !retorno_menu_iniciado
+    var _confirmar_creditos =
+        keyboard_check_pressed(
+            ord("E")
         )
-        {
-            retorno_menu_iniciado = true;
+        || keyboard_check_pressed(
+            vk_enter
+        );
 
 
-            var _voltar_ao_menu = method(
-                id,
+    if (
+        final_completo
+        && _confirmar_creditos
+        && !retorno_menu_iniciado
+    )
+    {
+        var _voltar_ao_menu = method(
+            id,
 
-                function()
-                {
-                    global.controle_bloqueado = true;
+            function()
+            {
+                parar_som_lapis();
 
-                    // Não chama resetar_progresso()
-                    room_goto(rm_menu);
-                }
-            );
+                global.controle_bloqueado =
+                    true;
+
+                // O progresso será resetado somente
+                // ao selecionar "Jogar novamente"
+                room_goto(rm_menu);
+            }
+        );
 
 
-            global.fade_instancia.iniciar(
+        var _fade_menu_iniciado =
+            iniciar_fade_final(
                 _voltar_ao_menu,
                 0.03,
                 45
             );
-        }
+
+
+        retorno_menu_iniciado =
+            _fade_menu_iniciado;
     }
+
 
     exit;
 }
+
+
+// ==================================================
+// PROTEÇÃO CONTRA ESTADO INVÁLIDO
+// ==================================================
+
+show_debug_message(
+    "ERRO: estado inválido no livro final."
+);
+
+parar_som_lapis();
+
+estado_final =
+    ESTADO_LIVRO_FECHADO_INICIO;
+
+contador = 0;
+
+abertura_iniciada = false;
+
+transicao_consequencia_iniciada = false;
+transicao_mensagem_iniciada = false;
+transicao_creditos_iniciada = false;
+
+retorno_menu_iniciado = false;

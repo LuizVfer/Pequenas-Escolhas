@@ -1,16 +1,23 @@
-// ==================================================
-// INTRODUÇÃO
-// ==================================================
+#region Bloquear gameplay
 
 global.controle_bloqueado = true;
+global.dialogo_ativo = false;
+
+#endregion
 
 
-// 0 = textos da introdução
-// 1 = título do jogo
-estado_intro = 0;
+#region Estados
+
+ESTADO_TEXTOS = 0;
+ESTADO_TITULO = 1;
+
+estado_intro = ESTADO_TEXTOS;
+
+#endregion
 
 
-// Texto definitivo
+#region Textos da introdução
+
 frases_intro =
 [
     "Em uma época em que notícias atravessavam reinos nas mãos de viajantes, um mensageiro recebeu uma tarefa simples.",
@@ -24,15 +31,20 @@ frases_intro =
     "Mas algumas jornadas deixam marcas muito além de seu destino."
 ];
 
+#endregion
 
-// Máquina de escrever
+
+#region Máquina de escrever
+
 frase_atual = 0;
+
 caracteres_visiveis = 0;
 velocidade_texto = 0.7;
 
-// ==================================================
-// SOM DO LÁPIS
-// ==================================================
+#endregion
+
+
+#region Som do lápis
 
 som_lapis_instancia = -1;
 
@@ -40,48 +52,150 @@ som_lapis_instancia = -1;
 iniciar_som_lapis = function()
 {
     if (
-        som_lapis_instancia == -1
-        || !audio_is_playing(som_lapis_instancia)
+        som_lapis_instancia != -1
+        && audio_is_playing(
+            som_lapis_instancia
+        )
     )
     {
-        som_lapis_instancia = audio_play_sound(
+        return;
+    }
+
+
+    som_lapis_instancia =
+        audio_play_sound(
             snd_lapis_escrevendo,
             0,
             true
         );
 
-        audio_sound_gain(
-            som_lapis_instancia,
-            0.30,
-            0
-        );
 
-        audio_sound_pitch(
-            som_lapis_instancia,
-            1
-        );
+    if (som_lapis_instancia == -1)
+    {
+        return;
     }
+
+
+    audio_sound_gain(
+        som_lapis_instancia,
+        0.30,
+        0
+    );
+
+
+    audio_sound_pitch(
+        som_lapis_instancia,
+        1
+    );
 };
 
 
 parar_som_lapis = function()
 {
-    if (som_lapis_instancia != -1)
+    if (som_lapis_instancia == -1)
+    {
+        return;
+    }
+
+
+    if (
+        audio_is_playing(
+            som_lapis_instancia
+        )
+    )
     {
         audio_stop_sound(
             som_lapis_instancia
         );
-
-        som_lapis_instancia = -1;
     }
+
+
+    som_lapis_instancia = -1;
 };
 
+#endregion
 
-// Título
+
+#region Título
+
 titulo_intro = "Pequenas Escolhas";
+
 alpha_titulo = 0;
 velocidade_alpha_titulo = 0.015;
 
+#endregion
 
-// Controle das transições
+
+#region Controle das transições
+
 transicao_iniciada = false;
+
+
+fade_intro_ativo = function()
+{
+    if (
+        !variable_global_exists(
+            "fade_instancia"
+        )
+    )
+    {
+        return false;
+    }
+
+
+    if (
+        !instance_exists(
+            global.fade_instancia
+        )
+    )
+    {
+        return false;
+    }
+
+
+    return global.fade_instancia.ativo;
+};
+
+
+iniciar_fade_intro = function(
+    _funcao,
+    _velocidade,
+    _duracao_preto
+)
+{
+    if (
+        !variable_global_exists(
+            "fade_instancia"
+        )
+    )
+    {
+        show_debug_message(
+            "ERRO: global.fade_instancia não existe."
+        );
+
+        return false;
+    }
+
+
+    if (
+        !instance_exists(
+            global.fade_instancia
+        )
+    )
+    {
+        show_debug_message(
+            "ERRO: obj_fade não encontrado na introdução."
+        );
+
+        return false;
+    }
+
+
+    return global.fade_instancia.iniciar(
+        _funcao,
+        _velocidade,
+        _duracao_preto
+    );
+};
+
+#endregion

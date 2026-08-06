@@ -1,15 +1,16 @@
 event_inherited();
 
-distancia_interacao = 48;
+// Ajuste visual exclusivo do comerciante
 offset_indicador_y = 12;
 
+// Interação com o comerciante
 interagir = function()
 {
     global.dialogo_instancia.abrir(
     [
         {
             nome: "Comerciante",
-            texto: "Viajante, não é? Faz tempo que não vejo alguém vindo de tão longe."
+            texto: "Um viajante, não é? Faz tempo que não vejo um rosto novo por estas ruas."
         },
 
         {
@@ -19,7 +20,7 @@ interagir = function()
 
         {
             nome: "Comerciante",
-            texto: "Então siga com cuidado. As ruas parecem tranquilas, mas sempre há alguma coisa no caminho."
+            texto: "Então siga em frente, mas vá com cuidado. Há uma agitação incomum na praça hoje."
         }
     ]);
 };

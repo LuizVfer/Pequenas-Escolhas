@@ -1,23 +1,32 @@
 event_inherited();
 
+
+#region Configuração da interação
+
 distancia_interacao = 44;
 offset_indicador_y = 12;
 prioridade_interacao = 10;
 
-alimentando_animacao = false;
+opcao_pendente = -1;
+transicao_iniciada = false;
+
+#endregion
 
 
-// ==================================================
-// RESTAURA ESCOLHA SALVA
-// ==================================================
+#region Restaurar escolha salva
+
+image_index = 0;
+image_speed = 0;
+
 
 if (global.escolha_sementes != -1)
 {
     pode_interagir = false;
 
+
     switch (global.escolha_sementes)
     {
-        // Amarrar
+        // Amarrar o saco
         case 0:
             sprite_index =
                 spr_saco_sementes_amarrado;
@@ -31,59 +40,107 @@ if (global.escolha_sementes != -1)
         break;
 
 
-        // Abrir mais
+        // Abrir mais o rasgo
         case 2:
             sprite_index =
                 spr_saco_sementes_aberto;
         break;
     }
-
-    image_index = 0;
-    image_speed = 0;
 }
 else
 {
+    sprite_index =
+        spr_saco_sementes_rasgado;
+
     pode_interagir = true;
 }
 
+#endregion
 
-// ==================================================
-// APLICA A ESCOLHA VISUAL
-// ==================================================
 
-aplicar_escolha_sementes = function()
+#region Aplicar escolha
+
+aplicar_escolha_sementes = function(_opcao)
 {
     var _mensagem = "";
 
-    switch (global.escolha_sementes)
-    {
-        // Amarrar
-        case 0:
-            sprite_index =
-                spr_saco_sementes_amarrado;
 
+    switch (_opcao)
+    {
+        // ==================================================
+        // AMARRAR O SACO
+        // ==================================================
+
+        case 0:
             _mensagem =
                 "Você apertou a corda e fechou o rasgo. O saco está bem fechado.";
         break;
 
 
-        // Deixar como está
-        case 1:
-            sprite_index =
-                spr_saco_sementes_rasgado;
+        // ==================================================
+        // DEIXAR COMO ESTÁ
+        // ==================================================
 
+        case 1:
             _mensagem =
                 "Você decidiu não mexer no saco. Algumas sementes continuam caindo.";
         break;
 
 
-        // Abrir mais
+        // ==================================================
+        // ABRIR MAIS O RASGO
+        // ==================================================
+
+        case 2:
+            _mensagem =
+                "Você puxou o tecido e aumentou o rasgo. Mais sementes se espalharam pelo caminho.";
+        break;
+
+
+        default:
+            return false;
+    }
+
+
+    var _dialogo_aberto =
+        global.dialogo_instancia.abrir(
+        [
+            {
+                nome: "",
+                texto: _mensagem
+            }
+        ]);
+
+
+    // Não registra nem altera o saco caso
+    // o diálogo de resultado não possa abrir
+    if (!_dialogo_aberto)
+    {
+        return false;
+    }
+
+
+    global.escolha_sementes = _opcao;
+    pode_interagir = false;
+
+
+    switch (_opcao)
+    {
+        case 0:
+            sprite_index =
+                spr_saco_sementes_amarrado;
+        break;
+
+
+        case 1:
+            sprite_index =
+                spr_saco_sementes_rasgado;
+        break;
+
+
         case 2:
             sprite_index =
                 spr_saco_sementes_aberto;
-
-            _mensagem =
-                "Você puxou o tecido e aumentou o rasgo. Mais sementes se espalharam pelo caminho.";
         break;
     }
 
@@ -98,23 +155,21 @@ aplicar_escolha_sementes = function()
     );
 
 
-    global.dialogo_instancia.abrir(
-    [
-        {
-            nome: "",
-            texto: _mensagem
-        }
-    ]);
+    return true;
 };
 
+#endregion
 
-// ==================================================
-// INTERAÇÃO
-// ==================================================
+
+#region Interação
 
 interagir = function()
 {
-    if (global.escolha_sementes != -1)
+    if (
+        global.escolha_sementes != -1
+        || transicao_iniciada
+        || !pode_interagir
+    )
     {
         exit;
     }
@@ -125,50 +180,86 @@ interagir = function()
 
         function(_opcao)
         {
-            global.escolha_sementes = _opcao;
-            pode_interagir = false;
-
-
-            // ==========================================
+            // ==============================================
             // AMARRAR OU ABRIR MAIS
-            // ==========================================
+            // ==============================================
 
             if (
                 _opcao == 0
                 || _opcao == 2
             )
             {
+                opcao_pendente = _opcao;
+
+
                 var _aplicar_escolha = method(
                     id,
 
                     function()
                     {
-                        aplicar_escolha_sementes();
+                        var _escolha_aplicada =
+                            aplicar_escolha_sementes(
+                                opcao_pendente
+                            );
+
+
+                        opcao_pendente = -1;
+                        transicao_iniciada = false;
+
+
+                        // Permite tentar novamente caso
+                        // o resultado não consiga ser aplicado
+                        if (!_escolha_aplicada)
+                        {
+                            pode_interagir = true;
+                        }
                     }
                 );
 
 
-                // Impede o diálogo anterior de liberar
-                // o jogador enquanto o fade acontece
-                global.dialogo_instancia
-                    .desbloqueio_atrasado = 0;
+                var _fade_iniciado =
+                    global.fade_instancia.iniciar(
+                        _aplicar_escolha,
+                        0.05,
+                        45
+                    );
 
 
-                global.fade_instancia.iniciar(
-                    _aplicar_escolha,
-                    0.05,
-                    45
-                );
+                // Só bloqueia e registra a transição
+                // quando o fade realmente começar
+                if (_fade_iniciado)
+                {
+                    transicao_iniciada = true;
+                    pode_interagir = false;
+
+                    // Impede o diálogo anterior de liberar
+                    // o jogador durante o fade
+                    global.dialogo_instancia
+                        .desbloqueio_atrasado = 0;
+                }
+                else
+                {
+                    opcao_pendente = -1;
+                    transicao_iniciada = false;
+                    pode_interagir = true;
+                }
             }
 
 
-            // ==========================================
+            // ==============================================
             // DEIXAR COMO ESTÁ
-            // ==========================================
+            // ==============================================
 
             else
             {
-                aplicar_escolha_sementes();
+                var _escolha_aplicada =
+                    aplicar_escolha_sementes(
+                        _opcao
+                    );
+
+
+                pode_interagir =
+                    !_escolha_aplicada;
             }
         }
     );
@@ -188,3 +279,5 @@ interagir = function()
         _salvar_escolha
     );
 };
+
+#endregion

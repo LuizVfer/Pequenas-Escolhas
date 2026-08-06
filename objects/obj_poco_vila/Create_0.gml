@@ -1,9 +1,10 @@
 event_inherited();
 
 
-#region Interação
+#region Configuração da interação
 
 distancia_interacao = 48;
+offset_indicador_y = 12;
 prioridade_interacao = 10;
 
 pode_interagir = true;
@@ -11,7 +12,7 @@ pode_interagir = true;
 #endregion
 
 
-#region Função de interação
+#region Interação
 
 interagir = function()
 {
@@ -21,7 +22,10 @@ interagir = function()
     }
 
 
-    // O morador já recebeu a água
+    // ==================================================
+    // ÁGUA JÁ FOI ENTREGUE
+    // ==================================================
+
     if (global.morador_recebeu_agua)
     {
         global.dialogo_instancia.abrir(
@@ -35,8 +39,12 @@ interagir = function()
 
         exit;
     }
-    
-    // Missão da água ainda não foi descoberta
+
+
+    // ==================================================
+    // MISSÃO DA ÁGUA AINDA NÃO FOI INICIADA
+    // ==================================================
+
     if (!global.quest_agua_iniciada)
     {
         global.dialogo_instancia.abrir(
@@ -47,12 +55,15 @@ interagir = function()
                     "Um poço utilizado pelos moradores da vila."
             }
         ]);
-    
+
         exit;
     }
 
 
-    // Jogador ainda não encontrou o balde
+    // ==================================================
+    // JOGADOR AINDA NÃO ENCONTROU O BALDE
+    // ==================================================
+
     if (!global.balde_coletado)
     {
         global.dialogo_instancia.abrir(
@@ -68,7 +79,10 @@ interagir = function()
     }
 
 
-    // O balde já está cheio
+    // ==================================================
+    // BALDE JÁ ESTÁ CHEIO
+    // ==================================================
+
     if (global.balde_cheio)
     {
         global.dialogo_instancia.abrir(
@@ -84,18 +98,27 @@ interagir = function()
     }
 
 
-    // Encher o balde
-    global.balde_cheio = true;
+    // ==================================================
+    // ENCHER O BALDE
+    // ==================================================
+
+    var _dialogo_aberto =
+        global.dialogo_instancia.abrir(
+        [
+            {
+                nome: "",
+                texto:
+                    "Você encheu o balde com água."
+            }
+        ]);
 
 
-    global.dialogo_instancia.abrir(
-    [
-        {
-            nome: "",
-            texto:
-                "Você encheu o balde com água."
-        }
-    ]);
+    // Só registra o balde cheio quando
+    // o diálogo realmente conseguir abrir
+    if (_dialogo_aberto)
+    {
+        global.balde_cheio = true;
+    }
 };
 
 #endregion

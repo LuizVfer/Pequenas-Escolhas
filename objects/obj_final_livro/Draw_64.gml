@@ -1,45 +1,72 @@
-// ==================================================
-// FUNDO ESCURO
-// ==================================================
+#region Configuração da GUI
+
+var _gui_largura =
+    display_get_gui_width();
+
+var _gui_altura =
+    display_get_gui_height();
+
+var _centro_x =
+    _gui_largura * 0.5;
+
+var _centro_y =
+    _gui_altura * 0.5;
+
+#endregion
+
+
+#region Fundo escuro
+
+draw_set_alpha(1);
 
 draw_set_color(
-    make_color_rgb(20, 16, 13)
+    make_color_rgb(
+        20,
+        16,
+        13
+    )
 );
 
 draw_rectangle(
     0,
     0,
-    640,
-    360,
+    _gui_largura,
+    _gui_altura,
     false
 );
 
 draw_set_color(c_white);
 
+#endregion
 
-// ==================================================
-// ESTADOS 0 E 2 — LIVRO FECHADO
-// ==================================================
+
+#region Livro fechado
 
 if (
-    estado_final == 0
-    || estado_final == 2
+    estado_final
+        == ESTADO_LIVRO_FECHADO_INICIO
+
+    || estado_final
+        == ESTADO_LIVRO_FECHADO_FINAL
 )
 {
     draw_sprite(
         spr_livro_fechado,
         0,
-        320,
-        180
+        _centro_x,
+        _centro_y
     );
 }
 
+#endregion
 
-// ==================================================
-// ESTADO 1 — CONSEQUÊNCIAS
-// ==================================================
 
-else if (estado_final == 1)
+#region Consequências
+
+else if (
+    estado_final
+    == ESTADO_CONSEQUENCIAS
+)
 {
     // Fundo do livro
     draw_sprite(
@@ -55,19 +82,29 @@ else if (estado_final == 1)
     draw_set_valign(fa_top);
 
 
+    // ----------------------------------------------
     // Título
+    // ----------------------------------------------
+
     draw_set_color(
-        make_color_rgb(80, 48, 30)
+        make_color_rgb(
+            80,
+            48,
+            30
+        )
     );
 
     draw_text(
-        320,
+        _centro_x,
         14,
         titulo_consequencia
     );
 
 
-    // Imagem
+    // ----------------------------------------------
+    // Imagem da consequência
+    // ----------------------------------------------
+
     if (sprite_consequencia != noone)
     {
         draw_sprite(
@@ -79,25 +116,65 @@ else if (estado_final == 1)
     }
 
 
+    // ----------------------------------------------
     // Frase atual
-    if (array_length(frases_consequencia) > 0)
-    {
-        var _frase_completa =
-            frases_consequencia[frase_atual];
+    // ----------------------------------------------
 
-        var _frase_mostrada = string_copy(
-            _frase_completa,
-            1,
-            floor(caracteres_visiveis)
+    var _quantidade_frases =
+        array_length(
+            frases_consequencia
         );
+
+
+    if (_quantidade_frases > 0)
+    {
+        var _indice_frase =
+            clamp(
+                frase_atual,
+                0,
+                _quantidade_frases - 1
+            );
+
+
+        var _frase_completa =
+            string(
+                frases_consequencia[
+                    _indice_frase
+                ]
+            );
+
+
+        var _quantidade_caracteres =
+            clamp(
+                floor(
+                    caracteres_visiveis
+                ),
+                0,
+                string_length(
+                    _frase_completa
+                )
+            );
+
+
+        var _frase_mostrada =
+            string_copy(
+                _frase_completa,
+                1,
+                _quantidade_caracteres
+            );
 
 
         draw_set_color(
-            make_color_rgb(45, 35, 25)
+            make_color_rgb(
+                45,
+                35,
+                25
+            )
         );
 
+
         draw_text_ext(
-            320,
+            _centro_x,
             232,
             _frase_mostrada,
             -1,
@@ -108,7 +185,9 @@ else if (estado_final == 1)
         // Indicador para continuar
         if (
             caracteres_visiveis
-            >= string_length(_frase_completa)
+            >= string_length(
+                _frase_completa
+            )
         )
         {
             draw_sprite(
@@ -121,159 +200,245 @@ else if (estado_final == 1)
     }
 }
 
+#endregion
 
-// ==================================================
-// ESTADO 3 — REFLEXÃO FINAL
-// ==================================================
 
-else if (estado_final == 3)
+#region Mensagem final
+
+else if (
+    estado_final
+    == ESTADO_MENSAGEM_FINAL
+)
 {
-    var _frase_final_completa =
-        frases_finais[frase_final_atual];
-
-    var _frase_final_mostrada = string_copy(
-        _frase_final_completa,
-        1,
-        floor(caracteres_finais_visiveis)
-    );
-
-
-    draw_set_font(fnt_dialogo);
-    draw_set_halign(fa_center);
-    draw_set_valign(fa_middle);
-
-    draw_set_color(
-        make_color_rgb(225, 211, 184)
-    );
-
-
-    draw_text_ext(
-        320,
-        170,
-        _frase_final_mostrada,
-        -1,
-        500
-    );
-
-
-    // Indicador para avançar
-    if (
-        caracteres_finais_visiveis
-        >= string_length(_frase_final_completa)
-    )
-    {
-        draw_sprite(
-            spr_tecla_E_placeholder,
-            0,
-            590,
-            330
+    var _quantidade_finais =
+        array_length(
+            frases_finais
         );
+
+
+    if (_quantidade_finais > 0)
+    {
+        var _indice_final =
+            clamp(
+                frase_final_atual,
+                0,
+                _quantidade_finais - 1
+            );
+
+
+        var _frase_final_completa =
+            string(
+                frases_finais[
+                    _indice_final
+                ]
+            );
+
+
+        var _caracteres_finais =
+            clamp(
+                floor(
+                    caracteres_finais_visiveis
+                ),
+                0,
+                string_length(
+                    _frase_final_completa
+                )
+            );
+
+
+        var _frase_final_mostrada =
+            string_copy(
+                _frase_final_completa,
+                1,
+                _caracteres_finais
+            );
+
+
+        draw_set_font(fnt_dialogo);
+        draw_set_halign(fa_center);
+        draw_set_valign(fa_middle);
+
+
+        draw_set_color(
+            make_color_rgb(
+                225,
+                211,
+                184
+            )
+        );
+
+
+        draw_text_ext(
+            _centro_x,
+            170,
+            _frase_final_mostrada,
+            -1,
+            500
+        );
+
+
+        // Indicador para avançar
+        if (
+            caracteres_finais_visiveis
+            >= string_length(
+                _frase_final_completa
+            )
+        )
+        {
+            draw_sprite(
+                spr_tecla_E_placeholder,
+                0,
+                590,
+                330
+            );
+        }
     }
 }
 
-// ==================================================
-// ESTADO 4 — TÍTULO FINAL E CRÉDITOS
-// ==================================================
+#endregion
 
-else if (estado_final == 4)
+
+#region Título e créditos
+
+else if (
+    estado_final
+    == ESTADO_CREDITOS
+)
 {
     draw_set_font(fnt_dialogo);
     draw_set_halign(fa_center);
     draw_set_valign(fa_middle);
 
 
-    // ==================================================
-    // TÍTULO
-    // ==================================================
+    // ----------------------------------------------
+    // Título
+    // ----------------------------------------------
 
-    draw_set_alpha(alpha_titulo_final);
-
-    draw_set_color(
-        make_color_rgb(225, 211, 184)
+    draw_set_alpha(
+        clamp(
+            alpha_titulo_final,
+            0,
+            1
+        )
     );
 
+
+    draw_set_color(
+        make_color_rgb(
+            225,
+            211,
+            184
+        )
+    );
+
+
     draw_text(
-        320,
+        _centro_x,
         86,
         titulo_final
     );
 
 
-    // Pequena linha abaixo do título
+    // Linha abaixo do título
     draw_set_color(
-        make_color_rgb(125, 94, 65)
+        make_color_rgb(
+            125,
+            94,
+            65
+        )
     );
 
+
     draw_rectangle(
-        220,
+        _centro_x - 100,
         110,
-        420,
+        _centro_x + 100,
         111,
         false
     );
 
 
-    // ==================================================
-    // CRÉDITOS
-    // ==================================================
+    // ----------------------------------------------
+    // Créditos
+    // ----------------------------------------------
 
-    draw_set_alpha(alpha_creditos);
+    draw_set_alpha(
+        clamp(
+            alpha_creditos,
+            0,
+            1
+        )
+    );
+
 
     draw_set_color(
-        make_color_rgb(190, 178, 155)
+        make_color_rgb(
+            190,
+            178,
+            155
+        )
     );
 
 
     var _credito_y = 152;
     var _espacamento = 20;
 
+    var _quantidade_creditos =
+        array_length(creditos);
+
+
     for (
         var _i = 0;
-        _i < array_length(creditos);
+        _i < _quantidade_creditos;
         _i++
     )
     {
         draw_text(
-            320,
-            _credito_y + _i * _espacamento,
-            creditos[_i]
+            _centro_x,
+            _credito_y
+                + _i * _espacamento,
+            string(creditos[_i])
         );
     }
-    
-    // ==================================================
-    // INSTRUÇÃO PARA VOLTAR AO MENU
-    // ==================================================
-    
+
+
+    // ----------------------------------------------
+    // Instrução para voltar ao menu
+    // ----------------------------------------------
+
     if (final_completo)
     {
         draw_set_alpha(1);
-    
+
         draw_set_font(fnt_dialogo);
         draw_set_halign(fa_center);
         draw_set_valign(fa_middle);
-    
+
         draw_set_color(
-            make_color_rgb(145, 132, 112)
+            make_color_rgb(
+                145,
+                132,
+                112
+            )
         );
-    
+
+
         draw_text(
-            320,
+            _centro_x,
             330,
             "Pressione E para voltar ao menu"
         );
     }
-
-
-    // Restaura o alpha
-    draw_set_alpha(1);
 }
 
+#endregion
 
-// ==================================================
-// RESTAURA CONFIGURAÇÕES
-// ==================================================
+
+#region Restaurar configurações
 
 draw_set_alpha(1);
 draw_set_color(c_white);
 draw_set_halign(fa_left);
 draw_set_valign(fa_top);
+
+#endregion
