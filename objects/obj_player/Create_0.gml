@@ -191,7 +191,7 @@ atualizar_animacao_martelo = function()
 x_anterior_passos = x;
 
 distancia_passos_acumulada = 0;
-distancia_entre_passos = 40;
+distancia_entre_passos = 70;
 
 passo_alternado = false;
 

@@ -1,12 +1,27 @@
 event_inherited();
 
-// Configuração da interação
+
+#region Configuração da interação
+
 distancia_interacao = 40;
 offset_indicador_y = 10;
 
-// Configuração do chute
+#endregion
+
+
+#region Configuração da pedra
+
 chutada = false;
 velocidade_chute = 3;
+
+// Guarda temporariamente a opção
+// enquanto o fade acontece
+opcao_pedra_pendente = -1;
+
+#endregion
+
+
+#region Restaurar estado
 
 // A pedra desaparece caso já tenha sido
 // chutada ou retirada anteriormente
@@ -19,50 +34,142 @@ if (
     exit;
 }
 
-// A pedra continua visível ao escolher não fazer nada,
-// mas não poderá ser examinada novamente
-pode_interagir = (global.escolha_pedra == -1);
+
+// Ao escolher não fazer nada,
+// a pedra permanece sem nova interação
+pode_interagir =
+    global.escolha_pedra == -1;
+
+#endregion
 
 
-// ==================================================
-// INTERAÇÃO
-// ==================================================
+#region Aplicar escolha
+
+aplicar_escolha_pedra = function(_opcao)
+{
+    global.escolha_pedra = _opcao;
+    pode_interagir = false;
+
+
+    switch (_opcao)
+    {
+        // Chutar a pedra
+        case 0:
+
+            instance_destroy();
+
+        break;
+
+
+        // Retirar a pedra
+        case 1:
+
+            instance_destroy();
+
+        break;
+
+
+        // Não fazer nada
+        case 2:
+
+            // A pedra permanece no caminho
+
+        break;
+
+
+        // Proteção contra opção inválida
+        default:
+
+            global.escolha_pedra = -1;
+            pode_interagir = true;
+
+        break;
+    }
+};
+
+#endregion
+
+
+#region Interação
 
 interagir = function()
 {
-    // Impede que uma nova escolha seja realizada
-    if (global.escolha_pedra != -1)
+    // Impede outra escolha enquanto uma
+    // já estiver salva ou aguardando o fade
+    if (
+        global.escolha_pedra != -1
+        || !pode_interagir
+        || opcao_pedra_pendente != -1
+    )
     {
         exit;
     }
+
 
     var _salvar_escolha = method(
         id,
 
         function(_opcao)
         {
-            global.escolha_pedra = _opcao;
-            pode_interagir = false;
-
-            switch (_opcao)
+            // Chutar e retirar utilizam fade
+            if (_opcao == 0 || _opcao == 1)
             {
-                // Chutar a pedra
-                case 0:
-                    chutada = true;
-                break;
+                opcao_pedra_pendente =
+                    _opcao;
 
-                // Retirar a pedra
-                case 1:
-                    instance_destroy();
-                break;
 
-                // Não fazer nada
-                case 2:
-                    // A pedra permanece no caminho
-                break;
+                var _aplicar_resultado = method(
+                    id,
+
+                    function()
+                    {
+                        var _opcao_salva =
+                            opcao_pedra_pendente;
+
+
+                        opcao_pedra_pendente =
+                            -1;
+
+
+                        aplicar_escolha_pedra(
+                            _opcao_salva
+                        );
+                    }
+                );
+
+
+                var _fade_iniciado =
+                    global.fade_instancia.iniciar(
+                        _aplicar_resultado,
+                        0.05,
+                        45
+                    );
+
+
+                if (_fade_iniciado)
+                {
+                    pode_interagir = false;
+                }
+                else
+                {
+                    // Permite tentar novamente caso
+                    // outro fade já esteja acontecendo
+                    opcao_pedra_pendente = -1;
+                    pode_interagir = true;
+                }
+
+
+                exit;
             }
+
+
+            // Não fazer nada não altera o cenário
+            aplicar_escolha_pedra(
+                _opcao
+            );
         }
     );
+
 
     global.dialogo_instancia.abrir_escolha(
         "Mensageiro",
@@ -78,3 +185,5 @@ interagir = function()
         _salvar_escolha
     );
 };
+
+#endregion

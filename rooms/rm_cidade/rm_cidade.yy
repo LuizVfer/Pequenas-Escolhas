@@ -6,7 +6,6 @@
   "inheritCreationOrder":false,
   "inheritLayers":false,
   "instanceCreationOrder":[
-    {"name":"inst_3672CD8C","path":"rooms/rm_cidade/rm_cidade.yy",},
     {"name":"inst_17CD2697","path":"rooms/rm_cidade/rm_cidade.yy",},
     {"name":"inst_178F7968","path":"rooms/rm_cidade/rm_cidade.yy",},
     {"name":"inst_66B7A888","path":"rooms/rm_cidade/rm_cidade.yy",},
@@ -22,6 +21,7 @@
     {"name":"inst_76F7A6E6","path":"rooms/rm_cidade/rm_cidade.yy",},
     {"name":"inst_432C6516","path":"rooms/rm_cidade/rm_cidade.yy",},
     {"name":"inst_6128A357","path":"rooms/rm_cidade/rm_cidade.yy",},
+    {"name":"inst_3672CD8C","path":"rooms/rm_cidade/rm_cidade.yy",},
   ],
   "isDnd":false,
   "layers":[
