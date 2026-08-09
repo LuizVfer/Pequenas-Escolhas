@@ -26,7 +26,7 @@
   "origin":0,
   "parent":{
     "name":"Puzzle",
-    "path":"folders/Objects/Floresta/Puzzle.yy",
+    "path":"folders/Sprites/Floresta/Puzzle.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

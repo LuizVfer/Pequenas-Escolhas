@@ -103,8 +103,6 @@ switch (estado_puzzle_roda)
         }
 
 
-        atualizar_marcador();
-
 
         // Segurar E aumenta a força
         if (keyboard_check(ord("E")))

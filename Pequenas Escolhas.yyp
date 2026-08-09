@@ -20,7 +20,7 @@
     {"$GMFolder":"","%Name":"Cidade","folderPath":"folders/Objects/Cidade.yy","name":"Cidade","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Destino","folderPath":"folders/Objects/Destino.yy","name":"Destino","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Floresta","folderPath":"folders/Objects/Floresta.yy","name":"Floresta","resourceType":"GMFolder","resourceVersion":"2.0",},
-    {"$GMFolder":"","%Name":"Puzzle","folderPath":"folders/Objects/Floresta/Puzzle.yy","name":"Puzzle","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"Puzzle","folderPath":"folders/Sprites/Floresta/Puzzle.yy","name":"Puzzle","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Vila","folderPath":"folders/Objects/Vila.yy","name":"Vila","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Particle Systems","folderPath":"folders/Particle Systems.yy","name":"Particle Systems","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Paths","folderPath":"folders/Paths.yy","name":"Paths","resourceType":"GMFolder","resourceVersion":"2.0",},
