@@ -372,48 +372,12 @@ for (
     );
 
 
-    // Selecionar o sprite correspondente
+    // O puzzle utiliza somente as duas orientações
+    // que podem ser distinguidas visualmente.
     var _sprite_corda =
-        spr_corda_direita;
-
-
-    switch (rotacoes_corda[_i])
-    {
-        // Direita — posição correta
-        case 0:
-        {
-            _sprite_corda =
-                spr_corda_direita;
-        }
-        break;
-
-
-        // Baixo
-        case 1:
-        {
-            _sprite_corda =
-                spr_corda_baixo;
-        }
-        break;
-
-
-        // Esquerda
-        case 2:
-        {
-            _sprite_corda =
-                spr_corda_esquerda;
-        }
-        break;
-
-
-        // Cima
-        case 3:
-        {
-            _sprite_corda =
-                spr_corda_cima;
-        }
-        break;
-    }
+        rotacoes_corda[_i] == 0
+            ? spr_corda_direita
+            : spr_corda_baixo;
 
 
     // Os sprites possuem origem no canto

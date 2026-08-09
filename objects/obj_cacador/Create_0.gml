@@ -35,14 +35,12 @@ pode_interagir =
 quantidade_pecas = 4;
 peca_selecionada = 0;
 
-// Direções:
-// 0 = direita
-// 1 = baixo
-// 2 = esquerda
-// 3 = cima
-rotacoes_corda = [1, 2, 3, 1];
+// Orientações:
+// 0 = horizontal
+// 1 = vertical
+rotacoes_corda = [1, 0, 1, 1];
 
-// Todas devem apontar para a direita
+// Todas devem ficar na horizontal
 solucao_corda = [0, 0, 0, 0];
 
 contador_conclusao = 0;
@@ -58,7 +56,7 @@ anim_puzzle = 0;
 girar_peca = function(_indice)
 {
     rotacoes_corda[_indice] =
-        (rotacoes_corda[_indice] + 1) mod 4;
+        (rotacoes_corda[_indice] + 1) mod 2;
 };
 
 
