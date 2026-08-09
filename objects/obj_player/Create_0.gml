@@ -416,7 +416,9 @@ estado_andando = new estado();
 
 estado_andando.inicia = function()
 {
-    usar_animacao_walk();
+    // Toda nova caminhada começa
+    // no primeiro frame
+    usar_animacao_walk(true);
 };
 
 
