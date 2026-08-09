@@ -215,9 +215,9 @@ criar_poeira_passos = function(
 
         random_range(0.28, 0.42),
 
-        irandom_range(1, 2),
-        1,
-
+       irandom_range(2, 3),
+        2,
+        
         _cor,
         poeira_alpha
     );
