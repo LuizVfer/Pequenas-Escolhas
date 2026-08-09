@@ -16,13 +16,21 @@ if (!_martelando)
 
 #region Som dos passos
 
+// Movimento real realizado pelo jogador
+movimento_x_frame =
+    x - x_anterior_passos;
+
+
 var _deslocamento_passos =
     abs(
-        x - x_anterior_passos
+        movimento_x_frame
     );
 
 
 x_anterior_passos = x;
+
+// Movimento horizontal real deste frame
+movimento_x_frame = 0;
 
 
 if (

@@ -33,8 +33,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_saco_sementes_rasgado",
-    "path":"sprites/spr_saco_sementes_rasgado/spr_saco_sementes_rasgado.yy",
+    "name":"spr_saco_sementes_aberto",
+    "path":"sprites/spr_saco_sementes_aberto/spr_saco_sementes_aberto.yy",
   },
   "spriteMaskId":null,
   "visible":true,

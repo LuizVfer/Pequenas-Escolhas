@@ -14,10 +14,10 @@ if (_player == noone)
 }
 
 
-// Movimento real ocorrido neste frame
+// Usa o mesmo movimento real detectado
+// pelo sistema de passos do jogador
 var _movimento_x =
-    _player.x
-    - _player.xprevious;
+    _player.movimento_x_frame;
 
 
 var _distancia_movida =
