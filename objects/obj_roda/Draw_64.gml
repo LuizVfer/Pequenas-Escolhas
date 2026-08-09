@@ -56,22 +56,22 @@ var _pulso =
 
 
 var _cor_fundo =
-    make_color_rgb(18, 15, 13);
+    make_color_rgb(39, 33, 30);
 
 var _cor_borda =
-    make_color_rgb(100, 76, 53);
+    make_color_rgb(78, 78, 78);
 
 var _cor_detalhe =
-    make_color_rgb(153, 113, 70);
+    make_color_rgb(163, 151, 113);
 
 var _cor_texto =
-    make_color_rgb(237, 219, 182);
+    make_color_rgb(214, 196, 173);
 
 var _cor_texto_secundario =
-    make_color_rgb(151, 138, 118);
+    make_color_rgb(154, 164, 167);
 
 var _cor_erro =
-    make_color_rgb(207, 125, 101);
+    make_color_rgb(173, 78, 61);
 
 #endregion
 
@@ -165,13 +165,13 @@ for (
     if (_i < _progresso)
     {
         draw_set_color(
-            make_color_rgb(210, 166, 101)
+            make_color_rgb(218, 183, 83)
         );
     }
     else
     {
         draw_set_color(
-            make_color_rgb(72, 57, 43)
+            make_color_rgb(63, 64, 62)
         );
     }
 
@@ -185,7 +185,7 @@ for (
 
 
     draw_set_color(
-        make_color_rgb(137, 104, 70)
+        make_color_rgb(89, 69, 56)
     );
 
     draw_circle(
@@ -234,7 +234,7 @@ else
 #region Barra
 
 draw_set_color(
-    make_color_rgb(43, 34, 28)
+    make_color_rgb(23, 22, 22)
 );
 
 draw_rectangle(
@@ -247,7 +247,7 @@ draw_rectangle(
 
 
 draw_set_color(
-    make_color_rgb(57, 46, 37)
+    make_color_rgb(48, 46, 46)
 );
 
 draw_rectangle(
@@ -284,7 +284,7 @@ draw_set_alpha(
 );
 
 draw_set_color(
-    make_color_rgb(225, 174, 98)
+    make_color_rgb(218, 183, 83)
 );
 
 draw_rectangle(
@@ -300,7 +300,7 @@ draw_rectangle(
 draw_set_alpha(1);
 
 draw_set_color(
-    make_color_rgb(174, 128, 72)
+    make_color_rgb(163, 151, 113)
 );
 
 draw_rectangle(
@@ -313,7 +313,7 @@ draw_rectangle(
 
 
 draw_set_color(
-    make_color_rgb(198, 151, 88)
+    make_color_rgb(218, 183, 83)
 );
 
 draw_rectangle(
@@ -338,8 +338,8 @@ var _marcador_na_zona =
 
 draw_set_color(
     _marcador_na_zona
-        ? make_color_rgb(255, 230, 169)
-        : make_color_rgb(225, 214, 190)
+        ? make_color_rgb(255, 232, 154)
+        : make_color_rgb(214, 196, 173)
 );
 
 
@@ -367,7 +367,7 @@ draw_triangle(
 
 
 draw_set_color(
-    make_color_rgb(120, 89, 59)
+    make_color_rgb(89, 69, 56)
 );
 
 draw_rectangle(
@@ -384,7 +384,7 @@ draw_rectangle(
 #region Rodapé
 
 draw_set_color(
-    make_color_rgb(64, 48, 36)
+    make_color_rgb(63, 64, 62)
 );
 
 draw_rectangle(
@@ -399,7 +399,7 @@ draw_rectangle(
 draw_set_halign(fa_left);
 
 draw_set_color(
-    make_color_rgb(147, 134, 115)
+    make_color_rgb(214, 196, 173)
 );
 
 draw_text(
@@ -410,7 +410,7 @@ draw_text(
 
 
 draw_set_color(
-    make_color_rgb(118, 108, 92)
+    make_color_rgb(154, 164, 167)
 );
 
 draw_text(
