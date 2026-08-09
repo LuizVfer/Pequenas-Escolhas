@@ -155,7 +155,7 @@ interagir = function()
 
                 {
                     nome: "Mensageiro",
-                    texto: "Se eu alinhar as três marcas, talvez consiga baixar a ponte."
+                    texto: "Se as três marcas apontarem para cima, talvez o mecanismo baixe a ponte."
                 }
             ]);
 

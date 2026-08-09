@@ -194,7 +194,7 @@ draw_text(
 
     _concluido
         ? "As travas começaram a se soltar"
-        : "Alinhe as três marcas"
+        : "Faça as três marcas apontarem para cima"
 );
 
 #endregion

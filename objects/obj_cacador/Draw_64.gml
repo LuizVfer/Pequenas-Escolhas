@@ -1,4 +1,4 @@
-// Só desenha durante o puzzle
+// Só desenha enquanto o minigame estiver aberto
 if (
     estado_cacador != CACADOR_PUZZLE
     && estado_cacador != CACADOR_CONCLUIDO
@@ -8,115 +8,77 @@ if (
 }
 
 
-#region Dados da interface
+#region Configuração visual
 
 var _concluido =
     estado_cacador == CACADOR_CONCLUIDO;
 
-var _painel_x1 = 100;
-var _painel_y1 = 92;
-var _painel_x2 = 540;
-var _painel_y2 = 280;
-
 var _centro_x = 320;
 
+var _painel_x1 = 92;
+var _painel_y1 = 68;
+var _painel_x2 = 548;
+var _painel_y2 = 302;
+
 var _peca_y = 184;
-var _tamanho_peca = 54;
+var _tamanho_slot = 62;
+var _metade_slot = _tamanho_slot * 0.5;
 
-var _inicio_pecas_x = 194;
-var _espacamento = 84;
+var _inicio_pecas_x = 188;
+var _espacamento = 88;
 
-var _escala_corda = 1.5;
+var _escala_corda = 1.75;
 
+var _meia_largura_horizontal =
+    sprite_get_width(spr_corda_direita)
+    * _escala_corda
+    * 0.5;
 
-// Paleta da Floresta
 var _cor_fundo =
-    make_color_rgb(
-        23,
-        30,
-        37
-    );
+    make_color_rgb(23, 30, 37);
 
 var _cor_borda =
-    make_color_rgb(
-        56,
-        74,
-        51
-    );
+    make_color_rgb(56, 74, 51);
 
 var _cor_detalhe =
-    make_color_rgb(
-        82,
-        115,
-        70
-    );
+    make_color_rgb(82, 115, 70);
 
-var _cor_peca =
-    make_color_rgb(
-        11,
-        10,
-        9
-    );
+var _cor_slot =
+    make_color_rgb(15, 19, 21);
 
-var _cor_peca_borda =
-    make_color_rgb(
-        67,
-        85,
-        61
-    );
+var _cor_slot_borda =
+    make_color_rgb(49, 65, 54);
 
 var _cor_corda_escura =
-    make_color_rgb(
-        60,
-        43,
-        25
-    );
+    make_color_rgb(73, 49, 28);
+
+var _cor_corda_luz =
+    make_color_rgb(118, 82, 48);
 
 var _cor_selecao =
-    make_color_rgb(
-        251,
-        204,
-        75
-    );
+    make_color_rgb(251, 204, 75);
+
+var _cor_correta =
+    make_color_rgb(112, 153, 91);
 
 var _cor_texto =
-    make_color_rgb(
-        214,
-        222,
-        213
-    );
+    make_color_rgb(214, 222, 213);
 
 var _cor_texto_secundario =
-    make_color_rgb(
-        122,
-        150,
-        138
-    );
+    make_color_rgb(122, 150, 138);
 
 #endregion
 
 
-#region Escurecimento
+#region Fundo e painel
 
-draw_set_alpha(0.35);
+draw_set_alpha(0.38);
 draw_set_color(c_black);
+draw_rectangle(0, 0, 640, 360, false);
 
-draw_rectangle(
-    0,
-    0,
-    640,
-    360,
-    false
-);
-
-#endregion
-
-
-#region Painel
 
 // Sombra
-draw_set_alpha(0.25);
-draw_set_color(c_black);
+draw_set_alpha(0.28);
 
 draw_rectangle(
     _painel_x1 + 4,
@@ -128,7 +90,7 @@ draw_rectangle(
 
 
 // Fundo
-draw_set_alpha(0.96);
+draw_set_alpha(0.97);
 draw_set_color(_cor_fundo);
 
 draw_rectangle(
@@ -153,7 +115,7 @@ draw_rectangle(
 );
 
 
-// Detalhe superior
+// Detalhes decorativos
 draw_set_color(_cor_detalhe);
 
 draw_rectangle(
@@ -164,20 +126,28 @@ draw_rectangle(
     false
 );
 
+draw_rectangle(
+    _painel_x1 + 46,
+    _painel_y2 - 1,
+    _painel_x2 - 46,
+    _painel_y2,
+    false
+);
+
 #endregion
 
 
 #region Título
 
-draw_set_font(fnt_minigame);
 draw_set_halign(fa_center);
 draw_set_valign(fa_middle);
 
+draw_set_font(fnt_dialogo);
 draw_set_color(_cor_texto);
 
 draw_text(
     _centro_x,
-    114,
+    91,
 
     _concluido
         ? "Cordas alinhadas"
@@ -185,80 +155,142 @@ draw_text(
 );
 
 
+draw_set_font(fnt_minigame);
 draw_set_color(_cor_texto_secundario);
 
 draw_text(
     _centro_x,
-    136,
+    116,
 
     _concluido
-        ? "Caminho liberado"
-        : "Alinhe todas as cordas"
+        ? "A passagem foi liberada"
+        : "Gire os trechos até formar uma única corda"
 );
 
 #endregion
 
 
-#region Entrada e saída
+#region Extremidades e ligações
 
-draw_set_font(fnt_minigame);
-draw_set_halign(fa_center);
-draw_set_valign(fa_middle);
+var _primeira_peca_x =
+    _inicio_pecas_x;
 
-draw_set_color(_cor_texto_secundario);
-
-
-// Entrada
-draw_text(
-    148,
-    _peca_y - 38,
-    "Entrada"
-);
-
-
-// Saída
-draw_text(
-    492,
-    _peca_y - 38,
-    "Saída"
-);
-
-#endregion
-
-
-#region Ligações externas
-
-draw_set_color(_cor_corda_escura);
-
-
-// Entrada até a primeira peça
-draw_rectangle(
-    116,
-    _peca_y - 2,
-
-    _inicio_pecas_x
-        - _tamanho_peca * 0.5,
-
-    _peca_y + 2,
-    false
-);
-
-
-// Centro da última peça
 var _ultima_peca_x =
     _inicio_pecas_x
     + (quantidade_pecas - 1)
     * _espacamento;
 
+var _pino_entrada_x = 124;
+var _pino_saida_x = 516;
 
-// Última peça até a saída
+
+// Textos das extremidades
+draw_set_color(_cor_texto_secundario);
+
+draw_text(
+    _pino_entrada_x,
+    145,
+    "Início"
+);
+
+draw_text(
+    _pino_saida_x,
+    145,
+    "Saída"
+);
+
+
+// Corda antes da primeira peça
+draw_set_color(_cor_corda_escura);
+
+draw_rectangle(
+    _pino_entrada_x,
+    _peca_y - 3,
+
+    _primeira_peca_x
+        - _metade_slot,
+
+    _peca_y + 3,
+    false
+);
+
+
+// Cordas entre as peças
+for (
+    var _i = 0;
+    _i < quantidade_pecas - 1;
+    _i++
+)
+{
+    var _x_atual =
+        _inicio_pecas_x
+        + _i * _espacamento;
+
+    var _x_seguinte =
+        _x_atual + _espacamento;
+
+
+    draw_rectangle(
+        _x_atual
+            + _metade_slot,
+
+        _peca_y - 3,
+
+        _x_seguinte
+            - _metade_slot,
+
+        _peca_y + 3,
+        false
+    );
+}
+
+
+// Corda depois da última peça
 draw_rectangle(
     _ultima_peca_x
-        + _tamanho_peca * 0.5,
+        + _metade_slot,
 
-    _peca_y - 2,
-    524,
-    _peca_y + 2,
+    _peca_y - 3,
+    _pino_saida_x,
+    _peca_y + 3,
+    false
+);
+
+
+// Pinos que prendem as pontas
+draw_rectangle(
+    _pino_entrada_x - 4,
+    _peca_y - 12,
+    _pino_entrada_x + 4,
+    _peca_y + 12,
+    false
+);
+
+draw_rectangle(
+    _pino_saida_x - 4,
+    _peca_y - 12,
+    _pino_saida_x + 4,
+    _peca_y + 12,
+    false
+);
+
+
+// Reflexo nos pinos
+draw_set_color(_cor_corda_luz);
+
+draw_rectangle(
+    _pino_entrada_x - 3,
+    _peca_y - 10,
+    _pino_entrada_x - 2,
+    _peca_y + 10,
+    false
+);
+
+draw_rectangle(
+    _pino_saida_x - 3,
+    _peca_y - 10,
+    _pino_saida_x - 2,
+    _peca_y + 10,
     false
 );
 
@@ -268,10 +300,7 @@ draw_rectangle(
 #region Peças da corda
 
 var _pulso =
-    (
-        sin(anim_puzzle * 1.5)
-        + 1
-    )
+    (sin(anim_puzzle * 1.5) + 1)
     * 0.5;
 
 
@@ -285,50 +314,93 @@ for (
         _inicio_pecas_x
         + _i * _espacamento;
 
-    var _metade =
-        _tamanho_peca * 0.5;
-
     var _selecionada =
         !_concluido
         && _i == peca_selecionada;
 
-
-    // Ligação entre as peças
-    if (_i < quantidade_pecas - 1)
-    {
-        var _proxima_x =
-            _x + _espacamento;
-
-        draw_set_color(_cor_corda_escura);
-
-        draw_rectangle(
-            _x + _metade,
-            _peca_y - 2,
-
-            _proxima_x - _metade,
-            _peca_y + 2,
-
-            false
-        );
-    }
+    var _horizontal =
+        rotacoes_corda[_i] == 0;
 
 
-    // Pulso da seleção
+    // Fundo do encaixe
+    draw_set_color(_cor_slot);
+
+    draw_rectangle(
+        _x - _metade_slot,
+        _peca_y - _metade_slot,
+
+        _x + _metade_slot,
+        _peca_y + _metade_slot,
+
+        false
+    );
+
+
+    // Pontas internas da corda.
+    // Elas encostam no sprite somente quando
+    // o trecho está na horizontal.
+    draw_set_color(_cor_corda_escura);
+
+    draw_rectangle(
+        _x - _metade_slot,
+        _peca_y - 3,
+
+        _x
+            - _meia_largura_horizontal,
+
+        _peca_y + 3,
+        false
+    );
+
+    draw_rectangle(
+        _x
+            + _meia_largura_horizontal,
+
+        _peca_y - 3,
+        _x + _metade_slot,
+        _peca_y + 3,
+        false
+    );
+
+
+    // Borda do encaixe
+    draw_set_color(
+        _concluido
+            ? _cor_selecao
+            : (
+                _selecionada
+                    ? _cor_selecao
+                    : _cor_slot_borda
+            )
+    );
+
+    draw_rectangle(
+        _x - _metade_slot,
+        _peca_y - _metade_slot,
+
+        _x + _metade_slot,
+        _peca_y + _metade_slot,
+
+        true
+    );
+
+
+    // Pulso da peça selecionada
     if (_selecionada)
     {
         draw_set_alpha(
-            0.35
-            + _pulso * 0.30
+            0.20
+            + _pulso * 0.22
         );
 
         draw_set_color(_cor_selecao);
 
         draw_rectangle(
-            _x - _metade - 4,
-            _peca_y - _metade - 4,
+            _x - _metade_slot - 4,
+            _peca_y - _metade_slot - 4,
 
-            _x + _metade + 4,
-            _peca_y + _metade + 4,
+            _x + _metade_slot + 4,
+            _peca_y + _metade_slot + 4,
 
             true
         );
@@ -337,87 +409,103 @@ for (
     }
 
 
-    // Fundo da peça
-    draw_set_color(_cor_peca);
-
-    draw_rectangle(
-        _x - _metade,
-        _peca_y - _metade,
-
-        _x + _metade,
-        _peca_y + _metade,
-
-        false
-    );
-
-
-    // Borda da peça
-    draw_set_color(
-        (
-            _selecionada
-            || _concluido
-        )
-            ? _cor_selecao
-            : _cor_peca_borda
-    );
-
-    draw_rectangle(
-        _x - _metade,
-        _peca_y - _metade,
-
-        _x + _metade,
-        _peca_y + _metade,
-
-        true
-    );
-
-
-    // O puzzle utiliza somente as duas orientações
-    // que podem ser distinguidas visualmente.
+    // O Auto Trim deixou a horizontal com 32x11
+    // e a vertical com 11x32.
     var _sprite_corda =
-        rotacoes_corda[_i] == 0
+        _horizontal
             ? spr_corda_direita
             : spr_corda_baixo;
 
 
-    // Os sprites possuem origem no canto
-    // e tamanho de 32 por 32.
-    // Este cálculo os centraliza na peça.
-    var _metade_sprite =
-        16 * _escala_corda;
+    // Obtém as medidas reais do sprite
+    var _largura_sprite =
+        sprite_get_width(
+            _sprite_corda
+        );
+
+    var _altura_sprite =
+        sprite_get_height(
+            _sprite_corda
+        );
+
+    var _origem_x =
+        sprite_get_xoffset(
+            _sprite_corda
+        );
+
+    var _origem_y =
+        sprite_get_yoffset(
+            _sprite_corda
+        );
+
+
+    // Centraliza corretamente mesmo depois
+    // de outro Auto Trim
+    var _desenho_x =
+        _x
+        + (
+            _origem_x
+            - _largura_sprite * 0.5
+        )
+        * _escala_corda;
+
+    var _desenho_y =
+        _peca_y
+        + (
+            _origem_y
+            - _altura_sprite * 0.5
+        )
+        * _escala_corda;
 
 
     draw_sprite_ext(
         _sprite_corda,
         0,
 
-        _x - _metade_sprite,
-        _peca_y - _metade_sprite,
+        _desenho_x,
+        _desenho_y,
 
         _escala_corda,
         _escala_corda,
 
         0,
-
         c_white,
         1
     );
 
 
-    // Indicador da peça selecionada
+    // Pequena marca de progresso
+    draw_set_color(
+        _horizontal
+            ? _cor_correta
+            : _cor_slot_borda
+    );
+
+    draw_rectangle(
+        _x - 5,
+        _peca_y + _metade_slot + 7,
+
+        _x + 5,
+        _peca_y + _metade_slot + 9,
+
+        false
+    );
+
+
+    // Ponteiro da seleção
     if (_selecionada)
     {
         draw_set_color(_cor_selecao);
 
         draw_triangle(
-            _x - 4,
-            _peca_y + _metade + 12,
+            _x - 5,
+            _peca_y - _metade_slot - 11,
 
-            _x + 4,
-            _peca_y + _metade + 12,
+            _x + 5,
+            _peca_y - _metade_slot - 11,
 
             _x,
-            _peca_y + _metade + 7,
+            _peca_y - _metade_slot - 6,
 
             false
         );
@@ -427,7 +515,7 @@ for (
 #endregion
 
 
-#region Progresso
+#region Progresso e controles
 
 draw_set_font(fnt_minigame);
 draw_set_halign(fa_center);
@@ -440,7 +528,7 @@ if (_concluido)
 
     draw_text(
         _centro_x,
-        238,
+        252,
         "Corda desembaraçada"
     );
 }
@@ -465,23 +553,25 @@ else
     }
 
 
-    draw_set_color(_cor_texto_secundario);
+    draw_set_color(
+        _cor_texto_secundario
+    );
 
     draw_text(
         _centro_x,
-        230,
+        246,
 
         string(_pecas_corretas)
         + " de "
         + string(quantidade_pecas)
-        + " peças alinhadas"
+        + " trechos alinhados"
     );
 
 
     draw_text(
         _centro_x,
-        258,
-        "A / D mover     E girar     Esc sair"
+        278,
+        "A / D selecionar     E girar     Esc sair"
     );
 }
 
