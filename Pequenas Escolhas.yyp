@@ -90,6 +90,7 @@
     {"id":{"name":"obj_pedra_escolha","path":"objects/obj_pedra_escolha/obj_pedra_escolha.yy",},},
     {"id":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},},
     {"id":{"name":"obj_poco_vila","path":"objects/obj_poco_vila/obj_poco_vila.yy",},},
+    {"id":{"name":"obj_poeira_passo","path":"objects/obj_poeira_passo/obj_poeira_passo.yy",},},
     {"id":{"name":"obj_ponte","path":"objects/obj_ponte/obj_ponte.yy",},},
     {"id":{"name":"obj_ponto_agricultor_portao","path":"objects/obj_ponto_agricultor_portao/obj_ponto_agricultor_portao.yy",},},
     {"id":{"name":"obj_portao_vila","path":"objects/obj_portao_vila/obj_portao_vila.yy",},},

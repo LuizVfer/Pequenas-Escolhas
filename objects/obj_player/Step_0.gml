@@ -14,31 +14,31 @@ if (!_martelando)
 #endregion
 
 
-#region Som dos passos
+#region Som e poeira dos passos
 
-// Movimento real realizado pelo jogador
-movimento_x_frame =
+// Movimento que realmente aconteceu
+// depois das colisões
+var _movimento_real =
     x - x_anterior_passos;
 
 
 var _deslocamento_passos =
-    abs(
-        movimento_x_frame
-    );
+    abs(_movimento_real);
 
 
 x_anterior_passos = x;
 
-// Movimento horizontal real deste frame
-movimento_x_frame = 0;
 
-
-if (
+var _andando_realmente =
     !global.controle_bloqueado
     && !animacao_martelo_ativa
-    && _deslocamento_passos > 0.01
-)
+    && _deslocamento_passos > 0.01;
+
+
+if (_andando_realmente)
 {
+    #region Som dos passos
+
     distancia_passos_acumulada +=
         _deslocamento_passos;
 
@@ -48,7 +48,8 @@ if (
         >= distancia_entre_passos
     )
     {
-        distancia_passos_acumulada = 0;
+        distancia_passos_acumulada -=
+            distancia_entre_passos;
 
 
         var _pitch_passo =
@@ -70,10 +71,79 @@ if (
             _pitch_passo
         );
     }
+
+    #endregion
+
+
+    #region Criar poeira diretamente
+
+    if (poeira_passos_ativa)
+    {
+        distancia_poeira_acumulada +=
+            _deslocamento_passos;
+
+
+        while (
+            distancia_poeira_acumulada
+            >= distancia_entre_poeiras
+        )
+        {
+            distancia_poeira_acumulada -=
+                distancia_entre_poeiras;
+
+
+            var _lado =
+                sign(_movimento_real);
+
+
+            // Dois pequenos grãos por emissão
+            repeat (2)
+            {
+                var _poeira =
+                    instance_create_layer(
+                        x
+                            - _lado * 11
+                            + random_range(-2, 2),
+
+                        bbox_bottom
+                            - 4
+                            + random_range(-1, 1),
+
+                        "L01_FX_Front",
+
+                        obj_poeira_passo
+                    );
+
+
+                // Poeira segue para trás
+                // em relação ao jogador
+                _poeira.velocidade_x =
+                    -_lado
+                    * random_range(
+                        0.15,
+                        0.35
+                    )
+                    + random_range(
+                        -0.08,
+                        0.08
+                    );
+
+
+                _poeira.velocidade_y =
+                    random_range(
+                        -0.45,
+                        -0.20
+                    );
+            }
+        }
+    }
+
+    #endregion
 }
 else
 {
     distancia_passos_acumulada = 0;
+    distancia_poeira_acumulada = 0;
 }
 
 #endregion

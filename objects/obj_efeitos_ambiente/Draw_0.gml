@@ -1,3 +1,92 @@
+#region Desenhar poeira da cidade
+
+for (
+    var _i = 0;
+    _i < array_length(poeiras_cidade);
+    _i++
+)
+{
+    var _poeira =
+        poeiras_cidade[_i];
+
+
+    var _tempo_vivo =
+        _poeira.vida_total
+        - _poeira.vida;
+
+
+    var _entrada =
+        clamp(
+            _tempo_vivo / 0.7,
+            0,
+            1
+        );
+
+
+    var _saida =
+        clamp(
+            _poeira.vida / 1,
+            0,
+            1
+        );
+
+
+    var _alpha =
+        _poeira.alpha
+        * _entrada
+        * _saida;
+
+
+    var _x =
+        round(_poeira.x);
+
+
+    var _y =
+        round(_poeira.y);
+
+
+    draw_set_color(
+        _poeira.cor
+    );
+
+
+    draw_set_alpha(
+        _alpha
+    );
+
+
+    draw_point(
+        _x,
+        _y
+    );
+
+
+    if (_poeira.tamanho > 1)
+    {
+        draw_point(
+            _x + 1,
+            _y
+        );
+    }
+
+
+    // Pequeno rastro na direção contrária
+    draw_set_alpha(
+        _alpha * 0.35
+    );
+
+
+    draw_point(
+        _x
+            + _poeira.tamanho
+            + 1,
+
+        _y
+    );
+}
+
+#endregion
+
 #region Desenhar folhas
 
 for (

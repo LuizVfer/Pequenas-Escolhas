@@ -8,6 +8,98 @@ var _delta =
 
 #endregion
 
+#region Poeira suspensa da cidade
+
+if (poeira_cidade_ativa)
+{
+    tempo_proxima_poeira_cidade -=
+        _delta;
+
+
+    if (
+        tempo_proxima_poeira_cidade <= 0
+        && array_length(poeiras_cidade)
+            < maximo_poeiras_cidade
+    )
+    {
+        criar_poeira_cidade();
+
+
+        tempo_proxima_poeira_cidade =
+            random_range(
+                0.35,
+                0.70
+            );
+    }
+
+
+    var _area_cidade =
+        obter_area_camera();
+
+
+    for (
+        var _i =
+            array_length(poeiras_cidade) - 1;
+
+        _i >= 0;
+
+        _i--
+    )
+    {
+        var _poeira =
+            poeiras_cidade[_i];
+
+
+        _poeira.vida -=
+            _delta;
+
+
+        _poeira.fase +=
+            _poeira.velocidade_fase
+            * _delta;
+
+
+        _poeira.x +=
+            _poeira.velocidade_x
+            * _delta;
+
+
+        _poeira.y +=
+        (
+            _poeira.velocidade_y
+            + sin(_poeira.fase)
+            * _poeira.oscilacao
+        )
+        * _delta;
+
+
+        if (
+            _poeira.vida <= 0
+
+            || _poeira.x
+                < _area_cidade.x - 24
+
+            || _poeira.x
+                > _area_cidade.x
+                + _area_cidade.largura
+                + 24
+        )
+        {
+            array_delete(
+                poeiras_cidade,
+                _i,
+                1
+            );
+        }
+        else
+        {
+            poeiras_cidade[_i] =
+                _poeira;
+        }
+    }
+}
+
+#endregion
 
 #region Folhas da floresta
 

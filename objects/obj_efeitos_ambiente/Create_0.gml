@@ -41,6 +41,25 @@ vagalume_cor = c_white;
 
 #endregion
 
+#region Efeito da cidade
+
+poeiras_cidade = [];
+
+poeira_cidade_ativa = false;
+
+tempo_proxima_poeira_cidade = 0.1;
+
+maximo_poeiras_cidade = 14;
+
+
+poeira_cidade_cor_1 =
+    c_white;
+
+poeira_cidade_cor_2 =
+    c_white;
+
+#endregion
+
 
 #region Configuração por região
 
@@ -59,6 +78,25 @@ switch (room)
             make_color_rgb(132, 124, 98);
 
         poeira_alpha = 0.18;
+        
+        // Poeira leve suspensa no ar
+        poeira_cidade_ativa = true;
+        
+        
+        poeira_cidade_cor_1 =
+            make_color_rgb(
+                174,
+                161,
+                132
+            );
+        
+        
+        poeira_cidade_cor_2 =
+            make_color_rgb(
+                132,
+                124,
+                105
+            );
 
     break;
 
@@ -251,6 +289,104 @@ obter_area_camera = function()
         altura:
             camera_get_view_height(_camera)
     };
+};
+
+#endregion
+
+#region Criar poeira da cidade
+
+criar_poeira_cidade = function()
+{
+    var _area =
+        obter_area_camera();
+
+
+    var _vida =
+        random_range(
+            6,
+            10
+        );
+
+
+    var _poeira =
+    {
+        // Surge suavemente em algum ponto
+        // da área visível
+        x:
+            _area.x
+            + random_range(
+                20,
+                _area.largura - 20
+            ),
+
+        y:
+            _area.y
+            + random_range(
+                55,
+                _area.altura - 65
+            ),
+
+
+        // Vento lento para a esquerda
+        velocidade_x:
+            random_range(
+                -11,
+                -5
+            ),
+
+        velocidade_y:
+            random_range(
+                -1.2,
+                0.6
+            ),
+
+
+        oscilacao:
+            random_range(
+                2,
+                4
+            ),
+
+        fase:
+            random_range(
+                0,
+                pi * 2
+            ),
+
+        velocidade_fase:
+            random_range(
+                1.2,
+                2.2
+            ),
+
+
+        vida: _vida,
+        vida_total: _vida,
+
+        tamanho:
+            irandom_range(
+                1,
+                2
+            ),
+
+        cor:
+            choose(
+                poeira_cidade_cor_1,
+                poeira_cidade_cor_2
+            ),
+
+        alpha:
+            random_range(
+                0.28,
+                0.45
+            )
+    };
+
+
+    array_push(
+        poeiras_cidade,
+        _poeira
+    );
 };
 
 #endregion

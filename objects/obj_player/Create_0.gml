@@ -211,6 +211,43 @@ passo_alternado = false;
 
 #endregion
 
+#region Poeira dos passos
+
+poeira_passos_ativa =
+    room == rm_cidade
+    || room == rm_floresta
+    || room == rm_vila;
+
+
+distancia_poeira_acumulada = 0;
+
+
+// Quantos pixels o jogador percorre
+// antes de produzir poeira
+switch (room)
+{
+    case rm_cidade:
+        distancia_entre_poeiras = 14;
+    break;
+
+
+    case rm_floresta:
+        distancia_entre_poeiras = 9;
+    break;
+
+
+    case rm_vila:
+        distancia_entre_poeiras = 7;
+    break;
+
+
+    default:
+        distancia_entre_poeiras = 10;
+    break;
+}
+
+#endregion
+
 
 #region Métodos de movimento
 
