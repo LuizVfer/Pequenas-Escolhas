@@ -49,7 +49,7 @@ aplicar_escolha_brinquedo = function()
             {
                 sprite_index = spr_crianca_brinquedo;
                 image_index = 0;
-                image_speed = 0;
+                image_speed = 1;
             }
 
             visible = false;
@@ -65,7 +65,7 @@ aplicar_escolha_brinquedo = function()
             {
                 sprite_index = spr_crianca_brinquedo_quebrado;
                 image_index = 0;
-                image_speed = 0;
+                image_speed = 1;
             }
 
             visible = false;
@@ -87,7 +87,7 @@ aplicar_escolha_brinquedo = function()
             {
                 sprite_index = spr_crianca_alcancando;
                 image_index = 0;
-                image_speed = 0;
+                image_speed = 1;
             }
 
             _mensagem =

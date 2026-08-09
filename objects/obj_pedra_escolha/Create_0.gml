@@ -55,14 +55,31 @@ aplicar_escolha_pedra = function(_opcao)
     {
         // Chutar a pedra
         case 0:
+        
             // Pequeno impacto do chute
             with (obj_camera)
             {
                 tremer(1, 6);
             }
-            
+        
+        
+            // O cavalo se assusta e foge
+            with (obj_cavalo)
+            {
+                instance_destroy();
+            }
+        
+        
+            // O prisioneiro aproveita para escapar
+            with (obj_prisioneiro)
+            {
+                instance_destroy();
+            }
+        
+        
+            // A pedra desaparece
             instance_destroy();
-
+        
         break;
 
 

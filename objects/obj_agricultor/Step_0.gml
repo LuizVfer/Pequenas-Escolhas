@@ -75,11 +75,12 @@ var _abrir_portao = method(
         with (obj_portao_vila)
         {
             sprite_index = spr_portao_aberto;
-
+        
             image_index = 0;
             image_speed = 0;
-
-            pode_interagir = false;
+        
+            // Agora o portão aberto pode ser usado
+            pode_interagir = true;
         }
 
 

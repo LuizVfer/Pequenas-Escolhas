@@ -25,7 +25,7 @@ som_portao = snd_portao_abrindo;
 #region Restaurar estado
 
 image_index = 0;
-image_speed = 0;
+image_speed = 1;
 
 
 // Caso o portão já esteja aberto,

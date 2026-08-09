@@ -258,7 +258,7 @@ if (estado_intro == ESTADO_TITULO)
 
 
                 room_goto(
-                    rm_destino
+                    rm_cidade
                 );
             }
         );

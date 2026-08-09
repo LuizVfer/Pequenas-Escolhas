@@ -4,7 +4,7 @@ event_inherited();
 #region Configuração visual
 
 image_speed = 0;
-image_index = 0;
+image_index = 1;
 
 
 // Restaura o resultado da escolha ao entrar na room
