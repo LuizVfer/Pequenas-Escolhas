@@ -2,9 +2,6 @@
 
 particulas = [];
 
-player_encontrado = false;
-player_x_anterior = 0;
-
 acumulador_distancia = 0;
 
 poeira_ativa = false;
