@@ -179,7 +179,7 @@ interagir = function()
         "O brinquedo está preso entre os galhos, longe do alcance da criança. O que fazer?",
 
         [
-            "Ajudar a criança",
+            "Tentar alcançar o brinquedo",
             "Derrubar com uma pedra",
             "Não fazer nada"
         ],

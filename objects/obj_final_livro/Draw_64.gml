@@ -68,16 +68,19 @@ else if (
     == ESTADO_CONSEQUENCIAS
 )
 {
-    // Fundo do livro
-    draw_sprite(
-        spr_fundo_pergaminho,
-        0,
-        0,
-        0
-    );
+    // O sprite já contém o livro,
+    // o pergaminho e a ilustração.
+    if (sprite_consequencia != noone)
+    {
+        draw_sprite(
+            sprite_consequencia,
+            0,
+            0,
+            0
+        );
+    }
 
 
-    draw_set_font(fnt_dialogo);
     draw_set_halign(fa_center);
     draw_set_valign(fa_top);
 
@@ -86,34 +89,21 @@ else if (
     // Título
     // ----------------------------------------------
 
+    draw_set_font(fnt_dialogo);
+
     draw_set_color(
         make_color_rgb(
-            80,
-            48,
-            30
+            76,
+            45,
+            27
         )
     );
 
     draw_text(
         _centro_x,
-        14,
+        20,
         titulo_consequencia
     );
-
-
-    // ----------------------------------------------
-    // Imagem da consequência
-    // ----------------------------------------------
-
-    if (sprite_consequencia != noone)
-    {
-        draw_sprite(
-            sprite_consequencia,
-            0,
-            160,
-            42
-        );
-    }
 
 
     // ----------------------------------------------
@@ -164,6 +154,10 @@ else if (
             );
 
 
+        // Fonte menor para as frases maiores
+        // caberem dentro da moldura.
+        draw_set_font(fnt_minigame);
+
         draw_set_color(
             make_color_rgb(
                 45,
@@ -175,10 +169,10 @@ else if (
 
         draw_text_ext(
             _centro_x,
-            232,
+            164,
             _frase_mostrada,
-            -1,
-            540
+            18,
+            220
         );
 
 

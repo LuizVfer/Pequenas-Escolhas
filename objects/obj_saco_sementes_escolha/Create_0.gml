@@ -43,14 +43,14 @@ if (global.escolha_sementes != -1)
         // Abrir mais o rasgo
         case 2:
             sprite_index =
-                spr_saco_sementes_aberto;
+                spr_saco_sementes_aberto; 
         break;
     }
 }
 else
 {
     sprite_index =
-        spr_saco_sementes_rasgado;
+        spr_saco_sementes_aberto; 
 
     pode_interagir = true;
 }
