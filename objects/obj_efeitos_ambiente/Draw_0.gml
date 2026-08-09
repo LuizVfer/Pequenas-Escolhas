@@ -64,12 +64,14 @@ for (
     );
 
 
-    draw_line(
+    draw_rectangle(
         _x,
         _y,
-
-        _x + _folha.tamanho,
-        _y + _inclinacao
+    
+        _x + _folha.tamanho + 1,
+        _y + 1,
+    
+        false
     );
 }
 
@@ -140,27 +142,31 @@ for (
     );
 
 
-    // Brilho externo muito discreto
+    // Brilho externo
     draw_set_alpha(
-        _alpha * 0.18
+        _alpha * 0.30
     );
-
-
-    draw_point(_x - 1, _y);
-    draw_point(_x + 1, _y);
-    draw_point(_x, _y - 1);
-    draw_point(_x, _y + 1);
-
-
+    
+    draw_rectangle(
+        _x - 1,
+        _y - 1,
+        _x + 2,
+        _y + 2,
+        false
+    );
+    
+    
     // Centro luminoso
     draw_set_alpha(
         _alpha
     );
-
-
-    draw_point(
+    
+    draw_rectangle(
         _x,
-        _y
+        _y,
+        _x + 1,
+        _y + 1,
+        false
     );
 }
 
@@ -214,15 +220,13 @@ for (
     draw_rectangle(
         _x,
         _y,
-
+    
         _x
-            + _particula.largura
-            - 1,
-
+            + _particula.largura,
+    
         _y
-            + _particula.altura
-            - 1,
-
+            + _particula.altura,
+    
         false
     );
 }
