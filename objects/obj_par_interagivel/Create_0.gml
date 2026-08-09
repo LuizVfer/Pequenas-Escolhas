@@ -19,13 +19,23 @@ prioridade_interacao = 0;
 
 #region Ponto de interação
 
-// Desloca o ponto usado para calcular
-// a distância até o jogador.
-//
-// Útil para objetos grandes, como
-// a ponte e o portão.
+// Ponto usado para calcular a distância
+// entre o jogador e o objeto
 offset_interacao_x = 0;
 offset_interacao_y = 0;
+
+#endregion
+
+
+#region Indicador de interação
+
+// Distância vertical do indicador E
+offset_indicador_y = 40;
+
+
+// Objetos grandes podem usar o ponto
+// de interação para posicionar o indicador
+indicador_usar_ponto_interacao = false;
 
 #endregion
 

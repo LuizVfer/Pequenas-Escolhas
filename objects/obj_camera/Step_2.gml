@@ -14,7 +14,8 @@ if (_player == noone)
 
 #region Verificar câmera
 
-// Atualiza a referência caso a View 0 tenha sido recriada
+// Atualiza a referência caso a View 0
+// tenha sido recriada
 camera_id = view_camera[0];
 
 
@@ -24,7 +25,6 @@ if (camera_id == -1)
 }
 
 
-// Mantém as dimensões sincronizadas com a View 0
 camera_largura =
     camera_get_view_width(camera_id);
 
@@ -45,7 +45,8 @@ if (
 
 #region Calcular posição desejada
 
-// Coloca o jogador em 40% da largura da tela
+// Coloca o jogador em 40%
+// da largura da tela
 var _alvo_x =
     _player.x
     - camera_largura
@@ -65,19 +66,90 @@ var _limite_x =
 #endregion
 
 
+#region Atualizar tremor
+
+var _fade_ativo =
+    fade_camera_ativo();
+
+
+// Começa quando o fade tiver terminado
+if (
+    tremor_aguardando
+    && !_fade_ativo
+)
+{
+    tremor_aguardando = false;
+    tremor_ativo = true;
+
+    tremor_frames_restantes =
+        tremor_duracao;
+}
+
+
+// Atualiza apenas quando a cena está visível
+if (
+    tremor_ativo
+    && !_fade_ativo
+)
+{
+    var _proporcao =
+        tremor_frames_restantes
+        / max(1, tremor_duracao);
+
+
+    // O tremor perde força gradualmente
+    var _forca_atual =
+        max(
+            1,
+            ceil(
+                tremor_forca
+                * _proporcao
+            )
+        );
+
+
+    tremor_lado =
+        -tremor_lado;
+
+
+    tremor_deslocamento_x =
+        tremor_lado
+        * _forca_atual;
+
+
+    tremor_frames_restantes -= 1;
+
+
+    if (tremor_frames_restantes <= 0)
+    {
+        tremor_ativo = false;
+    }
+}
+else
+{
+    // Não deixa a câmera deslocada
+    // durante uma tela preta
+    tremor_deslocamento_x = 0;
+}
+
+#endregion
+
+
 #region Atualizar câmera
 
-// Movimento direto e alinhado aos pixels,
-// adequado para o estilo pixel art
+// Posição normal somada ao tremor.
+// O clamp impede mostrar algo fora da room.
 camera_x =
     clamp(
-        round(_alvo_x),
+        round(_alvo_x)
+        + tremor_deslocamento_x,
+
         0,
         _limite_x
     );
 
 
-// O jogo não possui movimentação vertical
+// O jogo não possui movimento vertical
 camera_y = 0;
 
 

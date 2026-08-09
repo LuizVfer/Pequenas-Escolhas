@@ -21,6 +21,7 @@
     {"name":"inst_76F7A6E6","path":"rooms/rm_cidade/rm_cidade.yy",},
     {"name":"inst_6128A357","path":"rooms/rm_cidade/rm_cidade.yy",},
     {"name":"inst_3672CD8C","path":"rooms/rm_cidade/rm_cidade.yy",},
+    {"name":"inst_4DC7B49A","path":"rooms/rm_cidade/rm_cidade.yy",},
   ],
   "isDnd":false,
   "layers":[
@@ -45,6 +46,7 @@
         {"$GMRInstance":"v4","%Name":"inst_5BD0B618","colour":4294967295,"frozen":false,"hasCreationCode":true,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_5BD0B618","objectId":{"name":"obj_solid","path":"objects/obj_solid/obj_solid.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":4.0,"scaleY":3.0,"x":720.0,"y":256.0,},
         {"$GMRInstance":"v4","%Name":"inst_640A543","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_640A543","objectId":{"name":"obj_alvo_roda","path":"objects/obj_alvo_roda/obj_alvo_roda.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":752.0,"y":288.0,},
         {"$GMRInstance":"v4","%Name":"inst_6128A357","colour":4294967295,"frozen":false,"hasCreationCode":true,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_6128A357","objectId":{"name":"obj_saida_room","path":"objects/obj_saida_room/obj_saida_room.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":4.0,"scaleY":5.0,"x":2528.0,"y":304.0,},
+        {"$GMRInstance":"v4","%Name":"inst_4DC7B49A","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_4DC7B49A","objectId":{"name":"obj_efeitos_ambiente","path":"objects/obj_efeitos_ambiente/obj_efeitos_ambiente.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":0.0,"y":0.0,},
       ],"layers":[],"name":"L05_Triggers","properties":[],"resourceType":"GMRInstanceLayer","resourceVersion":"2.0","userdefinedDepth":false,"visible":true,},
     {"$GMRTileLayer":"","%Name":"L06_Ground_Tiles","depth":600,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"L06_Ground_Tiles","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":0,"SerialiseWidth":0,"TileSerialiseData":[],},"tilesetId":null,"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
     {"$GMRAssetLayer":"","%Name":"L07_Midground_Assets","assets":[

@@ -207,7 +207,7 @@ if (modo_escolha)
     // ----------------------------------------------
 
     draw_sprite(
-        spr_tecla_E_placeholder,
+        spr_tecla_E,
         0,
         _cx + _cw - 22,
         _cy + _ch - 20
@@ -364,7 +364,7 @@ if (
 )
 {
     draw_sprite(
-        spr_tecla_E_placeholder,
+        spr_tecla_E,
         0,
         caixa_x + caixa_largura - 22,
         caixa_y + caixa_altura - 20

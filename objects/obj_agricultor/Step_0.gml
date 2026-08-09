@@ -122,6 +122,12 @@ var _abrir_portao = method(
                 0
             );
         }
+        
+        // Impacto do portão abrindo
+        with (obj_camera)
+        {
+            tremer(2, 14);
+        }
 
 
         // ----------------------------------------------

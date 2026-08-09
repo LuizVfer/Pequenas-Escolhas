@@ -89,6 +89,11 @@ tocar_som_armadilha = function()
         _som_armadilha,
         0.95
     );
+    // Pequeno impacto da armadilha abrindo
+    with (obj_camera)
+    {
+        tremer(1, 8);
+    }
 };
 
 #endregion

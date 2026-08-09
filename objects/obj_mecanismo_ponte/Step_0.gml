@@ -266,7 +266,13 @@ switch (estado_mecanismo)
                         1,
                         0
                     );
-
+                    
+                    // Impacto da ponte ao abaixar
+                    with (obj_camera)
+                    {
+                        tremer(2, 18);
+                    }
+                    
 
                     estado_mecanismo =
                         MECANISMO_CONCLUIDO;

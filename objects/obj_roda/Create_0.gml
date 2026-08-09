@@ -389,6 +389,12 @@ concluir_reparo_carroca = function()
                     instance_destroy();
                 }
             }
+            
+            // Impacto do reparo da carroça
+            with (obj_camera)
+            {
+                tremer(2, 12);
+            }
 
 
             instance_destroy();

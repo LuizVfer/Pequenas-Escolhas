@@ -7,10 +7,12 @@ distancia_interacao = 56;
 prioridade_interacao = 10;
 
 offset_indicador_y = 12;
+indicador_usar_ponto_interacao = true;
 
 // O jogador chega pela esquerda
 offset_interacao_x = -24;
 offset_interacao_y = 0;
+
 
 #endregion
 

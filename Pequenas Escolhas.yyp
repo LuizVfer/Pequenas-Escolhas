@@ -73,6 +73,7 @@
     {"id":{"name":"obj_crianca_destino","path":"objects/obj_crianca_destino/obj_crianca_destino.yy",},},
     {"id":{"name":"obj_destinatario","path":"objects/obj_destinatario/obj_destinatario.yy",},},
     {"id":{"name":"obj_dialogo","path":"objects/obj_dialogo/obj_dialogo.yy",},},
+    {"id":{"name":"obj_efeitos_ambiente","path":"objects/obj_efeitos_ambiente/obj_efeitos_ambiente.yy",},},
     {"id":{"name":"obj_fade","path":"objects/obj_fade/obj_fade.yy",},},
     {"id":{"name":"obj_ferreiro","path":"objects/obj_ferreiro/obj_ferreiro.yy",},},
     {"id":{"name":"obj_final_livro","path":"objects/obj_final_livro/obj_final_livro.yy",},},

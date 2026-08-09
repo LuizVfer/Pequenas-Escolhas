@@ -8,6 +8,7 @@ prioridade_interacao = 10;
 
 offset_indicador_y = 12;
 
+indicador_usar_ponto_interacao = true;
 // Ponto de interação próximo ao brinquedo na árvore
 offset_interacao_x = 0;
 offset_interacao_y = 96;
@@ -68,6 +69,12 @@ aplicar_escolha_brinquedo = function()
             }
 
             visible = false;
+            
+            // Impacto do brinquedo caindo
+            with (obj_camera)
+            {
+                tremer(1, 8);
+            }
 
             _mensagem =
                 "A pedra atinge o galho. O brinquedo cai, mas se quebra ao tocar o chão.";

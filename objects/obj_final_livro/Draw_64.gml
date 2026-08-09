@@ -191,7 +191,7 @@ else if (
         )
         {
             draw_sprite(
-                spr_tecla_E_placeholder,
+                spr_tecla_E,
                 0,
                 574,
                 330
@@ -286,7 +286,7 @@ else if (
         )
         {
             draw_sprite(
-                spr_tecla_E_placeholder,
+                spr_tecla_E,
                 0,
                 590,
                 330

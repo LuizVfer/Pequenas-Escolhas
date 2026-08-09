@@ -11,7 +11,9 @@ prioridade_interacao = 10;
 offset_interacao_x = -120;
 offset_interacao_y = -48;
 
+
 offset_indicador_y = 12;
+indicador_usar_ponto_interacao = true;
 
 #endregion
 

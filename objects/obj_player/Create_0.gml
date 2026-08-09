@@ -18,6 +18,20 @@ x_resto = 0;
 // Objeto interagível selecionado
 interagivel_atual = noone;
 
+
+// Último alvo usado pelo indicador
+indicador_alvo_anterior = noone;
+
+
+// Posição desenhada na room
+indicador_x = x;
+indicador_y = y;
+
+
+// Estado da animação
+indicador_alpha = 0;
+indicador_tempo = 0;
+
 #endregion
 
 

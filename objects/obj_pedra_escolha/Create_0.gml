@@ -55,7 +55,12 @@ aplicar_escolha_pedra = function(_opcao)
     {
         // Chutar a pedra
         case 0:
-
+            // Pequeno impacto do chute
+            with (obj_camera)
+            {
+                tremer(1, 6);
+            }
+            
             instance_destroy();
 
         break;

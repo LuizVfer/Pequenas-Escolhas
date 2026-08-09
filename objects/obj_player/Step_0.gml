@@ -230,3 +230,112 @@ if (instance_exists(interagivel_atual))
 }
 
 #endregion
+
+#region Atualizar indicador de interação
+
+var _delta_indicador =
+    delta_time / 1000000;
+
+
+var _mostrar_indicador =
+    instance_exists(
+        interagivel_atual
+    )
+    && !global.dialogo_ativo
+    && !global.controle_bloqueado;
+
+
+if (_mostrar_indicador)
+{
+    // Reinicia a entrada quando o alvo muda
+    if (
+        interagivel_atual
+        != indicador_alvo_anterior
+    )
+    {
+        indicador_alpha = 0;
+        indicador_tempo = 0;
+    }
+
+
+    // Objetos grandes usam o ponto acessível
+    // empregado no cálculo da interação
+    if (
+        interagivel_atual
+            .indicador_usar_ponto_interacao
+    )
+    {
+        indicador_x =
+            round(
+                interagivel_atual.x
+                + interagivel_atual
+                    .offset_interacao_x
+            );
+
+
+        indicador_y =
+            round(
+                interagivel_atual.y
+                + interagivel_atual
+                    .offset_interacao_y
+                - interagivel_atual
+                    .offset_indicador_y
+            );
+    }
+    else
+    {
+        // NPCs e objetos pequenos continuam
+        // mostrando o indicador sobre a cabeça
+        indicador_x =
+            round(
+                interagivel_atual.x
+            );
+
+
+        indicador_y =
+            round(
+                interagivel_atual.bbox_top
+                - interagivel_atual
+                    .offset_indicador_y
+            );
+    }
+
+
+    // Aproximadamente 0,17 segundo para aparecer
+    indicador_alpha =
+        min(
+            1,
+            indicador_alpha
+                + 6
+                * _delta_indicador
+        );
+
+
+    indicador_tempo +=
+        _delta_indicador;
+}
+else
+{
+    // Aproximadamente 0,12 segundo para desaparecer
+    indicador_alpha =
+        max(
+            0,
+            indicador_alpha
+                - 8
+                * _delta_indicador
+        );
+}
+
+
+if (_mostrar_indicador)
+{
+    indicador_alvo_anterior =
+        interagivel_atual;
+}
+else
+{
+    indicador_alvo_anterior =
+        noone;
+}
+
+#endregion

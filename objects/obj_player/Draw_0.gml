@@ -7,23 +7,39 @@ draw_self();
 
 #region Indicador de interação
 
-if (
-    !global.dialogo_ativo
-    && !global.controle_bloqueado
-    && instance_exists(
-        interagivel_atual
-    )
-)
+if (indicador_alpha > 0.001)
 {
-    draw_sprite(
-        spr_tecla_E_placeholder,
+    // Oscilação lenta de somente 1 pixel
+    var _movimento_y =
+        round(
+            sin(
+                indicador_tempo
+                * 5
+            )
+        );
+
+
+    // Cresce suavemente de 90% até 100%
+    var _escala_indicador =
+        0.90
+        + 0.10
+        * indicador_alpha;
+
+
+    draw_sprite_ext(
+        spr_tecla_E,
         0,
 
-        interagivel_atual.x,
+        indicador_x,
+        indicador_y
+            + _movimento_y,
 
-        interagivel_atual.bbox_top
-            - interagivel_atual
-                .offset_indicador_y
+        _escala_indicador,
+        _escala_indicador,
+
+        0,
+        c_white,
+        indicador_alpha
     );
 }
 

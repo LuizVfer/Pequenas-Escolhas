@@ -1,0 +1,283 @@
+#region Delta time
+
+var _delta =
+    min(
+        delta_time / 1000000,
+        0.05
+    );
+
+#endregion
+
+
+#region Poeira do jogador
+
+var _player =
+    instance_find(
+        obj_player,
+        0
+    );
+
+
+if (_player != noone)
+{
+    if (!player_encontrado)
+    {
+        player_encontrado = true;
+        player_x_anterior = _player.x;
+    }
+    else
+    {
+        var _movimento_x =
+            _player.x
+            - player_x_anterior;
+
+
+        var _distancia_movida =
+            abs(_movimento_x);
+
+
+        // O limite evita poeira caso o jogador
+        // seja teleportado durante uma transição
+        if (
+            poeira_ativa
+            && _distancia_movida > 0.01
+            && _distancia_movida < 12
+        )
+        {
+            acumulador_distancia +=
+                _distancia_movida;
+
+
+            if (
+                acumulador_distancia
+                >= poeira_distancia
+            )
+            {
+                criar_poeira_passos(
+                    _player,
+                    sign(_movimento_x)
+                );
+
+
+                acumulador_distancia = 0;
+            }
+        }
+
+
+        player_x_anterior =
+            _player.x;
+    }
+}
+else
+{
+    player_encontrado = false;
+    acumulador_distancia = 0;
+}
+
+#endregion
+
+#region Folhas da floresta
+
+if (folhas_ativas)
+{
+    tempo_proxima_folha -=
+        _delta;
+
+
+    if (
+        tempo_proxima_folha <= 0
+        && array_length(folhas)
+            < maximo_folhas
+    )
+    {
+        criar_folha();
+
+
+        tempo_proxima_folha =
+            random_range(1.2, 2.2);
+    }
+
+
+    var _area_folhas =
+        obter_area_camera();
+
+
+    for (
+        var _i = array_length(folhas) - 1;
+        _i >= 0;
+        _i--
+    )
+    {
+        var _folha =
+            folhas[_i];
+
+
+        _folha.vida -=
+            _delta;
+
+
+        _folha.fase +=
+            _folha.velocidade_fase
+            * _delta;
+
+
+        _folha.x +=
+            _folha.velocidade_x
+            * _delta;
+
+
+        _folha.y +=
+        (
+            _folha.velocidade_y
+            + sin(_folha.fase)
+            * _folha.oscilacao
+        )
+        * _delta;
+
+
+        if (
+            _folha.vida <= 0
+            || _folha.x
+                < _area_folhas.x - 24
+        )
+        {
+            array_delete(
+                folhas,
+                _i,
+                1
+            );
+        }
+        else
+        {
+            folhas[_i] =
+                _folha;
+        }
+    }
+}
+
+#endregion
+
+#region Vagalumes da floresta
+
+if (vagalumes_ativos)
+{
+    tempo_proximo_vagalume -=
+        _delta;
+
+
+    if (
+        tempo_proximo_vagalume <= 0
+        && array_length(vagalumes)
+            < maximo_vagalumes
+    )
+    {
+        criar_vagalume();
+
+
+        tempo_proximo_vagalume =
+            random_range(0.7, 1.3);
+    }
+
+
+    for (
+        var _i = array_length(vagalumes) - 1;
+        _i >= 0;
+        _i--
+    )
+    {
+        var _vagalume =
+            vagalumes[_i];
+
+
+        _vagalume.vida -=
+            _delta;
+
+
+        _vagalume.fase +=
+            _vagalume.velocidade_pulso
+            * _delta;
+
+
+        _vagalume.x +=
+        (
+            _vagalume.velocidade_x
+            + sin(_vagalume.fase * 0.65)
+            * 1.5
+        )
+        * _delta;
+
+
+        _vagalume.y +=
+        (
+            _vagalume.velocidade_y
+            + cos(_vagalume.fase * 0.8)
+            * 1.5
+        )
+        * _delta;
+
+
+        if (_vagalume.vida <= 0)
+        {
+            array_delete(
+                vagalumes,
+                _i,
+                1
+            );
+        }
+        else
+        {
+            vagalumes[_i] =
+                _vagalume;
+        }
+    }
+}
+
+#endregion
+
+
+#region Atualizar partículas
+
+for (
+    var _i = array_length(particulas) - 1;
+    _i >= 0;
+    _i--
+)
+{
+    var _particula =
+        particulas[_i];
+
+
+    _particula.vida -= _delta;
+
+
+    if (_particula.vida <= 0)
+    {
+        array_delete(
+            particulas,
+            _i,
+            1
+        );
+    }
+    else
+    {
+        _particula.velocidade_y +=
+            _particula.gravidade
+            * _delta;
+
+
+        _particula.x +=
+            _particula.velocidade_x
+            * _delta;
+
+
+        _particula.y +=
+            _particula.velocidade_y
+            * _delta;
+
+
+        particulas[_i] =
+            _particula;
+    }
+}
+
+#endregion
