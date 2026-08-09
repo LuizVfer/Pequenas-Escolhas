@@ -8,492 +8,438 @@ var _delta =
 
 #endregion
 
-#region Poeira suspensa da cidade
 
-if (poeira_cidade_ativa)
+#region Criar novos efeitos
+
+switch (room)
 {
-    tempo_proxima_poeira_cidade -=
-        _delta;
+    case rm_cidade:
 
+        tempo_poeira_cidade -=
+            _delta;
 
-    if (
-        tempo_proxima_poeira_cidade <= 0
-        && array_length(poeiras_cidade)
-            < maximo_poeiras_cidade
-    )
-    {
-        criar_poeira_cidade();
-
-
-        tempo_proxima_poeira_cidade =
-            random_range(
-                0.20,
-                0.45
-            );
-    }
-
-
-    var _area_cidade =
-        obter_area_camera();
-
-
-    for (
-        var _i =
-            array_length(poeiras_cidade) - 1;
-
-        _i >= 0;
-
-        _i--
-    )
-    {
-        var _poeira =
-            poeiras_cidade[_i];
-
-
-        _poeira.vida -=
+        tempo_fumaca_cidade -=
             _delta;
 
 
-        _poeira.fase +=
-            _poeira.velocidade_fase
-            * _delta;
+        if (
+            tempo_poeira_cidade <= 0
 
-
-        _poeira.x +=
-            _poeira.velocidade_x
-            * _delta;
-
-
-        _poeira.y +=
-        (
-            _poeira.velocidade_y
-            + sin(_poeira.fase)
-            * _poeira.oscilacao
+            && contar_tipo(
+                TIPO_POEIRA_CIDADE
+            )
+            < maximo_poeira_cidade
         )
-        * _delta;
+        {
+            criar_poeira_cidade();
+
+
+            tempo_poeira_cidade =
+                random_range(
+                    0.14,
+                    0.30
+                );
+        }
 
 
         if (
-            _poeira.vida <= 0
+            tempo_fumaca_cidade <= 0
 
-            || _poeira.x
-                < _area_cidade.x - 24
-
-            || _poeira.x
-                > _area_cidade.x
-                + _area_cidade.largura
-                + 24
+            && contar_tipo(
+                TIPO_FUMACA_CIDADE
+            )
+            < maximo_fumaca_cidade
         )
         {
-            array_delete(
-                poeiras_cidade,
-                _i,
-                1
-            );
+            criar_fumaca_cidade();
+
+
+            tempo_fumaca_cidade =
+                random_range(
+                    0.40,
+                    0.75
+                );
         }
-        else
-        {
-            poeiras_cidade[_i] =
-                _poeira;
-        }
-    }
-}
 
-#endregion
-
-#region Fragmentos da vila
-
-if (fragmentos_vila_ativos)
-{
-    tempo_proximo_fragmento_vila -=
-        _delta;
+    break;
 
 
-    if (
-        tempo_proximo_fragmento_vila <= 0
-        && array_length(fragmentos_vila)
-            < maximo_fragmentos_vila
-    )
-    {
-        criar_fragmento_vila();
+    case rm_floresta:
 
+        tempo_folha -=
+            _delta;
 
-        tempo_proximo_fragmento_vila =
-            random_range(
-                0.45,
-                0.90
-            );
-    }
+        tempo_vagalume -=
+            _delta;
 
-
-    var _area_vila =
-        obter_area_camera();
-
-
-    for (
-        var _i =
-            array_length(fragmentos_vila) - 1;
-
-        _i >= 0;
-
-        _i--
-    )
-    {
-        var _fragmento =
-            fragmentos_vila[_i];
-
-
-        _fragmento.vida -=
+        tempo_polen -=
             _delta;
 
 
-        _fragmento.fase +=
-            _fragmento.velocidade_fase
-            * _delta;
-
-
-        _fragmento.x +=
-            _fragmento.velocidade_x
-            * _delta;
-
-
-        _fragmento.y +=
-        (
-            _fragmento.velocidade_y
-            + sin(_fragmento.fase)
-            * _fragmento.oscilacao
-        )
-        * _delta;
-
-
         if (
-            _fragmento.vida <= 0
+            tempo_folha <= 0
 
-            || _fragmento.x
-                < _area_vila.x - 32
-
-            || _fragmento.y
-                < _area_vila.y - 24
-
-            || _fragmento.y
-                > _area_vila.y
-                + _area_vila.altura
-                + 24
-        )
-        {
-            array_delete(
-                fragmentos_vila,
-                _i,
-                1
-            );
-        }
-        else
-        {
-            fragmentos_vila[_i] =
-                _fragmento;
-        }
-    }
-}
-
-#endregion
-
-#region Pétalas do destino
-
-if (petalas_destino_ativas)
-{
-    tempo_proxima_petala_destino -=
-        _delta;
-
-
-    if (
-        tempo_proxima_petala_destino <= 0
-        && array_length(petalas_destino)
-            < maximo_petalas_destino
-    )
-    {
-        criar_petala_destino();
-
-
-        tempo_proxima_petala_destino =
-            random_range(
-                0.55,
-                1.10
-            );
-    }
-
-
-    var _area_destino =
-        obter_area_camera();
-
-
-    for (
-        var _i =
-            array_length(petalas_destino) - 1;
-
-        _i >= 0;
-
-        _i--
-    )
-    {
-        var _petala =
-            petalas_destino[_i];
-
-
-        _petala.vida -=
-            _delta;
-
-
-        _petala.fase +=
-            _petala.velocidade_fase
-            * _delta;
-
-
-        _petala.x +=
-            _petala.velocidade_x
-            * _delta;
-
-
-        _petala.y +=
-        (
-            _petala.velocidade_y
-            + sin(_petala.fase)
-            * _petala.oscilacao
-        )
-        * _delta;
-
-
-        if (
-            _petala.vida <= 0
-
-            || _petala.x
-                < _area_destino.x - 32
-
-            || _petala.y
-                < _area_destino.y + 170
-
-            || _petala.y
-                > _area_destino.y
-                + _area_destino.altura
-                + 16
-        )
-        {
-            array_delete(
-                petalas_destino,
-                _i,
-                1
-            );
-        }
-        else
-        {
-            petalas_destino[_i] =
-                _petala;
-        }
-    }
-}
-
-#endregion
-
-#region Folhas da floresta
-
-if (folhas_ativas)
-{
-    tempo_proxima_folha -=
-        _delta;
-
-
-    if (
-        tempo_proxima_folha <= 0
-        && array_length(folhas)
+            && contar_tipo(
+                TIPO_FOLHA
+            )
             < maximo_folhas
-    )
-    {
-        criar_folha();
-
-
-        tempo_proxima_folha =
-            random_range(1.2, 2.2);
-    }
-
-
-    var _area_folhas =
-        obter_area_camera();
-
-
-    for (
-        var _i = array_length(folhas) - 1;
-        _i >= 0;
-        _i--
-    )
-    {
-        var _folha =
-            folhas[_i];
-
-
-        _folha.vida -=
-            _delta;
-
-
-        _folha.fase +=
-            _folha.velocidade_fase
-            * _delta;
-
-
-        _folha.x +=
-            _folha.velocidade_x
-            * _delta;
-
-
-        _folha.y +=
-        (
-            _folha.velocidade_y
-            + sin(_folha.fase)
-            * _folha.oscilacao
         )
-        * _delta;
+        {
+            criar_folha();
+
+
+            tempo_folha =
+                random_range(
+                    0.45,
+                    0.90
+                );
+        }
 
 
         if (
-            _folha.vida <= 0
-            || _folha.x
-                < _area_folhas.x - 24
+            tempo_vagalume <= 0
+
+            && contar_tipo(
+                TIPO_VAGALUME
+            )
+            < maximo_vagalumes
         )
         {
-            array_delete(
-                folhas,
-                _i,
-                1
-            );
+            criar_vagalume();
+
+
+            tempo_vagalume =
+                random_range(
+                    0.45,
+                    0.90
+                );
         }
-        else
+
+
+        if (
+            tempo_polen <= 0
+
+            && contar_tipo(
+                TIPO_POLEN
+            )
+            < maximo_polen
+        )
         {
-            folhas[_i] =
-                _folha;
+            criar_polen(
+                polen_floresta_cor
+            );
+
+
+            tempo_polen =
+                random_range(
+                    0.35,
+                    0.70
+                );
         }
-    }
-}
 
-#endregion
-
-#region Vagalumes da floresta
-
-if (vagalumes_ativos)
-{
-    tempo_proximo_vagalume -=
-        _delta;
+    break;
 
 
-    if (
-        tempo_proximo_vagalume <= 0
-        && array_length(vagalumes)
-            < maximo_vagalumes
-    )
-    {
-        criar_vagalume();
+    case rm_vila:
 
+        tempo_fragmento_vila -=
+            _delta;
 
-        tempo_proximo_vagalume =
-            random_range(0.7, 1.3);
-    }
-
-
-    for (
-        var _i = array_length(vagalumes) - 1;
-        _i >= 0;
-        _i--
-    )
-    {
-        var _vagalume =
-            vagalumes[_i];
-
-
-        _vagalume.vida -=
+        tempo_rajada_vila -=
             _delta;
 
 
-        _vagalume.fase +=
-            _vagalume.velocidade_pulso
-            * _delta;
+        if (
+            tempo_fragmento_vila <= 0
 
-
-        _vagalume.x +=
-        (
-            _vagalume.velocidade_x
-            + sin(_vagalume.fase * 0.65)
-            * 1.5
+            && contar_tipo(
+                TIPO_FRAGMENTO_VILA
+            )
+            < maximo_fragmentos_vila
         )
-        * _delta;
-
-
-        _vagalume.y +=
-        (
-            _vagalume.velocidade_y
-            + cos(_vagalume.fase * 0.8)
-            * 1.5
-        )
-        * _delta;
-
-
-        if (_vagalume.vida <= 0)
         {
-            array_delete(
-                vagalumes,
-                _i,
-                1
+            criar_fragmento_vila();
+
+
+            tempo_fragmento_vila =
+                random_range(
+                    0.28,
+                    0.58
+                );
+        }
+
+
+        if (
+            tempo_rajada_vila <= 0
+
+            && contar_tipo(
+                TIPO_RAJADA_VILA
+            )
+            < maximo_rajadas_vila
+        )
+        {
+            criar_rajada_vila();
+
+
+            tempo_rajada_vila =
+                random_range(
+                    1.8,
+                    3.2
+                );
+        }
+
+    break;
+
+
+    case rm_destino:
+
+        tempo_petala -=
+            _delta;
+
+        tempo_polen -=
+            _delta;
+
+        tempo_brilho_destino -=
+            _delta;
+
+
+        if (
+            tempo_petala <= 0
+
+            && contar_tipo(
+                TIPO_PETALA
+            )
+            < maximo_petalas
+        )
+        {
+            criar_petala();
+
+
+            tempo_petala =
+                random_range(
+                    0.30,
+                    0.62
+                );
+        }
+
+
+        if (
+            tempo_polen <= 0
+
+            && contar_tipo(
+                TIPO_POLEN
+            )
+            < maximo_polen
+        )
+        {
+            criar_polen(
+                polen_destino_cor
             );
+
+
+            tempo_polen =
+                random_range(
+                    0.45,
+                    0.85
+                );
         }
-        else
+
+
+        if (
+            tempo_brilho_destino <= 0
+
+            && contar_tipo(
+                TIPO_BRILHO_DESTINO
+            )
+            < maximo_brilhos_destino
+        )
         {
-            vagalumes[_i] =
-                _vagalume;
+            criar_brilho_destino();
+
+
+            tempo_brilho_destino =
+                random_range(
+                    0.65,
+                    1.15
+                );
         }
-    }
+
+    break;
 }
 
 #endregion
 
 
-#region Atualizar partículas
+#region Atualizar efeitos
+
+var _area =
+    obter_area_camera();
+
 
 for (
-    var _i = array_length(particulas) - 1;
+    var _i =
+        array_length(efeitos) - 1;
+
     _i >= 0;
+
     _i--
 )
 {
-    var _particula =
-        particulas[_i];
+    var _efeito =
+        efeitos[_i];
 
 
-    _particula.vida -= _delta;
+    _efeito.vida -=
+        _delta;
 
 
-    if (_particula.vida <= 0)
+    _efeito.fase +=
+        _efeito.velocidade_fase
+        * _delta;
+
+
+    switch (_efeito.tipo)
+    {
+        case TIPO_POEIRA_CIDADE:
+
+            _efeito.x +=
+                _efeito.velocidade_x
+                * _delta;
+
+
+            _efeito.y +=
+                (
+                    _efeito.velocidade_y
+
+                    + sin(
+                        _efeito.fase
+                    )
+                    * _efeito.amplitude
+                )
+                * _delta;
+
+        break;
+
+
+        case TIPO_FUMACA_CIDADE:
+
+            _efeito.x +=
+                (
+                    _efeito.velocidade_x
+
+                    + sin(
+                        _efeito.fase
+                    )
+                    * _efeito.amplitude
+                )
+                * _delta;
+
+
+            _efeito.y +=
+                _efeito.velocidade_y
+                * _delta;
+
+        break;
+
+
+        case TIPO_FOLHA:
+        case TIPO_FRAGMENTO_VILA:
+        case TIPO_PETALA:
+        case TIPO_POLEN:
+
+            _efeito.x +=
+                _efeito.velocidade_x
+                * _delta;
+
+
+            _efeito.y +=
+                (
+                    _efeito.velocidade_y
+
+                    + sin(
+                        _efeito.fase
+                    )
+                    * _efeito.amplitude
+                )
+                * _delta;
+
+        break;
+
+
+        case TIPO_VAGALUME:
+        case TIPO_BRILHO_DESTINO:
+
+            _efeito.x +=
+                (
+                    _efeito.velocidade_x
+
+                    + sin(
+                        _efeito.fase
+                        * 0.65
+                    )
+                    * _efeito.amplitude
+                )
+                * _delta;
+
+
+            _efeito.y +=
+                (
+                    _efeito.velocidade_y
+
+                    + cos(
+                        _efeito.fase
+                        * 0.8
+                    )
+                    * _efeito.amplitude
+                )
+                * _delta;
+
+        break;
+
+
+        case TIPO_RAJADA_VILA:
+
+            _efeito.x +=
+                _efeito.velocidade_x
+                * _delta;
+
+        break;
+    }
+
+
+    var _fora_da_camera =
+        _efeito.x
+            < _area.x - 128
+
+        || _efeito.x
+            > _area.x
+            + _area.largura
+            + 128
+
+        || _efeito.y
+            < _area.y - 96
+
+        || _efeito.y
+            > _area.y
+            + _area.altura
+            + 96;
+
+
+    if (
+        _efeito.vida <= 0
+        || _fora_da_camera
+    )
     {
         array_delete(
-            particulas,
+            efeitos,
             _i,
             1
         );
     }
     else
     {
-        _particula.velocidade_y +=
-            _particula.gravidade
-            * _delta;
-
-
-        _particula.x +=
-            _particula.velocidade_x
-            * _delta;
-
-
-        _particula.y +=
-            _particula.velocidade_y
-            * _delta;
-
-
-        particulas[_i] =
-            _particula;
+        efeitos[_i] =
+            _efeito;
     }
 }
 

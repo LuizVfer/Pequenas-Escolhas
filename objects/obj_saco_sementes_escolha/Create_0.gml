@@ -36,14 +36,14 @@ if (global.escolha_sementes != -1)
         // Deixar como está
         case 1:
             sprite_index =
-                spr_saco_sementes_rasgado;
+                spr_saco_sementes_aberto;
         break;
 
 
         // Abrir mais o rasgo
         case 2:
             sprite_index =
-                spr_saco_sementes_aberto; 
+                spr_saco_sementes_rasgado; 
         break;
     }
 }
@@ -134,13 +134,13 @@ aplicar_escolha_sementes = function(_opcao)
 
         case 1:
             sprite_index =
-                spr_saco_sementes_rasgado;
+                spr_saco_sementes_aberto;
         break;
 
 
         case 2:
             sprite_index =
-                spr_saco_sementes_aberto;
+                spr_saco_sementes_rasgado;
         break;
     }
 

@@ -1,358 +1,115 @@
-#region Configuração geral
+#region Tipos e estado geral
 
-particulas = [];
+TIPO_POEIRA_CIDADE = 0;
+TIPO_FUMACA_CIDADE = 1;
+TIPO_FOLHA = 2;
+TIPO_VAGALUME = 3;
+TIPO_POLEN = 4;
+TIPO_FRAGMENTO_VILA = 5;
+TIPO_RAJADA_VILA = 6;
+TIPO_PETALA = 7;
+TIPO_BRILHO_DESTINO = 8;
 
-acumulador_distancia = 0;
+efeitos = [];
+maximo_total_efeitos = 56;
 
-poeira_ativa = false;
-poeira_distancia = 10;
+tempo_poeira_cidade = 0.05;
+tempo_fumaca_cidade = 0.20;
+tempo_folha = 0.10;
+tempo_vagalume = 0.10;
+tempo_polen = 0.10;
+tempo_fragmento_vila = 0.10;
+tempo_rajada_vila = 0.40;
+tempo_petala = 0.10;
+tempo_brilho_destino = 0.20;
 
-poeira_cor_1 = c_white;
-poeira_cor_2 = c_white;
-poeira_alpha = 0.25;
-
-#endregion
-
-#region Efeitos da floresta
-
-folhas = [];
-vagalumes = [];
-
-folhas_ativas = false;
-vagalumes_ativos = false;
-
-
-// Controladores de surgimento
-tempo_proxima_folha = 0.4;
-tempo_proximo_vagalume = 0.2;
-
-
-// Quantidade máxima simultânea
-maximo_folhas = 8;
-maximo_vagalumes = 7;
-
-
-// Paleta padrão
-folha_cor_1 = c_white;
-folha_cor_2 = c_white;
-folha_cor_3 = c_white;
-
-vagalume_cor = c_white;
+maximo_poeira_cidade = 24;
+maximo_fumaca_cidade = 8;
+maximo_folhas = 14;
+maximo_vagalumes = 10;
+maximo_polen = 14;
+maximo_fragmentos_vila = 18;
+maximo_rajadas_vila = 3;
+maximo_petalas = 18;
+maximo_brilhos_destino = 8;
 
 #endregion
 
-#region Efeito da cidade
 
-poeiras_cidade = [];
-
-poeira_cidade_ativa = false;
-
-tempo_proxima_poeira_cidade = 0.1;
-
-maximo_poeiras_cidade = 20;
-
+#region Paletas
 
 poeira_cidade_cor_1 =
-    c_white;
+    make_color_rgb(210, 196, 162);
 
 poeira_cidade_cor_2 =
-    c_white;
+    make_color_rgb(176, 158, 126);
 
-#endregion
+fumaca_cidade_cor_1 =
+    make_color_rgb(176, 184, 180);
 
-#region Efeito da vila
-
-fragmentos_vila = [];
-
-fragmentos_vila_ativos = false;
-
-tempo_proximo_fragmento_vila = 0.15;
-
-maximo_fragmentos_vila = 12;
+fumaca_cidade_cor_2 =
+    make_color_rgb(143, 154, 153);
 
 
-palha_cor_1 = c_white;
-palha_cor_2 = c_white;
-semente_cor = c_white;
+folha_cor_1 =
+    make_color_rgb(65, 89, 56);
 
-#endregion
+folha_cor_2 =
+    make_color_rgb(48, 74, 46);
 
-#region Efeito do destino
+folha_cor_3 =
+    make_color_rgb(106, 86, 63);
 
-petalas_destino = [];
+polen_floresta_cor =
+    make_color_rgb(174, 166, 105);
 
-petalas_destino_ativas = false;
-
-tempo_proxima_petala_destino = 0.15;
-
-maximo_petalas_destino = 10;
-
-
-petala_cor_1 = c_white;
-petala_cor_2 = c_white;
-petala_cor_3 = c_white;
-
-#endregion
+vagalume_cor =
+    make_color_rgb(226, 207, 111);
 
 
-#region Configuração por região
+palha_cor_1 =
+    make_color_rgb(221, 190, 119);
 
-switch (room)
-{
-    case rm_cidade:
+palha_cor_2 =
+    make_color_rgb(190, 151, 84);
 
-        // Piso de pedra: poeira bem discreta
-        poeira_ativa = true;
-        poeira_distancia = 14;
+semente_cor =
+    make_color_rgb(135, 103, 69);
 
-        poeira_cor_1 =
-            make_color_rgb(163, 150, 110);
-
-        poeira_cor_2 =
-            make_color_rgb(132, 124, 98);
-
-        poeira_alpha = 0.18;
-        
-        // Poeira leve suspensa no ar
-        poeira_cidade_ativa = true;
-        
-        
-        poeira_cidade_cor_1 =
-            make_color_rgb(
-                210,
-                196,
-                162
-            );
-        
-        
-        poeira_cidade_cor_2 =
-            make_color_rgb(
-                176,
-                158,
-                126
-            );
-
-    break;
+rajada_vila_cor =
+    make_color_rgb(222, 196, 143);
 
 
-    case rm_floresta:
+petala_cor_1 =
+    make_color_rgb(224, 170, 157);
 
-        // Terra escura e folhas secas
-        poeira_ativa = true;
-        poeira_distancia = 9;
+petala_cor_2 =
+    make_color_rgb(235, 205, 170);
 
-        poeira_cor_1 =
-            make_color_rgb(87, 68, 55);
+petala_cor_3 =
+    make_color_rgb(195, 132, 126);
 
-        poeira_cor_2 =
-            make_color_rgb(106, 86, 63);
+polen_destino_cor =
+    make_color_rgb(226, 215, 151);
 
-        poeira_alpha = 0.28;
-        
-        // Folhas e vagalumes exclusivos da floresta
-        folhas_ativas = true;
-        vagalumes_ativos = true;
-        
-        
-        // Verdes e marrons da vegetação
-        folha_cor_1 =
-            make_color_rgb(65, 89, 56);
-        
-        folha_cor_2 =
-            make_color_rgb(48, 74, 46);
-        
-        folha_cor_3 =
-            make_color_rgb(106, 86, 63);
-        
-        
-        // Amarelo desaturado
-        vagalume_cor =
-            make_color_rgb(206, 189, 106);
-
-    break;
+brilho_destino_cor =
+    make_color_rgb(221, 231, 171);
 
 
-    case rm_vila:
-
-        // Chão seco próximo da plantação
-        poeira_ativa = true;
-        poeira_distancia = 7;
-
-        poeira_cor_1 =
-            make_color_rgb(170, 138, 94);
-
-        poeira_cor_2 =
-            make_color_rgb(148, 114, 76);
-
-        poeira_alpha = 0.30;
-        
-        // Palhas e sementes levadas pelo vento
-        fragmentos_vila_ativos = true;
-        
-        
-        palha_cor_1 =
-            make_color_rgb(
-                221,
-                190,
-                119
-            );
-        
-        
-        palha_cor_2 =
-            make_color_rgb(
-                190,
-                151,
-                84
-            );
-        
-        
-        semente_cor =
-            make_color_rgb(
-                135,
-                103,
-                69
-            );
-
-    break;
-
-    case rm_destino:
-
-        // Pétalas próximas das flores
-        petalas_destino_ativas = true;
-    
-    
-        petala_cor_1 =
-            make_color_rgb(
-                224,
-                170,
-                157
-            );
-    
-    
-        petala_cor_2 =
-            make_color_rgb(
-                235,
-                205,
-                170
-            );
-    
-    
-        petala_cor_3 =
-            make_color_rgb(
-                195,
-                132,
-                126
-            );
-    
-    break;
-}
-
-#endregion
-
-
-
-#region Criar partícula
-
-criar_particula = function(
-    _x,
-    _y,
-    _velocidade_x,
-    _velocidade_y,
-    _gravidade,
-    _vida,
-    _largura,
-    _altura,
-    _cor,
-    _alpha
-)
-{
-    var _particula =
+// Posição da chaminé existente
+// no fundo da Cidade
+fontes_fumaca_cidade =
+[
     {
-        x: _x,
-        y: _y,
-
-        velocidade_x: _velocidade_x,
-        velocidade_y: _velocidade_y,
-
-        gravidade: _gravidade,
-
-        vida: _vida,
-        vida_total: _vida,
-
-        largura: _largura,
-        altura: _altura,
-
-        cor: _cor,
-        alpha: _alpha
-    };
-
-
-    array_push(
-        particulas,
-        _particula
-    );
-};
+        x: 1608,
+        y: 29
+    }
+];
 
 #endregion
 
 
-#region Criar poeira dos passos
-
-criar_poeira_passos = function(
-    _player,
-    _direcao
-)
-{
-    var _origem_x =
-        _player.x
-        - _direcao * 5
-        + random_range(-2, 2);
-
-
-    var _origem_y =
-        _player.bbox_bottom
-        - 1;
-
-
-    var _cor =
-        choose(
-            poeira_cor_1,
-            poeira_cor_2
-        );
-
-
-    var _velocidade_x =
-        -_direcao
-        * random_range(8, 14)
-        + random_range(-3, 3);
-
-
-    var _velocidade_y =
-        random_range(-9, -5);
-
-
-    criar_particula(
-        _origem_x,
-        _origem_y,
-
-        _velocidade_x,
-        _velocidade_y,
-
-        18,
-
-        random_range(0.28, 0.42),
-
-       irandom_range(2, 3),
-        2,
-        
-        _cor,
-        poeira_alpha
-    );
-};
-
-#endregion
-
-#region Área visível da câmera
+#region Funções auxiliares
 
 obter_area_camera = function()
 {
@@ -372,387 +129,362 @@ obter_area_camera = function()
 
 
     return {
-        x: camera_get_view_x(_camera),
-        y: camera_get_view_y(_camera),
+        x:
+            camera_get_view_x(
+                _camera
+            ),
+
+        y:
+            camera_get_view_y(
+                _camera
+            ),
 
         largura:
-            camera_get_view_width(_camera),
+            camera_get_view_width(
+                _camera
+            ),
 
         altura:
-            camera_get_view_height(_camera)
+            camera_get_view_height(
+                _camera
+            )
     };
+};
+
+
+contar_tipo = function(_tipo)
+{
+    var _quantidade = 0;
+
+
+    for (
+        var _i = 0;
+        _i < array_length(efeitos);
+        _i++
+    )
+    {
+        if (efeitos[_i].tipo == _tipo)
+        {
+            _quantidade++;
+        }
+    }
+
+
+    return _quantidade;
+};
+
+
+adicionar_efeito = function(
+    _tipo,
+    _x,
+    _y,
+    _velocidade_x,
+    _velocidade_y,
+    _vida,
+    _tamanho,
+    _cor,
+    _alpha,
+    _velocidade_fase,
+    _amplitude,
+    _subtipo = 0
+)
+{
+    if (
+        array_length(efeitos)
+        >= maximo_total_efeitos
+    )
+    {
+        return false;
+    }
+
+
+    array_push(
+        efeitos,
+        {
+            tipo: _tipo,
+            subtipo: _subtipo,
+
+            x: _x,
+            y: _y,
+
+            velocidade_x:
+                _velocidade_x,
+
+            velocidade_y:
+                _velocidade_y,
+
+            vida: _vida,
+            vida_total: _vida,
+
+            tamanho: _tamanho,
+            cor: _cor,
+            alpha: _alpha,
+
+            fase:
+                random_range(
+                    0,
+                    pi * 2
+                ),
+
+            velocidade_fase:
+                _velocidade_fase,
+
+            amplitude:
+                _amplitude
+        }
+    );
+
+
+    return true;
+};
+
+
+obter_x_surgimento = function(
+    _area,
+    _inicial
+)
+{
+    if (_inicial)
+    {
+        return
+            _area.x
+            + random_range(
+                8,
+                _area.largura - 8
+            );
+    }
+
+
+    return
+        _area.x
+        + _area.largura
+        + random_range(
+            4,
+            28
+        );
 };
 
 #endregion
 
-#region Criar poeira da cidade
+
+#region Criar poeira da Cidade
 
 criar_poeira_cidade = function()
 {
     var _area =
         obter_area_camera();
 
-
     var _vida =
-        random_range(
-            6,
-            10
-        );
+        random_range(5, 9);
 
 
-    var _poeira =
+    return adicionar_efeito(
+        TIPO_POEIRA_CIDADE,
+
+        _area.x
+            + random_range(
+                16,
+                _area.largura - 16
+            ),
+
+        _area.y
+            + random_range(
+                46,
+                _area.altura - 46
+            ),
+
+        random_range(-10, -4),
+        random_range(-0.8, 0.8),
+
+        _vida,
+
+        irandom_range(1, 3),
+
+        choose(
+            poeira_cidade_cor_1,
+            poeira_cidade_cor_2
+        ),
+
+        random_range(0.32, 0.58),
+        random_range(1.1, 2.4),
+        random_range(2, 5)
+    );
+};
+
+#endregion
+
+
+#region Criar fumaça da Cidade
+
+criar_fumaca_cidade = function()
+{
+    var _area =
+        obter_area_camera();
+
+    var _fonte =
+        noone;
+
+
+    for (
+        var _i = 0;
+        _i
+            < array_length(
+                fontes_fumaca_cidade
+            );
+        _i++
+    )
     {
-        // Surge suavemente em algum ponto
-        // da área visível
-        x:
-            _area.x
-            + random_range(
-                20,
-                _area.largura - 20
-            ),
-
-        y:
-            _area.y
-            + random_range(
-                55,
-                _area.altura - 65
-            ),
+        var _candidata =
+            fontes_fumaca_cidade[_i];
 
 
-        // Vento lento para a esquerda
-        velocidade_x:
-            random_range(
-                -11,
-                -5
-            ),
+        if (
+            _candidata.x
+                >= _area.x - 24
 
-        velocidade_y:
-            random_range(
-                -1.2,
-                0.6
-            ),
-
-
-        oscilacao:
-            random_range(
-                2,
-                4
-            ),
-
-        fase:
-            random_range(
-                0,
-                pi * 2
-            ),
-
-        velocidade_fase:
-            random_range(
-                1.2,
-                2.2
-            ),
-
-
-        vida: _vida,
-        vida_total: _vida,
-
-        tamanho:
-            irandom_range(
-                2,
-                3
-            ),
-
-        cor:
-            choose(
-                poeira_cidade_cor_1,
-                poeira_cidade_cor_2
-            ),
-
-        alpha:
-        random_range(
-            0.55,
-            0.80
+            && _candidata.x
+                <= _area.x
+                + _area.largura
+                + 24
         )
-    };
+        {
+            _fonte =
+                _candidata;
+
+            break;
+        }
+    }
 
 
-    array_push(
-        poeiras_cidade,
-        _poeira
-    );
-};
-
-#endregion
-
-#region Criar fragmento da vila
-
-criar_fragmento_vila = function()
-{
-    var _area =
-        obter_area_camera();
+    if (!is_struct(_fonte))
+    {
+        return false;
+    }
 
 
     var _vida =
-        random_range(
-            9,
-            15
-        );
+        random_range(4, 6.5);
 
 
-    // 0 = palha
-    // 1 = semente
-    var _tipo =
-        irandom(3) == 0
-        ? 1
-        : 0;
+    return adicionar_efeito(
+        TIPO_FUMACA_CIDADE,
 
+        _fonte.x
+            + random_range(-2, 2),
 
-    var _fragmento =
-    {
-        // Nasce à direita da câmera
-        x:
-            _area.x
-            + _area.largura
-            + random_range(
-                4,
-                24
-            ),
+        _fonte.y
+            + random_range(-1, 1),
 
-        y:
-            _area.y
-            + random_range(
-                70,
-                285
-            ),
+        random_range(-4, 1),
+        random_range(-10, -6),
 
+        _vida,
 
-        velocidade_x:
-            random_range(
-                -38,
-                -22
-            ),
+        irandom_range(2, 3),
 
-        velocidade_y:
-            random_range(
-                -1.5,
-                1.5
-            ),
+        choose(
+            fumaca_cidade_cor_1,
+            fumaca_cidade_cor_2
+        ),
 
-
-        oscilacao:
-            random_range(
-                4,
-                8
-            ),
-
-        fase:
-            random_range(
-                0,
-                pi * 2
-            ),
-
-        velocidade_fase:
-            random_range(
-                2,
-                3.5
-            ),
-
-
-        vida: _vida,
-        vida_total: _vida,
-
-        tipo: _tipo,
-
-        tamanho:
-            _tipo == 0
-            ? irandom_range(3, 5)
-            : 1,
-
-        cor:
-            _tipo == 0
-            ? choose(
-                palha_cor_1,
-                palha_cor_2
-            )
-            : semente_cor,
-
-        alpha:
-            random_range(
-                0.55,
-                0.80
-            )
-    };
-
-
-    array_push(
-        fragmentos_vila,
-        _fragmento
+        random_range(0.18, 0.30),
+        random_range(1, 1.8),
+        random_range(0.8, 2)
     );
 };
 
 #endregion
 
-#region Criar pétala do destino
-
-criar_petala_destino = function()
-{
-    var _area =
-        obter_area_camera();
-
-
-    var _vida =
-        random_range(
-            9,
-            14
-        );
-
-
-    var _petala =
-    {
-        // Surge à direita da câmera
-        // e próxima da vegetação
-        x:
-            _area.x
-            + _area.largura
-            + random_range(
-                6,
-                24
-            ),
-
-        y:
-            _area.y
-            + random_range(
-                210,
-                _area.altura - 48
-            ),
-
-
-        velocidade_x:
-            random_range(
-                -30,
-                -18
-            ),
-
-        velocidade_y:
-            random_range(
-                -1,
-                1.5
-            ),
-
-
-        oscilacao:
-            random_range(
-                5,
-                9
-            ),
-
-        fase:
-            random_range(
-                0,
-                pi * 2
-            ),
-
-        velocidade_fase:
-            random_range(
-                2,
-                3.6
-            ),
-
-
-        vida: _vida,
-        vida_total: _vida,
-
-        tamanho:
-            irandom_range(
-                2,
-                3
-            ),
-
-        cor:
-            choose(
-                petala_cor_1,
-                petala_cor_2,
-                petala_cor_3
-            ),
-
-        alpha:
-            random_range(
-                0.65,
-                0.90
-            )
-    };
-
-
-    array_push(
-        petalas_destino,
-        _petala
-    );
-};
-
-#endregion
 
 #region Criar folha
 
-criar_folha = function()
+criar_folha = function(
+    _inicial = false
+)
 {
     var _area =
         obter_area_camera();
 
+    var _vida =
+        random_range(13, 19);
 
-    var _folha =
-    {
-        // A folha nasce um pouco fora
-        // do lado direito da câmera
-        x:
-            _area.x
-            + _area.largura
-            + random_range(4, 20),
 
-        y:
-            _area.y
+    return adicionar_efeito(
+        TIPO_FOLHA,
+
+        obter_x_surgimento(
+            _area,
+            _inicial
+        ),
+
+        _area.y
             + random_range(
-                45,
-                _area.altura - 55
+                44,
+                _area.altura - 42
             ),
 
+        random_range(-50, -28),
+        random_range(-2, 3),
 
-        velocidade_x:
-            random_range(-46, -28),
+        _vida,
 
-        velocidade_y:
-            random_range(-2, 3),
+        irandom_range(1, 3),
+
+        choose(
+            folha_cor_1,
+            folha_cor_2,
+            folha_cor_3
+        ),
+
+        random_range(0.42, 0.68),
+        random_range(1.8, 3.4),
+        random_range(5, 11)
+    );
+};
+
+#endregion
 
 
-        oscilacao:
-            random_range(5, 10),
+#region Criar pólen
 
-        fase:
-            random_range(0, pi * 2),
+criar_polen = function(
+    _cor,
+    _inicial = false
+)
+{
+    var _area =
+        obter_area_camera();
 
-        velocidade_fase:
-            random_range(1.8, 3.2),
+    var _vida =
+        random_range(7, 12);
 
 
-        vida: 18,
-        vida_total: 18,
+    return adicionar_efeito(
+        TIPO_POLEN,
 
-        tamanho:
-            irandom_range(1, 2),
+        obter_x_surgimento(
+            _area,
+            _inicial
+        ),
 
-        cor:
-            choose(
-                folha_cor_1,
-                folha_cor_2,
-                folha_cor_3
+        _area.y
+            + random_range(
+                105,
+                _area.altura - 36
             ),
 
-        alpha:
-            random_range(0.28, 0.48)
-    };
+        random_range(-12, -4),
+        random_range(-1.2, 0.8),
 
+        _vida,
 
-    array_push(
-        folhas,
-        _folha
+        irandom_range(1, 2),
+
+        _cor,
+
+        random_range(0.28, 0.50),
+        random_range(1.2, 2.5),
+        random_range(2.5, 5.5)
     );
 };
 
@@ -766,58 +498,323 @@ criar_vagalume = function()
     var _area =
         obter_area_camera();
 
+    var _vida =
+        random_range(5, 8);
+
+
+    return adicionar_efeito(
+        TIPO_VAGALUME,
+
+        _area.x
+            + random_range(
+                28,
+                _area.largura - 28
+            ),
+
+        _area.y
+            + random_range(
+                190,
+                312
+            ),
+
+        random_range(-4, 4),
+        random_range(-2, 2),
+
+        _vida,
+
+        1,
+
+        vagalume_cor,
+
+        random_range(0.55, 0.82),
+        random_range(2.2, 4.2),
+        random_range(1, 2.2)
+    );
+};
+
+#endregion
+
+
+#region Criar fragmento da Vila
+
+criar_fragmento_vila = function(
+    _inicial = false
+)
+{
+    var _area =
+        obter_area_camera();
+
+    var _vida =
+        random_range(9, 15);
+
+
+    // 0 = palha
+    // 1 = semente
+    var _subtipo =
+        irandom(3) == 0
+        ? 1
+        : 0;
+
+
+    return adicionar_efeito(
+        TIPO_FRAGMENTO_VILA,
+
+        obter_x_surgimento(
+            _area,
+            _inicial
+        ),
+
+        _area.y
+            + random_range(
+                72,
+                310
+            ),
+
+        random_range(-42, -24),
+        random_range(-1.5, 1.5),
+
+        _vida,
+
+        _subtipo == 0
+            ? irandom_range(3, 6)
+            : 1,
+
+        _subtipo == 0
+            ? choose(
+                palha_cor_1,
+                palha_cor_2
+            )
+            : semente_cor,
+
+        random_range(0.62, 0.88),
+        random_range(2, 3.8),
+        random_range(4, 9),
+
+        _subtipo
+    );
+};
+
+#endregion
+
+
+#region Criar rajada da Vila
+
+criar_rajada_vila = function(
+    _inicial = false
+)
+{
+    var _area =
+        obter_area_camera();
+
+    var _vida =
+        random_range(7, 10);
+
+
+    return adicionar_efeito(
+        TIPO_RAJADA_VILA,
+
+        obter_x_surgimento(
+            _area,
+            _inicial
+        ),
+
+        _area.y
+            + random_range(
+                255,
+                310
+            ),
+
+        random_range(-74, -52),
+        0,
+
+        _vida,
+
+        irandom_range(20, 38),
+
+        rajada_vila_cor,
+
+        random_range(0.14, 0.24),
+        random_range(2, 3),
+        0
+    );
+};
+
+#endregion
+
+
+#region Criar pétala
+
+criar_petala = function(
+    _inicial = false
+)
+{
+    var _area =
+        obter_area_camera();
+
+    var _vida =
+        random_range(9, 14);
+
+
+    return adicionar_efeito(
+        TIPO_PETALA,
+
+        obter_x_surgimento(
+            _area,
+            _inicial
+        ),
+
+        _area.y
+            + random_range(
+                175,
+                316
+            ),
+
+        random_range(-34, -19),
+        random_range(-1, 1.5),
+
+        _vida,
+
+        irandom_range(2, 3),
+
+        choose(
+            petala_cor_1,
+            petala_cor_2,
+            petala_cor_3
+        ),
+
+        random_range(0.68, 0.92),
+        random_range(2, 3.8),
+        random_range(5, 10)
+    );
+};
+
+#endregion
+
+
+#region Criar brilho do Destino
+
+criar_brilho_destino = function()
+{
+    var _area =
+        obter_area_camera();
 
     var _vida =
         random_range(4.5, 7);
 
 
-    var _vagalume =
-    {
-        // Surge na região baixa da floresta,
-        // perto da vegetação
-        x:
-            _area.x
+    return adicionar_efeito(
+        TIPO_BRILHO_DESTINO,
+
+        _area.x
             + random_range(
-                35,
-                _area.largura - 35
+                28,
+                _area.largura - 28
             ),
 
-        y:
-            _area.y
+        _area.y
             + random_range(
-                205,
-                310
+                190,
+                305
             ),
 
+        random_range(-2.5, 2.5),
+        random_range(-1.6, 1.6),
 
-        velocidade_x:
-            random_range(-3, 3),
+        _vida,
 
-        velocidade_y:
-            random_range(-1.5, 1.5),
+        1,
 
+        brilho_destino_cor,
 
-        fase:
-            random_range(0, pi * 2),
-
-        velocidade_pulso:
-            random_range(2, 4),
-
-
-        vida: _vida,
-        vida_total: _vida,
-
-        cor: vagalume_cor,
-
-        alpha:
-            random_range(0.40, 0.65)
-    };
-
-
-    array_push(
-        vagalumes,
-        _vagalume
+        random_range(0.36, 0.58),
+        random_range(1.8, 3.2),
+        random_range(0.8, 1.8)
     );
 };
+
+#endregion
+
+
+#region Preencher a tela ao entrar
+
+// Evita que a room comece vazia
+// enquanto os efeitos estão surgindo
+switch (room)
+{
+    case rm_cidade:
+
+        repeat (18)
+        {
+            criar_poeira_cidade();
+        }
+
+    break;
+
+
+    case rm_floresta:
+
+        repeat (10)
+        {
+            criar_folha(true);
+        }
+
+
+        repeat (10)
+        {
+            criar_polen(
+                polen_floresta_cor,
+                true
+            );
+        }
+
+
+        repeat (7)
+        {
+            criar_vagalume();
+        }
+
+    break;
+
+
+    case rm_vila:
+
+        repeat (13)
+        {
+            criar_fragmento_vila(true);
+        }
+
+
+        repeat (2)
+        {
+            criar_rajada_vila(true);
+        }
+
+    break;
+
+
+    case rm_destino:
+
+        repeat (13)
+        {
+            criar_petala(true);
+        }
+
+
+        repeat (8)
+        {
+            criar_polen(
+                polen_destino_cor,
+                true
+            );
+        }
+
+
+        repeat (5)
+        {
+            criar_brilho_destino();
+        }
+
+    break;
+}
 
 #endregion
