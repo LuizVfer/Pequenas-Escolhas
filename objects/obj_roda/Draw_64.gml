@@ -222,7 +222,9 @@ else
     draw_text(
         _centro_x,
         274,
-        "Acerte a faixa"
+        _modo_martelo
+        ? "Acerte a faixa"
+        : "Segure E e solte na faixa"
     );
 }
 
@@ -414,7 +416,9 @@ draw_set_color(
 draw_text(
     232,
     322,
-    "confirmar"
+    _modo_martelo
+    ? "confirmar"
+    : "segurar e soltar"
 );
 
 #endregion

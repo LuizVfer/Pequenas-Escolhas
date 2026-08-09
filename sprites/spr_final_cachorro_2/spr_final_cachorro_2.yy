@@ -2,9 +2,9 @@
   "$GMSprite":"v2",
   "%Name":"spr_final_cachorro_2",
   "bboxMode":0,
-  "bbox_bottom":179,
+  "bbox_bottom":359,
   "bbox_left":0,
-  "bbox_right":319,
+  "bbox_right":639,
   "bbox_top":0,
   "collisionKind":1,
   "collisionTolerance":0,
@@ -12,14 +12,14 @@
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"v1","%Name":"89524ebf-38c0-4c62-951d-220e4412b0d9","name":"89524ebf-38c0-4c62-951d-220e4412b0d9","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"1d1e226a-afe6-44c7-8d9c-350e011353b2","name":"1d1e226a-afe6-44c7-8d9c-350e011353b2","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,
-  "height":180,
+  "height":360,
   "HTile":false,
   "layers":[
-    {"$GMImageLayer":"","%Name":"813d9342-84e3-4853-bbc6-a594bf291c89","blendMode":0,"displayName":"default","isLocked":false,"name":"813d9342-84e3-4853-bbc6-a594bf291c89","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"553f9a76-a02e-409b-9a8e-7e57f483c161","blendMode":0,"displayName":"default","isLocked":false,"name":"553f9a76-a02e-409b-9a8e-7e57f483c161","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
   "name":"spr_final_cachorro_2",
   "nineSlice":null,
@@ -69,8 +69,8 @@
     "tracks":[
       {"$GMSpriteFramesTrack":"","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"$KeyframeStore<SpriteFrameKeyframe>":"","Keyframes":[
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"89524ebf-38c0-4c62-951d-220e4412b0d9","path":"sprites/spr_final_cachorro_2/spr_final_cachorro_2.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
-              },"Disabled":false,"id":"b9413c6c-7192-4241-b2bb-bc3a510b956a","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"1d1e226a-afe6-44c7-8d9c-350e011353b2","path":"sprites/spr_final_cachorro_2/spr_final_cachorro_2.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"609d885c-6dc5-47ba-8a5a-fe6dcf55b1e6","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
           ],"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"2.0",},"modifiers":[],"name":"frames","resourceType":"GMSpriteFramesTrack","resourceVersion":"2.0","spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange":null,
@@ -86,5 +86,5 @@
   },
   "type":0,
   "VTile":false,
-  "width":320,
+  "width":640,
 }

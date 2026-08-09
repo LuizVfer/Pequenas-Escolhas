@@ -106,31 +106,53 @@ switch (estado_puzzle_roda)
         atualizar_marcador();
 
 
-        if (keyboard_check_pressed(ord("E")))
+        // Segurar E aumenta a força
+        if (keyboard_check(ord("E")))
         {
+            carregando_impulso = true;
+        
+            marcador_posicao =
+                min(
+                    1,
+                    marcador_posicao
+                        + velocidade_carga_roda
+                );
+        }
+        
+        
+        // Soltar E confirma a força escolhida
+        if (
+            carregando_impulso
+            && keyboard_check_released(ord("E"))
+        )
+        {
+            carregando_impulso = false;
+        
+        
             if (marcador_acertou_zona())
             {
                 minigame_ativo = false;
-
+        
                 x_inicio_impulso = x;
-
+        
                 x_fim_impulso =
                     calcular_destino_impulso(
                         impulso_atual + 1
                     );
-
+        
                 contador_impulso = 0;
-
+        
                 estado_puzzle_roda =
                     ESTADO_IMPULSO;
-
-
-                var _som = audio_play_sound(
-                    snd_opcao_confirmar,
-                    1,
-                    false
-                );
-
+        
+        
+                var _som =
+                    audio_play_sound(
+                        snd_opcao_confirmar,
+                        1,
+                        false
+                    );
+        
                 audio_sound_gain(
                     _som,
                     0.45,
@@ -140,13 +162,15 @@ switch (estado_puzzle_roda)
             else
             {
                 feedback_erro = 30;
-
+        
                 marcador_posicao = 0;
-                marcador_direcao = 1;
-
                 bloqueio_entrada_minigame = 10;
-
-                sortear_zona(0.27, 0.73);
+        
+                sortear_zona(
+                    0.27,
+                    0.73
+                );
+        
                 tocar_som_erro();
             }
         }

@@ -75,6 +75,9 @@ feedback_erro = 0;
 
 anim_minigame_roda = 0;
 
+carregando_impulso = false;
+velocidade_carga_roda = 0.018;
+
 #endregion
 
 
@@ -168,6 +171,7 @@ reiniciar_marcador = function(_bloqueio)
     feedback_erro = 0;
 
     anim_minigame_roda = 0;
+    carregando_impulso = false;
 };
 
 
