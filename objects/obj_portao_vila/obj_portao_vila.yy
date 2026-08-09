@@ -37,5 +37,5 @@
     "path":"sprites/spr_portao_fechado/spr_portao_fechado.yy",
   },
   "spriteMaskId":null,
-  "visible":false,
+  "visible":true,
 }

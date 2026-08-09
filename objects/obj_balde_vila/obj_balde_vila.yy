@@ -34,9 +34,9 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_tecla_E_placeholder",
-    "path":"sprites/spr_tecla_E_placeholder/spr_tecla_E_placeholder.yy",
+    "name":"spr_balde",
+    "path":"sprites/spr_balde/spr_balde.yy",
   },
   "spriteMaskId":null,
-  "visible":false,
+  "visible":true,
 }

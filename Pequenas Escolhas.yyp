@@ -129,6 +129,7 @@
     {"id":{"name":"spr_arvore_brinquedo","path":"sprites/spr_arvore_brinquedo/spr_arvore_brinquedo.yy",},},
     {"id":{"name":"spr_arvore_grande","path":"sprites/spr_arvore_grande/spr_arvore_grande.yy",},},
     {"id":{"name":"spr_arvore_pequena","path":"sprites/spr_arvore_pequena/spr_arvore_pequena.yy",},},
+    {"id":{"name":"spr_balde","path":"sprites/spr_balde/spr_balde.yy",},},
     {"id":{"name":"spr_barraca_mercado","path":"sprites/spr_barraca_mercado/spr_barraca_mercado.yy",},},
     {"id":{"name":"spr_barril","path":"sprites/spr_barril/spr_barril.yy",},},
     {"id":{"name":"spr_brinquedo_inteiro","path":"sprites/spr_brinquedo_inteiro/spr_brinquedo_inteiro.yy",},},

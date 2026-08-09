@@ -10,7 +10,7 @@ offset_indicador_y = 12;
 
 // Ponto de interação próximo ao brinquedo na árvore
 offset_interacao_x = 0;
-offset_interacao_y = 32;
+offset_interacao_y = 96;
 
 #endregion
 
