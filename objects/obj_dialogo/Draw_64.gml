@@ -4,6 +4,50 @@ if (!ativo)
 }
 
 
+// ==================================================
+// PALETA DA CAIXA
+// ==================================================
+
+var _cor_nome =
+    make_color_rgb(
+        221,
+        187,
+        119
+    );
+
+var _cor_texto =
+    make_color_rgb(
+        230,
+        224,
+        207
+    );
+
+var _cor_separador =
+    make_color_rgb(
+        128,
+        99,
+        62
+    );
+
+var _cor_selecao =
+    make_color_rgb(
+        251,
+        204,
+        75
+    );
+
+var _cor_fundo_selecao =
+    make_color_rgb(
+        96,
+        77,
+        41
+    );
+
+
+// ==================================================
+// CONFIGURAÇÃO DO TEXTO
+// ==================================================
+
 draw_set_font(fnt_dialogo);
 draw_set_halign(fa_left);
 draw_set_valign(fa_top);
@@ -88,13 +132,7 @@ if (modo_escolha)
     // Nome
     // ----------------------------------------------
 
-    draw_set_color(
-        make_color_rgb(
-            110,
-            65,
-            38
-        )
-    );
+    draw_set_color(_cor_nome);
 
     draw_text(
         _cx + 18,
@@ -107,13 +145,7 @@ if (modo_escolha)
     // Linha separadora
     // ----------------------------------------------
 
-    draw_set_color(
-        make_color_rgb(
-            130,
-            95,
-            60
-        )
-    );
+    draw_set_color(_cor_separador);
 
     draw_rectangle(
         _cx + 18,
@@ -128,13 +160,7 @@ if (modo_escolha)
     // Pergunta
     // ----------------------------------------------
 
-    draw_set_color(
-        make_color_rgb(
-            45,
-            35,
-            25
-        )
-    );
+    draw_set_color(_cor_texto);
 
     draw_text_ext(
         _pergunta_x,
@@ -148,7 +174,32 @@ if (modo_escolha)
     // ----------------------------------------------
     // Opções
     // ----------------------------------------------
-
+    
+    var _anim_selecao =
+        current_time * 0.006;
+    
+    var _movimento_marcador =
+        round(
+            sin(_anim_selecao) * 2
+        );
+    
+    var _movimento_opcao =
+        round(
+            sin(
+                _anim_selecao * 0.75
+            )
+        );
+    
+    var _pulso_selecao =
+        0.38
+        + (
+            sin(
+                _anim_selecao * 1.25
+            )
+            + 1
+        ) * 0.06;
+    
+    
     for (
         var _i = 0;
         _i < _quantidade_opcoes;
@@ -158,48 +209,87 @@ if (modo_escolha)
         var _linha_y =
             _opcoes_y
             + _i * _altura_opcao;
-
-
+    
+        var _centro_linha_y =
+            _linha_y
+            + (
+                _altura_opcao - 5
+            ) * 0.5;
+    
+    
         if (_i == opcao_atual)
         {
-            draw_set_color(
-                make_color_rgb(
-                    110,
-                    65,
-                    38
-                )
+            // Fundo pulsante da opção selecionada
+            draw_set_alpha(
+                _pulso_selecao
             );
-
-
-            draw_sprite(
-                spr_marcador_opcao_placeholder,
-                0,
-                _cx + 27,
+    
+            draw_set_color(
+                _cor_fundo_selecao
+            );
+    
+            draw_rectangle(
+                _cx + 18,
+                _linha_y - 3,
+                _cx + _cw - 18,
                 _linha_y
-                    + string_height(
-                        string(opcoes[_i])
-                    )
-                    * 0.5
+                    + _altura_opcao
+                    - 2,
+                false
+            );
+    
+    
+            // Marcador igual ao menu
+            draw_set_alpha(1);
+            draw_set_color(_cor_selecao);
+    
+            draw_set_font(fnt_minigame);
+            draw_set_valign(fa_middle);
+    
+            draw_text(
+                _cx
+                    + 24
+                    + _movimento_marcador,
+                _centro_linha_y,
+                ">"
+            );
+    
+    
+            // Texto selecionado
+            draw_set_font(fnt_dialogo);
+            draw_set_valign(fa_top);
+    
+            draw_text(
+                _cx
+                    + 44
+                    + _movimento_opcao,
+                _linha_y,
+                string(opcoes[_i])
             );
         }
         else
         {
-            draw_set_color(
-                make_color_rgb(
-                    45,
-                    35,
-                    25
-                )
+            // Opções não selecionadas
+            draw_set_alpha(1);
+            draw_set_color(_cor_texto);
+    
+            draw_set_font(fnt_dialogo);
+            draw_set_valign(fa_top);
+    
+            draw_text(
+                _cx + 44,
+                _linha_y,
+                string(opcoes[_i])
             );
         }
-
-
-        draw_text(
-            _cx + 44,
-            _linha_y,
-            string(opcoes[_i])
-        );
     }
+    
+    
+    // Restaurar desenho
+    draw_set_alpha(1);
+    draw_set_font(fnt_dialogo);
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
 
 
     // ----------------------------------------------
@@ -213,6 +303,10 @@ if (modo_escolha)
         _cy + _ch - 20
     );
 
+
+    // ----------------------------------------------
+    // Restaurar configurações
+    // ----------------------------------------------
 
     draw_set_color(c_white);
     draw_set_halign(fa_left);
@@ -254,7 +348,7 @@ var _tem_nome =
 
 
 // ==================================================
-// CAIXA
+// CAIXA DO DIÁLOGO
 // ==================================================
 
 draw_sprite_stretched(
@@ -273,13 +367,7 @@ draw_sprite_stretched(
 
 if (_tem_nome)
 {
-    draw_set_color(
-        make_color_rgb(
-            110,
-            65,
-            38
-        )
-    );
+    draw_set_color(_cor_nome);
 
     draw_text(
         caixa_x + 18,
@@ -288,13 +376,11 @@ if (_tem_nome)
     );
 
 
-    draw_set_color(
-        make_color_rgb(
-            130,
-            95,
-            60
-        )
-    );
+    // ----------------------------------------------
+    // Linha separadora
+    // ----------------------------------------------
+
+    draw_set_color(_cor_separador);
 
     draw_rectangle(
         caixa_x + 18,
@@ -336,14 +422,7 @@ var _texto_mostrado =
     );
 
 
-// Garante a mesma cor do texto com ou sem nome
-draw_set_color(
-    make_color_rgb(
-        45,
-        35,
-        25
-    )
-);
+draw_set_color(_cor_texto);
 
 draw_text_ext(
     _texto_x,
@@ -377,5 +456,7 @@ if (
 // ==================================================
 
 draw_set_color(c_white);
+draw_set_alpha(1);
+
 draw_set_halign(fa_left);
 draw_set_valign(fa_top);
