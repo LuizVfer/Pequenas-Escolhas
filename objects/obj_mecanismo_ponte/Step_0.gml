@@ -51,7 +51,7 @@ switch (estado_mecanismo)
 
 
     // ==================================================
-    // PUZZLE DAS RODAS
+    // PUZZLE DAS ENGRENAGENS
     // ==================================================
 
     case MECANISMO_PUZZLE:
@@ -76,14 +76,15 @@ switch (estado_mecanismo)
             keyboard_check_pressed(vk_escape);
 
 
-        // Sair possui prioridade sobre os outros comandos
+        // Sair possui prioridade
         if (_sair)
         {
-            var _som_sair = audio_play_sound(
-                snd_opcao_confirmar,
-                1,
-                false
-            );
+            var _som_sair =
+                audio_play_sound(
+                    snd_opcao_confirmar,
+                    1,
+                    false
+                );
 
             audio_sound_gain(
                 _som_sair,
@@ -95,10 +96,7 @@ switch (estado_mecanismo)
         }
         else
         {
-            // ------------------------------------------
-            // SELECIONAR A RODA ANTERIOR
-            // ------------------------------------------
-
+            // Selecionar a engrenagem anterior
             if (_esquerda)
             {
                 roda_selecionada--;
@@ -124,10 +122,7 @@ switch (estado_mecanismo)
             }
 
 
-            // ------------------------------------------
-            // SELECIONAR A PRÓXIMA RODA
-            // ------------------------------------------
-
+            // Selecionar a próxima engrenagem
             else if (_direita)
             {
                 roda_selecionada++;
@@ -155,10 +150,7 @@ switch (estado_mecanismo)
             }
 
 
-            // ------------------------------------------
-            // GIRAR A RODA SELECIONADA
-            // ------------------------------------------
-
+            // Girar a engrenagem selecionada
             if (_girar)
             {
                 girar_roda(roda_selecionada);
@@ -203,7 +195,10 @@ switch (estado_mecanismo)
         pode_interagir = false;
 
         contador_conclusao =
-            max(0, contador_conclusao - 1);
+            max(
+                0,
+                contador_conclusao - 1
+            );
 
 
         if (
@@ -211,79 +206,86 @@ switch (estado_mecanismo)
             && !transicao_iniciada
         )
         {
-            var _abaixar_ponte = method(
-                id,
+            var _abaixar_ponte =
+                method(
+                    id,
 
-                function()
-                {
-                    global.ponte_abaixada = true;
-
-
-                    // Troca a ponte durante a tela preta
-                    with (obj_ponte)
+                    function()
                     {
-                        sprite_index =
-                            spr_ponte_abaixada;
-
-                        image_index = 0;
-                        image_speed = 0;
-
-                        pode_interagir = false;
-                    }
+                        global.ponte_abaixada = true;
 
 
-                    // Libera a passagem
-                    with (obj_bloqueio_ponte)
-                    {
-                        instance_destroy();
-                    }
+                        // Troca a ponte durante
+                        // a tela preta
+                        with (obj_ponte)
+                        {
+                            sprite_index =
+                                spr_ponte_abaixada;
+
+                            image_index = 0;
+                            image_speed = 0;
+
+                            pode_interagir = false;
+                        }
 
 
-                    // Abaixa a música para destacar o efeito
-                    if (
-                        instance_exists(
-                            global.game_instancia
+                        // Libera a passagem
+                        with (obj_bloqueio_ponte)
+                        {
+                            instance_destroy();
+                        }
+
+
+                        // Abaixa a música para
+                        // destacar o efeito
+                        if (
+                            instance_exists(
+                                global.game_instancia
+                            )
                         )
-                    )
-                    {
-                        global.game_instancia
-                            .abaixar_musica_para_efeito(
-                                90,
-                                0.30
+                        {
+                            global.game_instancia
+                                .abaixar_musica_para_efeito(
+                                    90,
+                                    0.30
+                                );
+                        }
+
+
+                        var _som_ponte =
+                            audio_play_sound(
+                                som_ponte,
+                                2,
+                                false
                             );
-                    }
 
-
-                    var _som_ponte =
-                        audio_play_sound(
-                            som_ponte,
-                            2,
-                            false
+                        audio_sound_gain(
+                            _som_ponte,
+                            1,
+                            0
                         );
 
-                    audio_sound_gain(
-                        _som_ponte,
-                        1,
-                        0
-                    );
-                    
-                    // Impacto da ponte ao abaixar
-                    with (obj_camera)
-                    {
-                        tremer(2, 18);
+
+                        // Impacto da ponte
+                        with (obj_camera)
+                        {
+                            tremer(
+                                2,
+                                18
+                            );
+                        }
+
+
+                        estado_mecanismo =
+                            MECANISMO_CONCLUIDO;
+
+                        transicao_iniciada = false;
+                        pode_interagir = false;
+
+                        // O obj_fade devolverá
+                        // o controle ao terminar
                     }
-                    
-
-                    estado_mecanismo =
-                        MECANISMO_CONCLUIDO;
-
-                    transicao_iniciada = false;
-                    pode_interagir = false;
-
-                    // O obj_fade devolverá o controle
-                    // quando a transição terminar
-                }
-            );
+                );
 
 
             var _fade_iniciado =
@@ -294,7 +296,6 @@ switch (estado_mecanismo)
                 );
 
 
-            // Só muda de estado se o fade começar
             if (_fade_iniciado)
             {
                 transicao_iniciada = true;

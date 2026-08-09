@@ -37,7 +37,6 @@ switch (estado_cacador)
     {
         pode_interagir = false;
 
-        // Abre o puzzle depois que o diálogo terminar
         if (!global.controle_bloqueado)
         {
             abrir_puzzle_corda();
@@ -91,7 +90,7 @@ switch (estado_cacador)
             keyboard_check_pressed(vk_escape);
 
 
-        // Sair possui prioridade sobre os outros comandos
+        // Sair possui prioridade
         if (_sair)
         {
             var _som_sair =
@@ -111,10 +110,7 @@ switch (estado_cacador)
         }
         else
         {
-            // ------------------------------------------
-            // SELECIONAR A PEÇA ANTERIOR
-            // ------------------------------------------
-
+            // Selecionar a peça anterior
             if (_esquerda)
             {
                 peca_selecionada--;
@@ -140,10 +136,7 @@ switch (estado_cacador)
             }
 
 
-            // ------------------------------------------
-            // SELECIONAR A PRÓXIMA PEÇA
-            // ------------------------------------------
-
+            // Selecionar a próxima peça
             else if (_direita)
             {
                 peca_selecionada++;
@@ -171,10 +164,7 @@ switch (estado_cacador)
             }
 
 
-            // ------------------------------------------
-            // GIRAR A PEÇA SELECIONADA
-            // ------------------------------------------
-
+            // Girar a peça selecionada
             if (_girar)
             {
                 girar_peca(peca_selecionada);
@@ -193,7 +183,6 @@ switch (estado_cacador)
                 );
 
 
-                // Verifica se todas as peças estão alinhadas
                 if (puzzle_corda_resolvido())
                 {
                     estado_cacador =
@@ -220,7 +209,10 @@ switch (estado_cacador)
         pode_interagir = false;
 
         contador_conclusao =
-            max(0, contador_conclusao - 1);
+            max(
+                0,
+                contador_conclusao - 1
+            );
 
 
         if (
@@ -228,31 +220,35 @@ switch (estado_cacador)
             && !transicao_iniciada
         )
         {
-            var _liberar_caminho = method(
-                id,
+            var _liberar_caminho =
+                method(
+                    id,
 
-                function()
-                {
-                    global.caminho_cacador_liberado =
-                        true;
-
-                    // Remove o bloqueio da passagem
-                    with (obj_bloqueio_cacador)
+                    function()
                     {
-                        instance_destroy();
+                        global.caminho_cacador_liberado =
+                            true;
+
+
+                        // Remove o bloqueio
+                        with (obj_bloqueio_cacador)
+                        {
+                            instance_destroy();
+                        }
+
+
+                        estado_cacador =
+                            CACADOR_PARADO;
+
+                        transicao_iniciada = false;
+
+                        // Evita interação imediata
+                        bloqueio_interacao = 10;
+                        pode_interagir = false;
+
+                        // O obj_fade devolverá o controle
                     }
-
-                    estado_cacador = CACADOR_PARADO;
-                    transicao_iniciada = false;
-
-                    // Evita uma interação imediata
-                    bloqueio_interacao = 10;
-                    pode_interagir = false;
-
-                    // O próprio obj_fade devolverá o
-                    // controle quando a transição terminar
-                }
-            );
+                );
 
 
             var _fade_iniciado =
@@ -263,7 +259,6 @@ switch (estado_cacador)
                 );
 
 
-            // Só muda de estado se o fade realmente começar
             if (_fade_iniciado)
             {
                 transicao_iniciada = true;

@@ -1,3 +1,4 @@
+// Só desenha durante o puzzle
 if (
     estado_cacador != CACADOR_PUZZLE
     && estado_cacador != CACADOR_CONCLUIDO
@@ -25,35 +26,72 @@ var _tamanho_peca = 54;
 var _inicio_pecas_x = 194;
 var _espacamento = 84;
 
+var _escala_corda = 1.5;
+
+
+// Paleta da Floresta
 var _cor_fundo =
-    make_color_rgb(18, 15, 13);
+    make_color_rgb(
+        23,
+        30,
+        37
+    );
 
 var _cor_borda =
-    make_color_rgb(95, 73, 52);
+    make_color_rgb(
+        56,
+        74,
+        51
+    );
 
 var _cor_detalhe =
-    make_color_rgb(151, 111, 69);
+    make_color_rgb(
+        82,
+        115,
+        70
+    );
 
 var _cor_peca =
-    make_color_rgb(38, 31, 26);
+    make_color_rgb(
+        11,
+        10,
+        9
+    );
 
 var _cor_peca_borda =
-    make_color_rgb(92, 70, 51);
-
-var _cor_corda =
-    make_color_rgb(191, 154, 103);
+    make_color_rgb(
+        67,
+        85,
+        61
+    );
 
 var _cor_corda_escura =
-    make_color_rgb(105, 78, 54);
+    make_color_rgb(
+        60,
+        43,
+        25
+    );
 
 var _cor_selecao =
-    make_color_rgb(214, 169, 105);
+    make_color_rgb(
+        251,
+        204,
+        75
+    );
 
 var _cor_texto =
-    make_color_rgb(230, 214, 184);
+    make_color_rgb(
+        214,
+        222,
+        213
+    );
 
 var _cor_texto_secundario =
-    make_color_rgb(145, 134, 116);
+    make_color_rgb(
+        122,
+        150,
+        138
+    );
 
 #endregion
 
@@ -76,6 +114,7 @@ draw_rectangle(
 
 #region Painel
 
+// Sombra
 draw_set_alpha(0.25);
 draw_set_color(c_black);
 
@@ -88,6 +127,7 @@ draw_rectangle(
 );
 
 
+// Fundo
 draw_set_alpha(0.96);
 draw_set_color(_cor_fundo);
 
@@ -100,6 +140,7 @@ draw_rectangle(
 );
 
 
+// Borda
 draw_set_alpha(1);
 draw_set_color(_cor_borda);
 
@@ -112,6 +153,7 @@ draw_rectangle(
 );
 
 
+// Detalhe superior
 draw_set_color(_cor_detalhe);
 
 draw_rectangle(
@@ -136,6 +178,7 @@ draw_set_color(_cor_texto);
 draw_text(
     _centro_x,
     114,
+
     _concluido
         ? "Cordas alinhadas"
         : "Cordas emaranhadas"
@@ -147,9 +190,10 @@ draw_set_color(_cor_texto_secundario);
 draw_text(
     _centro_x,
     136,
+
     _concluido
         ? "Caminho liberado"
-        : "Alinhe as cordas"
+        : "Alinhe todas as cordas"
 );
 
 #endregion
@@ -164,7 +208,7 @@ draw_set_valign(fa_middle);
 draw_set_color(_cor_texto_secundario);
 
 
-// Rótulo da entrada
+// Entrada
 draw_text(
     148,
     _peca_y - 38,
@@ -172,7 +216,7 @@ draw_text(
 );
 
 
-// Rótulo da saída
+// Saída
 draw_text(
     492,
     _peca_y - 38,
@@ -191,8 +235,10 @@ draw_set_color(_cor_corda_escura);
 draw_rectangle(
     116,
     _peca_y - 2,
+
     _inicio_pecas_x
         - _tamanho_peca * 0.5,
+
     _peca_y + 2,
     false
 );
@@ -209,6 +255,7 @@ var _ultima_peca_x =
 draw_rectangle(
     _ultima_peca_x
         + _tamanho_peca * 0.5,
+
     _peca_y - 2,
     524,
     _peca_y + 2,
@@ -224,7 +271,8 @@ var _pulso =
     (
         sin(anim_puzzle * 1.5)
         + 1
-    ) * 0.5;
+    )
+    * 0.5;
 
 
 for (
@@ -256,18 +304,21 @@ for (
         draw_rectangle(
             _x + _metade,
             _peca_y - 2,
+
             _proxima_x - _metade,
             _peca_y + 2,
+
             false
         );
     }
 
 
-    // Destaque da seleção
+    // Pulso da seleção
     if (_selecionada)
     {
         draw_set_alpha(
-            0.35 + _pulso * 0.30
+            0.35
+            + _pulso * 0.30
         );
 
         draw_set_color(_cor_selecao);
@@ -275,8 +326,10 @@ for (
         draw_rectangle(
             _x - _metade - 4,
             _peca_y - _metade - 4,
+
             _x + _metade + 4,
             _peca_y + _metade + 4,
+
             true
         );
 
@@ -290,15 +343,20 @@ for (
     draw_rectangle(
         _x - _metade,
         _peca_y - _metade,
+
         _x + _metade,
         _peca_y + _metade,
+
         false
     );
 
 
     // Borda da peça
     draw_set_color(
-        _selecionada
+        (
+            _selecionada
+            || _concluido
+        )
             ? _cor_selecao
             : _cor_peca_borda
     );
@@ -306,101 +364,79 @@ for (
     draw_rectangle(
         _x - _metade,
         _peca_y - _metade,
+
         _x + _metade,
         _peca_y + _metade,
+
         true
     );
 
 
-    // Cor da corda
-    draw_set_color(
-        _concluido
-            ? _cor_selecao
-            : _cor_corda
-    );
+    // Selecionar o sprite correspondente
+    var _sprite_corda =
+        spr_corda_direita;
 
 
     switch (rotacoes_corda[_i])
     {
-        // Horizontal
+        // Direita — posição correta
         case 0:
         {
-            draw_line_width(
-                _x - 20,
-                _peca_y,
-                _x + 20,
-                _peca_y,
-                4
-            );
+            _sprite_corda =
+                spr_corda_direita;
         }
         break;
 
 
-        // Curva para baixo
+        // Baixo
         case 1:
         {
-            draw_line_width(
-                _x - 20,
-                _peca_y,
-                _x,
-                _peca_y,
-                4
-            );
-
-            draw_line_width(
-                _x,
-                _peca_y,
-                _x,
-                _peca_y + 20,
-                4
-            );
+            _sprite_corda =
+                spr_corda_baixo;
         }
         break;
 
 
-        // Vertical
+        // Esquerda
         case 2:
         {
-            draw_line_width(
-                _x,
-                _peca_y - 20,
-                _x,
-                _peca_y + 20,
-                4
-            );
+            _sprite_corda =
+                spr_corda_esquerda;
         }
         break;
 
 
-        // Curva para cima
+        // Cima
         case 3:
         {
-            draw_line_width(
-                _x - 20,
-                _peca_y,
-                _x,
-                _peca_y,
-                4
-            );
-
-            draw_line_width(
-                _x,
-                _peca_y,
-                _x,
-                _peca_y - 20,
-                4
-            );
+            _sprite_corda =
+                spr_corda_cima;
         }
         break;
     }
 
 
-    // Nó central
-    draw_circle(
-        _x,
-        _peca_y,
-        4,
-        false
+    // Os sprites possuem origem no canto
+    // e tamanho de 32 por 32.
+    // Este cálculo os centraliza na peça.
+    var _metade_sprite =
+        16 * _escala_corda;
+
+
+    draw_sprite_ext(
+        _sprite_corda,
+        0,
+
+        _x - _metade_sprite,
+        _peca_y - _metade_sprite,
+
+        _escala_corda,
+        _escala_corda,
+
+        0,
+
+        c_white,
+        1
     );
 
 
@@ -470,6 +506,7 @@ else
     draw_text(
         _centro_x,
         230,
+
         string(_pecas_corretas)
         + " de "
         + string(quantidade_pecas)
@@ -480,7 +517,7 @@ else
     draw_text(
         _centro_x,
         258,
-        "A/D mover   E girar   Esc sair"
+        "A / D mover     E girar     Esc sair"
     );
 }
 

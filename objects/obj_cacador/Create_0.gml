@@ -35,10 +35,14 @@ pode_interagir =
 quantidade_pecas = 4;
 peca_selecionada = 0;
 
-// Rotações atuais das peças
+// Direções:
+// 0 = direita
+// 1 = baixo
+// 2 = esquerda
+// 3 = cima
 rotacoes_corda = [1, 2, 3, 1];
 
-// Rotação correta de cada peça
+// Todas devem apontar para a direita
 solucao_corda = [0, 0, 0, 0];
 
 contador_conclusao = 0;
@@ -90,7 +94,7 @@ abrir_puzzle_corda = function()
 
 fechar_puzzle_corda = function()
 {
-    // Impede que o mesmo Esc abra o menu de pausa
+    // Impede que o mesmo Esc abra o menu
     global.bloquear_pause_frames = 2;
     keyboard_clear(vk_escape);
 
@@ -119,10 +123,7 @@ interagir = function()
     }
 
 
-    // ==================================================
-    // CONVERSA DEPOIS DO PUZZLE
-    // ==================================================
-
+    // Conversa depois do puzzle
     if (global.caminho_cacador_liberado)
     {
         var _dialogo_final_aberto =
@@ -146,10 +147,7 @@ interagir = function()
     }
 
 
-    // ==================================================
-    // PRIMEIRA CONVERSA
-    // ==================================================
-
+    // Primeira conversa
     if (!cacador_examinado)
     {
         var _dialogo_inicial_aberto =
@@ -176,7 +174,6 @@ interagir = function()
                 }
             ]);
 
-        // Só registra a conversa se o diálogo abrir
         if (_dialogo_inicial_aberto)
         {
             cacador_examinado = true;
@@ -188,7 +185,7 @@ interagir = function()
     }
 
 
-    // Abre novamente o puzzle caso o jogador tenha saído
+    // Reabre o puzzle caso o jogador tenha saído
     abrir_puzzle_corda();
 };
 

@@ -32,7 +32,7 @@ pode_interagir =
 
 #region Configuração do puzzle
 
-// Posições das marcas:
+// Posições das engrenagens:
 // 0 = cima
 // 1 = direita
 // 2 = baixo
@@ -69,7 +69,7 @@ girar_roda = function(_indice)
 {
     girar_posicao(_indice);
 
-    // Cada roda também movimenta a seguinte
+    // Cada engrenagem também movimenta a seguinte
     if (_indice < quantidade_rodas - 1)
     {
         girar_posicao(_indice + 1);
@@ -137,10 +137,7 @@ interagir = function()
     }
 
 
-    // ==================================================
-    // PRIMEIRA ANÁLISE DO MECANISMO
-    // ==================================================
-
+    // Primeira análise do mecanismo
     if (!mecanismo_examinado)
     {
         var _dialogo_aberto =
@@ -175,7 +172,7 @@ interagir = function()
     }
 
 
-    // Nas próximas interações, abre diretamente o puzzle
+    // Nas próximas interações, abre o puzzle
     abrir_puzzle();
 };
 

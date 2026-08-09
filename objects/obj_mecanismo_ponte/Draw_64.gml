@@ -25,7 +25,8 @@ var _painel_y1 = 76;
 var _painel_x2 = 528;
 var _painel_y2 = 292;
 
-var _raio_roda = 30;
+var _raio_roda = 28;
+var _escala_engrenagem = 1.65;
 
 var _centros_rodas =
 [
@@ -34,32 +35,63 @@ var _centros_rodas =
     430
 ];
 
+
+// Paleta da Floresta
 var _cor_fundo =
-    make_color_rgb(18, 15, 13);
+    make_color_rgb(
+        23,
+        30,
+        37
+    );
 
 var _cor_borda =
-    make_color_rgb(95, 73, 52);
+    make_color_rgb(
+        56,
+        74,
+        51
+    );
 
 var _cor_detalhe =
-    make_color_rgb(151, 111, 69);
-
-var _cor_roda =
-    make_color_rgb(45, 35, 28);
-
-var _cor_roda_borda =
-    make_color_rgb(118, 88, 59);
-
-var _cor_marca =
-    make_color_rgb(220, 199, 160);
+    make_color_rgb(
+        82,
+        115,
+        70
+    );
 
 var _cor_selecao =
-    make_color_rgb(207, 162, 101);
+    make_color_rgb(
+        251,
+        204,
+        75
+    );
 
 var _cor_texto =
-    make_color_rgb(230, 214, 184);
+    make_color_rgb(
+        214,
+        222,
+        213
+    );
 
 var _cor_texto_secundario =
-    make_color_rgb(145, 134, 116);
+    make_color_rgb(
+        122,
+        150,
+        138
+    );
+
+var _cor_ligacao =
+    make_color_rgb(
+        38,
+        53,
+        48
+    );
+
+var _cor_trava =
+    make_color_rgb(
+        26,
+        36,
+        27
+    );
 
 #endregion
 
@@ -146,6 +178,7 @@ draw_set_color(_cor_texto);
 draw_text(
     _centro_x,
     98,
+
     _concluido
         ? "Mecanismo alinhado"
         : "Mecanismo da ponte"
@@ -158,6 +191,7 @@ draw_set_color(_cor_texto_secundario);
 draw_text(
     _centro_x,
     120,
+
     _concluido
         ? "As travas começaram a se soltar"
         : "Alinhe as três marcas"
@@ -166,11 +200,9 @@ draw_text(
 #endregion
 
 
-#region Ligações entre as rodas
+#region Ligações entre as engrenagens
 
-draw_set_color(
-    make_color_rgb(78, 58, 42)
-);
+draw_set_color(_cor_ligacao);
 
 draw_rectangle(
     _centros_rodas[0] + _raio_roda,
@@ -196,13 +228,14 @@ draw_rectangle(
 #endregion
 
 
-#region Rodas
+#region Engrenagens
 
 var _pulso_selecao =
     (
         sin(anim_puzzle * 1.5)
         + 1
-    ) * 0.5;
+    )
+    * 0.5;
 
 
 for (
@@ -219,11 +252,12 @@ for (
         && _i == roda_selecionada;
 
 
-    // Destaque da roda selecionada
+    // Destaque atrás da engrenagem
     if (_selecionada)
     {
         draw_set_alpha(
-            0.45 + _pulso_selecao * 0.30
+            0.25
+            + _pulso_selecao * 0.20
         );
 
         draw_set_color(_cor_selecao);
@@ -232,139 +266,53 @@ for (
             _x,
             _centro_y,
             _raio_roda + 5,
-            true
+            false
         );
 
         draw_set_alpha(1);
     }
 
 
-    // Fundo da roda
-    draw_set_color(_cor_roda);
+    // O desenho original aponta para cima.
+    // Ângulos:
+    // 0 = cima
+    // 1 = direita
+    // 2 = baixo
+    var _angulo_engrenagem =
+        -posicoes_rodas[_i] * 90;
 
-    draw_circle(
+
+    draw_sprite_ext(
+        spr_engranagem,
+        0,
+
         _x,
         _centro_y,
-        _raio_roda,
-        false
+
+        _escala_engrenagem,
+        _escala_engrenagem,
+
+        _angulo_engrenagem,
+
+        c_white,
+        1
     );
 
 
-    // Borda da roda
-    draw_set_color(
-        _selecionada
-            ? _cor_selecao
-            : _cor_roda_borda
-    );
-
-    draw_circle(
-        _x,
-        _centro_y,
-        _raio_roda,
-        true
-    );
-
-
-    // Eixo central
-    draw_set_color(
-        make_color_rgb(91, 68, 48)
-    );
-
-    draw_circle(
-        _x,
-        _centro_y,
-        7,
-        false
-    );
-
-
-    draw_set_color(
-        make_color_rgb(142, 105, 68)
-    );
-
-    draw_circle(
-        _x,
-        _centro_y,
-        7,
-        true
-    );
-
-
-    // Pequenos suportes internos
-    draw_set_color(
-        make_color_rgb(73, 54, 40)
-    );
-
-    draw_line(
-        _x - 22,
-        _centro_y,
-        _x + 22,
-        _centro_y
-    );
-
-    draw_line(
-        _x,
-        _centro_y - 22,
-        _x,
-        _centro_y + 22
-    );
-
-
-    // Direção da marca
-    var _direcao_x = 0;
-    var _direcao_y = -18;
-
-    switch (posicoes_rodas[_i])
-    {
-        // Cima
-        case 0:
-            _direcao_x = 0;
-            _direcao_y = -18;
-        break;
-
-
-        // Direita
-        case 1:
-            _direcao_x = 18;
-            _direcao_y = 0;
-        break;
-
-
-        // Baixo
-        case 2:
-            _direcao_x = 0;
-            _direcao_y = 18;
-        break;
-    }
-
-
-    // Marca da roda
-    draw_set_color(
-        _concluido
-            ? _cor_selecao
-            : _cor_marca
-    );
-
-    draw_line_width(
-        _x,
-        _centro_y,
-        _x + _direcao_x,
-        _centro_y + _direcao_y,
-        3
-    );
-
-
-    draw_circle(
-        _x + _direcao_x,
-        _centro_y + _direcao_y,
-        3,
-        false
-    );
-
-
-    // Indicador de seleção
+    // Contorno da engrenagem selecionada
     if (_selecionada)
     {
+        draw_set_color(_cor_selecao);
+
+        draw_circle(
+            _x,
+            _centro_y,
+            _raio_roda + 2,
+            true
+        );
+
+
+        // Indicador abaixo da engrenagem
         draw_triangle(
             _x - 4,
             _centro_y + 40,
@@ -409,16 +357,16 @@ var _espaco_travas = 34;
 
 
 // Linhas entre as travas
-draw_set_color(
-    make_color_rgb(71, 53, 39)
-);
+draw_set_color(_cor_ligacao);
 
 draw_rectangle(
     _inicio_travas_x + 8,
     _trava_y - 1,
+
     _inicio_travas_x
         + _espaco_travas * 2
         - 8,
+
     _trava_y + 1,
     false
 );
@@ -438,10 +386,11 @@ for (
         _i < _travas_ativas;
 
 
+    // Preenchimento da trava
     draw_set_color(
         _ativa
             ? _cor_selecao
-            : make_color_rgb(54, 42, 34)
+            : _cor_trava
     );
 
     draw_rectangle(
@@ -453,10 +402,15 @@ for (
     );
 
 
+    // Borda da trava
     draw_set_color(
         _ativa
-            ? make_color_rgb(238, 199, 130)
-            : make_color_rgb(105, 78, 54)
+            ? make_color_rgb(
+                255,
+                230,
+                154
+            )
+            : _cor_borda
     );
 
     draw_rectangle(
