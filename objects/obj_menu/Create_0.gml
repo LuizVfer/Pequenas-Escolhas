@@ -35,6 +35,12 @@ opcoes_menu = [];
 transicao_iniciada = false;
 
 anim_menu = 0;
+// Animações desenhadas manualmente
+frame_fundo_menu = 0;
+frame_logo_menu = 0;
+
+fps_fundo_menu = 3;
+fps_logo_menu = 8;
 
 #endregion
 

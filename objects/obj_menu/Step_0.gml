@@ -20,6 +20,29 @@ if (fade_menu_ativo())
 
 anim_menu += 0.08;
 
+var _delta_menu =
+    delta_time / 1000000;
+
+
+frame_fundo_menu =
+    (
+        frame_fundo_menu
+        + fps_fundo_menu
+        * _delta_menu
+    ) mod sprite_get_number(
+        spr_menu_fundo
+    );
+
+
+frame_logo_menu =
+    (
+        frame_logo_menu
+        + fps_logo_menu
+        * _delta_menu
+    ) mod sprite_get_number(
+        spr_logo_pequenas_escolhas
+    );
+
 #endregion
 
 

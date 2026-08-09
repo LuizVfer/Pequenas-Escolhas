@@ -2,9 +2,9 @@
   "$GMSprite":"v2",
   "%Name":"spr_placa_madeira",
   "bboxMode":0,
-  "bbox_bottom":31,
+  "bbox_bottom":27,
   "bbox_left":0,
-  "bbox_right":31,
+  "bbox_right":19,
   "bbox_top":0,
   "collisionKind":1,
   "collisionTolerance":0,
@@ -12,14 +12,14 @@
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"v1","%Name":"63e76f37-ed7a-41e0-bd9a-395ba4f02f41","name":"63e76f37-ed7a-41e0-bd9a-395ba4f02f41","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"e776b225-ea0b-4d28-ba9b-63fc67fcd8de","name":"e776b225-ea0b-4d28-ba9b-63fc67fcd8de","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,
-  "height":32,
+  "height":28,
   "HTile":false,
   "layers":[
-    {"$GMImageLayer":"","%Name":"f598247b-698f-464c-97f6-8477ef197e8b","blendMode":0,"displayName":"default","isLocked":false,"name":"f598247b-698f-464c-97f6-8477ef197e8b","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"f3708404-1692-4cc0-83a5-e5bdbb2e4bc7","blendMode":0,"displayName":"default","isLocked":false,"name":"f3708404-1692-4cc0-83a5-e5bdbb2e4bc7","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
   "name":"spr_placa_madeira",
   "nineSlice":null,
@@ -69,8 +69,8 @@
     "tracks":[
       {"$GMSpriteFramesTrack":"","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"$KeyframeStore<SpriteFrameKeyframe>":"","Keyframes":[
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"63e76f37-ed7a-41e0-bd9a-395ba4f02f41","path":"sprites/spr_placa_madeira/spr_placa_madeira.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
-              },"Disabled":false,"id":"4c5f7839-7315-4e02-8a01-93d3755698c0","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"e776b225-ea0b-4d28-ba9b-63fc67fcd8de","path":"sprites/spr_placa_madeira/spr_placa_madeira.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"2e0c3fbd-e240-41cb-b4bc-9ac34238bbda","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
           ],"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"2.0",},"modifiers":[],"name":"frames","resourceType":"GMSpriteFramesTrack","resourceVersion":"2.0","spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange":null,
@@ -86,5 +86,5 @@
   },
   "type":0,
   "VTile":false,
-  "width":32,
+  "width":20,
 }
