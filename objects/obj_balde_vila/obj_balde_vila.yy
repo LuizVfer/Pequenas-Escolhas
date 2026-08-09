@@ -38,5 +38,5 @@
     "path":"sprites/spr_tecla_E_placeholder/spr_tecla_E_placeholder.yy",
   },
   "spriteMaskId":null,
-  "visible":true,
+  "visible":false,
 }

@@ -8,8 +8,8 @@ prioridade_interacao = 10;
 
 // Aproxima o ponto de interação da extremidade
 // acessível da ponte levantada
-offset_interacao_x = -56;
-offset_interacao_y = 0;
+offset_interacao_x = -120;
+offset_interacao_y = -48;
 
 offset_indicador_y = 12;
 

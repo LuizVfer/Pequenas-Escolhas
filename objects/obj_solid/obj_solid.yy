@@ -37,5 +37,5 @@
     "name":"spr_solid_placeholder",
     "path":"sprites/spr_solid_placeholder/spr_solid_placeholder.yy",
   },
-  "visible":true,
+  "visible":false,
 }

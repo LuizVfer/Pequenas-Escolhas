@@ -37,5 +37,5 @@
     "path":"sprites/spr_saida_placeholder/spr_saida_placeholder.yy",
   },
   "spriteMaskId":null,
-  "visible":true,
+  "visible":false,
 }
