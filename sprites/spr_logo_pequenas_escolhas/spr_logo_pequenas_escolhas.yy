@@ -2,24 +2,35 @@
   "$GMSprite":"v2",
   "%Name":"spr_logo_pequenas_escolhas",
   "bboxMode":0,
-  "bbox_bottom":79,
-  "bbox_left":0,
-  "bbox_right":219,
-  "bbox_top":0,
+  "bbox_bottom":74,
+  "bbox_left":10,
+  "bbox_right":137,
+  "bbox_top":26,
   "collisionKind":1,
   "collisionTolerance":0,
   "DynamicTexturePage":false,
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"v1","%Name":"ac28fb40-3804-4e7a-9c90-3ae4c367bf0e","name":"ac28fb40-3804-4e7a-9c90-3ae4c367bf0e","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"9054b6d3-62cb-49b4-a92d-923ae9a80b78","name":"9054b6d3-62cb-49b4-a92d-923ae9a80b78","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"c1b2b877-3ae5-4adc-82cc-67ffafa233aa","name":"c1b2b877-3ae5-4adc-82cc-67ffafa233aa","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"70ee9c34-725c-49b7-9369-5f2a3dd83353","name":"70ee9c34-725c-49b7-9369-5f2a3dd83353","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"ac1a8bbd-8ac5-43a4-93a7-48b453f71a5f","name":"ac1a8bbd-8ac5-43a4-93a7-48b453f71a5f","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"a9ff7ea6-e92a-4f85-9596-2cacbf6957f5","name":"a9ff7ea6-e92a-4f85-9596-2cacbf6957f5","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"c0ea6332-911b-4ddc-8a36-88df5753d27e","name":"c0ea6332-911b-4ddc-8a36-88df5753d27e","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"2d2e6f5b-827e-4f44-99a3-bde335e17325","name":"2d2e6f5b-827e-4f44-99a3-bde335e17325","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"f1018c2c-cfd3-43ad-b6b7-2445c5956cc7","name":"f1018c2c-cfd3-43ad-b6b7-2445c5956cc7","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"07329818-34e0-4be0-86d9-86e5d85c3d51","name":"07329818-34e0-4be0-86d9-86e5d85c3d51","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"bcc7d45d-4385-4586-82c1-5be7b5a9ed11","name":"bcc7d45d-4385-4586-82c1-5be7b5a9ed11","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"738341d1-04c8-46c0-8937-7730a967ad13","name":"738341d1-04c8-46c0-8937-7730a967ad13","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"4b80ba67-b023-4ca7-a561-3f64e3925b87","name":"4b80ba67-b023-4ca7-a561-3f64e3925b87","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,
-  "height":80,
+  "height":150,
   "HTile":false,
   "layers":[
-    {"$GMImageLayer":"","%Name":"df2fdc62-8637-411f-acf7-c30e1ff574e6","blendMode":0,"displayName":"default","isLocked":false,"name":"df2fdc62-8637-411f-acf7-c30e1ff574e6","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"0431f3f1-927f-4c38-ae4e-8fa157f625d0","blendMode":0,"displayName":"default","isLocked":false,"name":"0431f3f1-927f-4c38-ae4e-8fa157f625d0","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
   "name":"spr_logo_pequenas_escolhas",
   "nineSlice":null,
@@ -49,7 +60,7 @@
     },
     "eventStubScript":null,
     "eventToFunction":{},
-    "length":1.0,
+    "length":12.0,
     "lockOrigin":false,
     "moments":{
       "$KeyframeStore<MomentsEventKeyframe>":"",
@@ -59,7 +70,7 @@
     },
     "name":"spr_logo_pequenas_escolhas",
     "playback":1,
-    "playbackSpeed":30.0,
+    "playbackSpeed":8.0,
     "playbackSpeedType":0,
     "resourceType":"GMSequence",
     "resourceVersion":"2.0",
@@ -69,8 +80,41 @@
     "tracks":[
       {"$GMSpriteFramesTrack":"","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"$KeyframeStore<SpriteFrameKeyframe>":"","Keyframes":[
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"ac28fb40-3804-4e7a-9c90-3ae4c367bf0e","path":"sprites/spr_logo_pequenas_escolhas/spr_logo_pequenas_escolhas.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
-              },"Disabled":false,"id":"1177419b-444f-46df-8bba-a8f2994c37c1","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"9054b6d3-62cb-49b4-a92d-923ae9a80b78","path":"sprites/spr_logo_pequenas_escolhas/spr_logo_pequenas_escolhas.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"81a2da84-8fdd-4c73-aaa9-308d8b3d145d","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+            {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"c1b2b877-3ae5-4adc-82cc-67ffafa233aa","path":"sprites/spr_logo_pequenas_escolhas/spr_logo_pequenas_escolhas.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"94633f3c-b2f9-4c2b-8b7a-3353c77cdd0a","IsCreationKey":false,"Key":1.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+            {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"70ee9c34-725c-49b7-9369-5f2a3dd83353","path":"sprites/spr_logo_pequenas_escolhas/spr_logo_pequenas_escolhas.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"45a34f13-e7aa-4201-a0d9-2e6aa6bce0f3","IsCreationKey":false,"Key":2.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+            {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"ac1a8bbd-8ac5-43a4-93a7-48b453f71a5f","path":"sprites/spr_logo_pequenas_escolhas/spr_logo_pequenas_escolhas.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"c1216815-3c7a-4f78-9fd9-e01c4c535cc3","IsCreationKey":false,"Key":3.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+            {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"a9ff7ea6-e92a-4f85-9596-2cacbf6957f5","path":"sprites/spr_logo_pequenas_escolhas/spr_logo_pequenas_escolhas.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"0e8a0c8e-6cc5-45b8-a033-4b1159d141b4","IsCreationKey":false,"Key":4.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+            {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"c0ea6332-911b-4ddc-8a36-88df5753d27e","path":"sprites/spr_logo_pequenas_escolhas/spr_logo_pequenas_escolhas.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"9a312fe4-2128-474f-a4ec-7364f98dd61b","IsCreationKey":false,"Key":5.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+            {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"2d2e6f5b-827e-4f44-99a3-bde335e17325","path":"sprites/spr_logo_pequenas_escolhas/spr_logo_pequenas_escolhas.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"b83e1823-8515-4fb6-92e2-50007f0e2bd8","IsCreationKey":false,"Key":6.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+            {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"f1018c2c-cfd3-43ad-b6b7-2445c5956cc7","path":"sprites/spr_logo_pequenas_escolhas/spr_logo_pequenas_escolhas.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"fb70abab-0cd8-4c93-90f9-46532602f65f","IsCreationKey":false,"Key":7.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+            {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"07329818-34e0-4be0-86d9-86e5d85c3d51","path":"sprites/spr_logo_pequenas_escolhas/spr_logo_pequenas_escolhas.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"803598e3-9bdf-4884-a600-875a4c577ab0","IsCreationKey":false,"Key":8.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+            {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"bcc7d45d-4385-4586-82c1-5be7b5a9ed11","path":"sprites/spr_logo_pequenas_escolhas/spr_logo_pequenas_escolhas.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"2e07fb83-a023-4437-a0a1-5f7f73062260","IsCreationKey":false,"Key":9.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+            {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"738341d1-04c8-46c0-8937-7730a967ad13","path":"sprites/spr_logo_pequenas_escolhas/spr_logo_pequenas_escolhas.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"fdb600f2-968a-47d9-be8d-4a3a4c8f5b6e","IsCreationKey":false,"Key":10.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+            {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"4b80ba67-b023-4ca7-a561-3f64e3925b87","path":"sprites/spr_logo_pequenas_escolhas/spr_logo_pequenas_escolhas.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"c199dd96-fea2-4e63-9794-1b34550698a9","IsCreationKey":false,"Key":11.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
           ],"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"2.0",},"modifiers":[],"name":"frames","resourceType":"GMSpriteFramesTrack","resourceVersion":"2.0","spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange":null,
@@ -86,5 +130,5 @@
   },
   "type":0,
   "VTile":false,
-  "width":220,
+  "width":150,
 }

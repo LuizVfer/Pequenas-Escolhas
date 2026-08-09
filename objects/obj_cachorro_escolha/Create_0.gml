@@ -48,7 +48,7 @@ switch (global.escolha_cachorro)
 
 
 image_index = 0;
-image_speed = 0;
+image_speed = 1;
 
 pode_interagir =
     global.escolha_cachorro == -1;
@@ -144,7 +144,7 @@ aplicar_escolha_cachorro = function(_opcao)
 
 
     image_index = 0;
-    image_speed = 0;
+    image_speed = 1;
 };
 
 #endregion
