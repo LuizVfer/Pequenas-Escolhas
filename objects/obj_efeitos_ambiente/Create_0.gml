@@ -49,7 +49,7 @@ poeira_cidade_ativa = false;
 
 tempo_proxima_poeira_cidade = 0.1;
 
-maximo_poeiras_cidade = 14;
+maximo_poeiras_cidade = 20;
 
 
 poeira_cidade_cor_1 =
@@ -57,6 +57,40 @@ poeira_cidade_cor_1 =
 
 poeira_cidade_cor_2 =
     c_white;
+
+#endregion
+
+#region Efeito da vila
+
+fragmentos_vila = [];
+
+fragmentos_vila_ativos = false;
+
+tempo_proximo_fragmento_vila = 0.15;
+
+maximo_fragmentos_vila = 12;
+
+
+palha_cor_1 = c_white;
+palha_cor_2 = c_white;
+semente_cor = c_white;
+
+#endregion
+
+#region Efeito do destino
+
+petalas_destino = [];
+
+petalas_destino_ativas = false;
+
+tempo_proxima_petala_destino = 0.15;
+
+maximo_petalas_destino = 10;
+
+
+petala_cor_1 = c_white;
+petala_cor_2 = c_white;
+petala_cor_3 = c_white;
 
 #endregion
 
@@ -85,17 +119,17 @@ switch (room)
         
         poeira_cidade_cor_1 =
             make_color_rgb(
-                174,
-                161,
-                132
+                210,
+                196,
+                162
             );
         
         
         poeira_cidade_cor_2 =
             make_color_rgb(
-                132,
-                124,
-                105
+                176,
+                158,
+                126
             );
 
     break;
@@ -151,7 +185,65 @@ switch (room)
             make_color_rgb(148, 114, 76);
 
         poeira_alpha = 0.30;
+        
+        // Palhas e sementes levadas pelo vento
+        fragmentos_vila_ativos = true;
+        
+        
+        palha_cor_1 =
+            make_color_rgb(
+                221,
+                190,
+                119
+            );
+        
+        
+        palha_cor_2 =
+            make_color_rgb(
+                190,
+                151,
+                84
+            );
+        
+        
+        semente_cor =
+            make_color_rgb(
+                135,
+                103,
+                69
+            );
 
+    break;
+
+    case rm_destino:
+
+        // Pétalas próximas das flores
+        petalas_destino_ativas = true;
+    
+    
+        petala_cor_1 =
+            make_color_rgb(
+                224,
+                170,
+                157
+            );
+    
+    
+        petala_cor_2 =
+            make_color_rgb(
+                235,
+                205,
+                170
+            );
+    
+    
+        petala_cor_3 =
+            make_color_rgb(
+                195,
+                132,
+                126
+            );
+    
     break;
 }
 
@@ -365,8 +457,8 @@ criar_poeira_cidade = function()
 
         tamanho:
             irandom_range(
-                1,
-                2
+                2,
+                3
             ),
 
         cor:
@@ -376,10 +468,10 @@ criar_poeira_cidade = function()
             ),
 
         alpha:
-            random_range(
-                0.28,
-                0.45
-            )
+        random_range(
+            0.55,
+            0.80
+        )
     };
 
 
@@ -391,6 +483,212 @@ criar_poeira_cidade = function()
 
 #endregion
 
+#region Criar fragmento da vila
+
+criar_fragmento_vila = function()
+{
+    var _area =
+        obter_area_camera();
+
+
+    var _vida =
+        random_range(
+            9,
+            15
+        );
+
+
+    // 0 = palha
+    // 1 = semente
+    var _tipo =
+        irandom(3) == 0
+        ? 1
+        : 0;
+
+
+    var _fragmento =
+    {
+        // Nasce à direita da câmera
+        x:
+            _area.x
+            + _area.largura
+            + random_range(
+                4,
+                24
+            ),
+
+        y:
+            _area.y
+            + random_range(
+                70,
+                285
+            ),
+
+
+        velocidade_x:
+            random_range(
+                -38,
+                -22
+            ),
+
+        velocidade_y:
+            random_range(
+                -1.5,
+                1.5
+            ),
+
+
+        oscilacao:
+            random_range(
+                4,
+                8
+            ),
+
+        fase:
+            random_range(
+                0,
+                pi * 2
+            ),
+
+        velocidade_fase:
+            random_range(
+                2,
+                3.5
+            ),
+
+
+        vida: _vida,
+        vida_total: _vida,
+
+        tipo: _tipo,
+
+        tamanho:
+            _tipo == 0
+            ? irandom_range(3, 5)
+            : 1,
+
+        cor:
+            _tipo == 0
+            ? choose(
+                palha_cor_1,
+                palha_cor_2
+            )
+            : semente_cor,
+
+        alpha:
+            random_range(
+                0.55,
+                0.80
+            )
+    };
+
+
+    array_push(
+        fragmentos_vila,
+        _fragmento
+    );
+};
+
+#endregion
+
+#region Criar pétala do destino
+
+criar_petala_destino = function()
+{
+    var _area =
+        obter_area_camera();
+
+
+    var _vida =
+        random_range(
+            9,
+            14
+        );
+
+
+    var _petala =
+    {
+        // Surge à direita da câmera
+        // e próxima da vegetação
+        x:
+            _area.x
+            + _area.largura
+            + random_range(
+                6,
+                24
+            ),
+
+        y:
+            _area.y
+            + random_range(
+                210,
+                _area.altura - 48
+            ),
+
+
+        velocidade_x:
+            random_range(
+                -30,
+                -18
+            ),
+
+        velocidade_y:
+            random_range(
+                -1,
+                1.5
+            ),
+
+
+        oscilacao:
+            random_range(
+                5,
+                9
+            ),
+
+        fase:
+            random_range(
+                0,
+                pi * 2
+            ),
+
+        velocidade_fase:
+            random_range(
+                2,
+                3.6
+            ),
+
+
+        vida: _vida,
+        vida_total: _vida,
+
+        tamanho:
+            irandom_range(
+                2,
+                3
+            ),
+
+        cor:
+            choose(
+                petala_cor_1,
+                petala_cor_2,
+                petala_cor_3
+            ),
+
+        alpha:
+            random_range(
+                0.65,
+                0.90
+            )
+    };
+
+
+    array_push(
+        petalas_destino,
+        _petala
+    );
+};
+
+#endregion
 
 #region Criar folha
 

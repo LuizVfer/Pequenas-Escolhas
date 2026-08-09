@@ -15,9 +15,10 @@ for (
         - _poeira.vida;
 
 
+    // Aparece e desaparece suavemente
     var _entrada =
         clamp(
-            _tempo_vivo / 0.7,
+            _tempo_vivo / 0.35,
             0,
             1
         );
@@ -25,7 +26,7 @@ for (
 
     var _saida =
         clamp(
-            _poeira.vida / 1,
+            _poeira.vida / 0.75,
             0,
             1
         );
@@ -50,37 +51,238 @@ for (
     );
 
 
+    // Grão principal
     draw_set_alpha(
         _alpha
     );
 
 
-    draw_point(
+    draw_rectangle(
         _x,
-        _y
+        _y,
+
+        _x + _poeira.tamanho,
+        _y + 1,
+
+        false
     );
 
 
-    if (_poeira.tamanho > 1)
+    // Pequeno grão atrás
+    draw_set_alpha(
+        _alpha * 0.55
+    );
+
+
+    draw_rectangle(
+        _x
+            + _poeira.tamanho
+            + 3,
+
+        _y,
+
+        _x
+            + _poeira.tamanho
+            + 4,
+
+        _y + 1,
+
+        false
+    );
+}
+
+#endregion
+
+#region Desenhar fragmentos da vila
+
+for (
+    var _i = 0;
+    _i < array_length(fragmentos_vila);
+    _i++
+)
+{
+    var _fragmento =
+        fragmentos_vila[_i];
+
+
+    var _tempo_vivo =
+        _fragmento.vida_total
+        - _fragmento.vida;
+
+
+    var _entrada =
+        clamp(
+            _tempo_vivo / 0.35,
+            0,
+            1
+        );
+
+
+    var _saida =
+        clamp(
+            _fragmento.vida / 0.8,
+            0,
+            1
+        );
+
+
+    var _alpha =
+        _fragmento.alpha
+        * _entrada
+        * _saida;
+
+
+    var _x =
+        round(_fragmento.x);
+
+
+    var _y =
+        round(_fragmento.y);
+
+
+    draw_set_color(
+        _fragmento.cor
+    );
+
+
+    draw_set_alpha(
+        _alpha
+    );
+
+
+    if (_fragmento.tipo == 0)
     {
-        draw_point(
+        // Palha inclinando enquanto gira
+        var _inclinacao =
+            sign(
+                sin(
+                    _fragmento.fase * 1.4
+                )
+            );
+
+
+        draw_line(
+            _x,
+            _y,
+
+            _x + _fragmento.tamanho,
+            _y + _inclinacao
+        );
+    }
+    else
+    {
+        // Pequena semente
+        draw_rectangle(
+            _x,
+            _y,
             _x + 1,
-            _y
+            _y + 1,
+            false
+        );
+    }
+}
+
+#endregion
+
+#region Desenhar pétalas do destino
+
+for (
+    var _i = 0;
+    _i < array_length(petalas_destino);
+    _i++
+)
+{
+    var _petala =
+        petalas_destino[_i];
+
+
+    var _tempo_vivo =
+        _petala.vida_total
+        - _petala.vida;
+
+
+    var _entrada =
+        clamp(
+            _tempo_vivo / 0.35,
+            0,
+            1
+        );
+
+
+    var _saida =
+        clamp(
+            _petala.vida / 0.8,
+            0,
+            1
+        );
+
+
+    var _alpha =
+        _petala.alpha
+        * _entrada
+        * _saida;
+
+
+    var _x =
+        round(_petala.x);
+
+
+    var _y =
+        round(_petala.y);
+
+
+    var _virada =
+        sin(
+            _petala.fase * 1.3
+        );
+
+
+    draw_set_color(
+        _petala.cor
+    );
+
+
+    draw_set_alpha(
+        _alpha
+    );
+
+
+    if (_virada >= 0)
+    {
+        // Pétala virada horizontalmente
+        draw_rectangle(
+            _x,
+            _y,
+
+            _x + _petala.tamanho,
+            _y + 1,
+
+            false
+        );
+    }
+    else
+    {
+        // Pétala virada verticalmente
+        draw_rectangle(
+            _x,
+            _y,
+
+            _x + 1,
+            _y + _petala.tamanho,
+
+            false
         );
     }
 
 
-    // Pequeno rastro na direção contrária
+    // Pequeno brilho em uma das extremidades
     draw_set_alpha(
-        _alpha * 0.35
+        _alpha * 0.45
     );
 
 
     draw_point(
-        _x
-            + _poeira.tamanho
-            + 1,
-
+        _x + 1,
         _y
     );
 }

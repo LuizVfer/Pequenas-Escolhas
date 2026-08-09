@@ -27,8 +27,8 @@ if (poeira_cidade_ativa)
 
         tempo_proxima_poeira_cidade =
             random_range(
-                0.35,
-                0.70
+                0.20,
+                0.45
             );
     }
 
@@ -95,6 +95,198 @@ if (poeira_cidade_ativa)
         {
             poeiras_cidade[_i] =
                 _poeira;
+        }
+    }
+}
+
+#endregion
+
+#region Fragmentos da vila
+
+if (fragmentos_vila_ativos)
+{
+    tempo_proximo_fragmento_vila -=
+        _delta;
+
+
+    if (
+        tempo_proximo_fragmento_vila <= 0
+        && array_length(fragmentos_vila)
+            < maximo_fragmentos_vila
+    )
+    {
+        criar_fragmento_vila();
+
+
+        tempo_proximo_fragmento_vila =
+            random_range(
+                0.45,
+                0.90
+            );
+    }
+
+
+    var _area_vila =
+        obter_area_camera();
+
+
+    for (
+        var _i =
+            array_length(fragmentos_vila) - 1;
+
+        _i >= 0;
+
+        _i--
+    )
+    {
+        var _fragmento =
+            fragmentos_vila[_i];
+
+
+        _fragmento.vida -=
+            _delta;
+
+
+        _fragmento.fase +=
+            _fragmento.velocidade_fase
+            * _delta;
+
+
+        _fragmento.x +=
+            _fragmento.velocidade_x
+            * _delta;
+
+
+        _fragmento.y +=
+        (
+            _fragmento.velocidade_y
+            + sin(_fragmento.fase)
+            * _fragmento.oscilacao
+        )
+        * _delta;
+
+
+        if (
+            _fragmento.vida <= 0
+
+            || _fragmento.x
+                < _area_vila.x - 32
+
+            || _fragmento.y
+                < _area_vila.y - 24
+
+            || _fragmento.y
+                > _area_vila.y
+                + _area_vila.altura
+                + 24
+        )
+        {
+            array_delete(
+                fragmentos_vila,
+                _i,
+                1
+            );
+        }
+        else
+        {
+            fragmentos_vila[_i] =
+                _fragmento;
+        }
+    }
+}
+
+#endregion
+
+#region Pétalas do destino
+
+if (petalas_destino_ativas)
+{
+    tempo_proxima_petala_destino -=
+        _delta;
+
+
+    if (
+        tempo_proxima_petala_destino <= 0
+        && array_length(petalas_destino)
+            < maximo_petalas_destino
+    )
+    {
+        criar_petala_destino();
+
+
+        tempo_proxima_petala_destino =
+            random_range(
+                0.55,
+                1.10
+            );
+    }
+
+
+    var _area_destino =
+        obter_area_camera();
+
+
+    for (
+        var _i =
+            array_length(petalas_destino) - 1;
+
+        _i >= 0;
+
+        _i--
+    )
+    {
+        var _petala =
+            petalas_destino[_i];
+
+
+        _petala.vida -=
+            _delta;
+
+
+        _petala.fase +=
+            _petala.velocidade_fase
+            * _delta;
+
+
+        _petala.x +=
+            _petala.velocidade_x
+            * _delta;
+
+
+        _petala.y +=
+        (
+            _petala.velocidade_y
+            + sin(_petala.fase)
+            * _petala.oscilacao
+        )
+        * _delta;
+
+
+        if (
+            _petala.vida <= 0
+
+            || _petala.x
+                < _area_destino.x - 32
+
+            || _petala.y
+                < _area_destino.y + 170
+
+            || _petala.y
+                > _area_destino.y
+                + _area_destino.altura
+                + 16
+        )
+        {
+            array_delete(
+                petalas_destino,
+                _i,
+                1
+            );
+        }
+        else
+        {
+            petalas_destino[_i] =
+                _petala;
         }
     }
 }
