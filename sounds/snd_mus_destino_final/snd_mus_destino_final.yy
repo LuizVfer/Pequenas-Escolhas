@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"snd_mus_destino_final.mp3",
+  "soundFile":"snd_mus_destino_final.wav",
   "volume":1.0,
 }

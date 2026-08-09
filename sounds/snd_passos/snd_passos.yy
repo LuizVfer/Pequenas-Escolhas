@@ -10,7 +10,7 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":0.37290248,
+  "duration":0.387483,
   "exportDir":"",
   "name":"snd_passos",
   "parent":{
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"snd_passos.wav",
+  "soundFile":"snd_passos.mp3",
   "volume":1.0,
 }

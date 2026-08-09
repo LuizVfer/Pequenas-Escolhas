@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"snd_opcao_mover.wav",
+  "soundFile":"snd_opcao_mover.mp3",
   "volume":1.0,
 }
